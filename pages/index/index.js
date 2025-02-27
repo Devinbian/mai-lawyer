@@ -13,9 +13,24 @@ Page({
       "律师费如何计算",
     ],
     loading: false,
+    navHeight: 0,
+    statusBarHeight: 20
   },
 
-  onLoad() {
+  onLoad: function() {
+    console.warn('页面加载 - 测试日志');
+    
+    // 直接尝试获取组件
+    const nav = this.selectComponent('#customNav');
+    console.log('直接获取导航组件：', nav);
+
+    // 延迟获取组件
+    setTimeout(() => {
+      const nav2 = this.selectComponent('#customNav');
+      console.log('延迟获取导航组件：', nav2);
+    }, 1000);
+
+    const app = getApp();
     // 添加欢迎消息
     this.addMessage({
       type: "ai",
@@ -23,12 +38,24 @@ Page({
     });
 
     // 获取用户信息（如果已登录）
-    const app = getApp();
     if (app.globalData.isLogin) {
       this.setData({
         userInfo: app.globalData.userInfo,
       });
     }
+
+    const systemInfo = wx.getSystemInfoSync();
+    this.setData({
+      statusBarHeight: systemInfo.statusBarHeight
+    });
+  },
+
+  onReady: function() {
+    console.log('页面ready');
+  },
+
+  onShow: function() {
+    console.log('页面show');
   },
 
   // 检查登录状态
@@ -150,4 +177,12 @@ Page({
       },
     });
   },
+
+  // 监听导航高度变化
+  onNavHeight(e) {
+    console.warn('收到导航高度:', e.detail.height);
+    this.setData({
+      navHeight: e.detail.height
+    });
+  }
 });

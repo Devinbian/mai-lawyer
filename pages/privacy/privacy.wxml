@@ -1,3 +1,37 @@
 <view class="container">
-  <rich-text nodes="{{content}}"></rich-text>
+  <custom-nav title="隐私政策"></custom-nav>
+  <view class="content">
+    <view class="privacy-content">
+      <view class="title">隐私政策</view>
+      <view class="section">
+        <view class="section-title">1. 信息收集</view>
+        <view class="section-content">
+          我们可能收集的个人信息包括但不限于：
+          <view class="item">• 您的基本信息（如姓名、手机号）</view>
+          <view class="item">• 设备信息（如设备型号、操作系统版本）</view>
+          <view class="item">• 使用记录（如咨询历史、浏览记录）</view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">2. 信息使用</view>
+        <view class="section-content">
+          我们收集的信息将用于：
+          <view class="item">• 提供法律咨询服务</view>
+          <view class="item">• 改进产品和服务质量</view>
+          <view class="item">• 向您推送相关服务信息</view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">3. 信息保护</view>
+        <view class="section-content">
+          我们承诺：
+          <view class="item">• 采取严格的数据安全措施</view>
+          <view class="item">• 不会将信息用于非法用途</view>
+          <view class="item">• 未经您同意不会向第三方分享</view>
+        </view>
+      </view>
+    </view>
+  </view>
 </view> 

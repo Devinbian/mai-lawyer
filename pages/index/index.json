@@ -1,4 +1,6 @@
 {
   "navigationBarTitleText": "麦小律",
-  "usingComponents": {}
+  "usingComponents": {
+    "custom-nav": "/components/custom-nav/custom-nav"
+  }
 }

@@ -1,62 +1,37 @@
-<view class="container" wx:if="{{expert}}">
-  <!-- 专家信息 -->
-  <view class="expert-header">
-    <view class="basic-info">
-      <image class="avatar" src="{{expert.avatar}}" />
-      <view class="info-right">
-        <view class="name-title">
-          <text class="name">{{expert.name}}</text>
-          <text class="title">{{expert.title}}</text>
-        </view>
-        <view class="stats">
-          <view class="stat-item">
-            <text class="num">{{expert.followCount}}</text>
-            <text class="label">关注</text>
-          </view>
-          <view class="stat-item">
-            <text class="num">{{expert.serviceCount}}</text>
-            <text class="label">服务</text>
-          </view>
-          <view class="stat-item">
-            <text class="num">{{expert.years}}年</text>
-            <text class="label">从业</text>
-          </view>
+<view class="container">
+  <custom-nav title="专家详情"></custom-nav>
+  <view class="content">
+    <!-- 专家基本信息 -->
+    <view class="expert-header">
+      <image class="expert-avatar" src="{{expert.avatar}}" />
+      <view class="expert-info">
+        <view class="expert-name">{{expert.name}}</view>
+        <view class="expert-title">{{expert.title}}</view>
+        <view class="expert-tags">
+          <text class="tag" wx:for="{{expert.tags}}" wx:key="*this">{{item}}</text>
         </view>
       </view>
-      <button 
-        class="follow-btn {{isFollowed ? 'followed' : ''}}" 
-        bindtap="handleFollow"
-      >
-        {{isFollowed ? '已关注' : '关注'}}
-      </button>
     </view>
 
-    <view class="tags">
-      <text class="tag" wx:for="{{expert.tags}}" wx:key="*this">{{item}}</text>
+    <!-- 专家简介 -->
+    <view class="expert-intro">
+      <view class="section-title">执业简介</view>
+      <view class="intro-content">{{expert.introduction}}</view>
     </view>
-  </view>
 
-  <!-- 律师简介 -->
-  <view class="section">
-    <view class="section-title">律师简介</view>
-    <view class="introduction">{{expert.introduction}}</view>
-  </view>
-
-  <!-- 服务项目 -->
-  <view class="section">
-    <view class="section-title">服务项目</view>
-    <view class="services">
-      <view 
-        class="service-item"
-        wx:for="{{services}}"
-        wx:key="name"
-        bindtap="selectService"
-        data-index="{{index}}"
-      >
-        <image class="service-icon" src="{{item.icon}}" />
-        <text class="service-name">{{item.name}}</text>
-        <text class="service-price">{{item.price}}</text>
+    <!-- 专业领域 -->
+    <view class="expert-fields">
+      <view class="section-title">专业领域</view>
+      <view class="fields-content">
+        <view class="field-item" wx:for="{{expert.fields}}" wx:key="*this">
+          {{item}}
+        </view>
       </view>
+    </view>
+
+    <!-- 咨询按钮 -->
+    <view class="action-bar">
+      <button class="consult-btn" bindtap="handleConsult">立即咨询</button>
     </view>
   </view>
 </view> 

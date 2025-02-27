@@ -12,7 +12,7 @@ Page({
   },
 
   // 微信一键登录
-  async handleWechatLogin() {
+  handleWechatLogin() {
     if (!this.data.isAgree) {
       wx.showToast({
         title: "请先同意用户协议和隐私政策",
@@ -23,11 +23,15 @@ Page({
 
     this.setData({ loading: true });
     try {
-      const app = getApp();
-      const loginResult = await app.login();
-      // TODO: 处理登录成功后的逻辑
-      wx.switchTab({
-        url: "/pages/index/index",
+      wx.getUserProfile({
+        desc: '用于完善用户资料',
+        success: (res) => {
+          const app = getApp();
+          app.globalData.userInfo = res.userInfo;
+          app.globalData.isLogin = true;
+          
+          wx.navigateBack();
+        }
       });
     } catch (error) {
       wx.showToast({
@@ -55,17 +59,16 @@ Page({
     });
   },
 
-  // 查看协议
-  viewAgreement() {
-    wx.navigateTo({
-      url: "/pages/agreement/agreement",
-    });
-  },
-
   // 查看隐私政策
   viewPrivacy() {
     wx.navigateTo({
       url: "/pages/privacy/privacy",
     });
   },
+
+  gotoAgreement() {
+    wx.navigateTo({
+      url: '/pages/agreement/agreement'
+    });
+  }
 });

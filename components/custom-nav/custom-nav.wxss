@@ -1,0 +1,58 @@
+.nav-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+.nav-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+}
+
+/* 状态栏背景 */
+.status-bar {
+  width: 100%;
+  position: relative;
+}
+
+/* 导航内容区 */
+.nav-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 32rpx;
+}
+
+.nav-title {
+  display: flex;
+  align-items: center;
+}
+
+.main-title {
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: 600;
+  font-family: PingFangSC-Semibold, PingFang SC;
+}
+
+.title-separator {
+  color: #fff;
+  margin: 0 16rpx;
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.sub-title {
+  color: #fff;
+  font-size: 24rpx;
+  font-weight: 400;
+  font-family: PingFangSC-Regular, PingFang SC;
+  opacity: 0.8;
+} 

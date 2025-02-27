@@ -1,75 +1,39 @@
 Page({
   data: {
-    expert: null,
-    services: [
-      {
-        icon: "/assets/images/service1.png",
-        name: "图文咨询",
-        price: "99元/次",
-      },
-      {
-        icon: "/assets/images/service2.png",
-        name: "电话咨询",
-        price: "199元/30分钟",
-      },
-      {
-        icon: "/assets/images/service3.png",
-        name: "见面咨询",
-        price: "500元/小时",
-      },
-      {
-        icon: "/assets/images/service4.png",
-        name: "代制诉状",
-        price: "1000元起",
-      },
-      {
-        icon: "/assets/images/service5.png",
-        name: "律师函",
-        price: "800元起",
-      },
-    ],
-    isFollowed: false,
+    expert: {
+      id: 1,
+      name: '张律师',
+      title: '资深律师',
+      avatar: '/static/images/expert-1.png',
+      tags: ['经验丰富', '响应快速', '专业可靠'],
+      introduction: '从业20年，专注于劳动法、合同法等领域...',
+      fields: [
+        '劳动争议',
+        '合同纠纷',
+        '知识产权',
+        '公司法务'
+      ]
+    }
   },
 
   onLoad(options) {
     const { id } = options;
-    // TODO: 根据id获取专家详情
-    this.getExpertDetail(id);
+    if (id) {
+      // TODO: 根据ID获取专家详情
+      console.log('专家ID:', id);
+    }
   },
 
-  // 获取专家详情
-  async getExpertDetail(id) {
-    // TODO: 调用接口获取专家详情
-    const expert = {
-      id: id,
-      avatar: "/assets/images/expert1.png",
-      name: "张律师",
-      title: "金牌律师",
-      followCount: 2356,
-      serviceCount: 1890,
-      years: 15,
-      tags: ["婚姻家事", "劳动纠纷", "合同纠纷"],
-      introduction: "从业15年，专注于婚姻家事、劳动纠纷等领域...",
-    };
-    this.setData({ expert });
-  },
-
-  // 关注/取消关注
-  handleFollow() {
-    // TODO: 实现关注/取消关注接口调用
-    this.setData({
-      isFollowed: !this.data.isFollowed,
+  handleConsult() {
+    // 处理咨询按钮点击
+    wx.showModal({
+      title: '提示',
+      content: '是否立即咨询该专家？',
+      success(res) {
+        if (res.confirm) {
+          // TODO: 跳转到咨询页面或创建咨询会话
+        }
+      }
     });
-  },
-
-  // 选择服务
-  selectService(e) {
-    const { index } = e.currentTarget.dataset;
-    const service = this.data.services[index];
-    // TODO: 实现服务选择逻辑
-    wx.showToast({
-      title: `已选择${service.name}`,
-      icon: "none",
-    });
-  },
-});
+  }
+}) 

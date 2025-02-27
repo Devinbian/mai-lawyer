@@ -1,4 +1,5 @@
 {
-  "navigationBarTitleText": "文书列表",
-  "usingComponents": {}
-}
+  "usingComponents": {
+    "custom-nav": "/components/custom-nav/custom-nav"
+  }
+} 

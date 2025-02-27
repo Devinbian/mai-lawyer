@@ -1,3 +1,16 @@
 <view class="container">
-  <rich-text nodes="{{content}}"></rich-text>
+  <custom-nav title="用户协议"></custom-nav>
+  <view class="content">
+    <view class="agreement-content">
+      <view class="title">用户协议及隐私政策</view>
+      <view class="section">
+        <view class="section-title">1. 总则</view>
+        <view class="section-content">
+          <!-- 协议内容 -->
+          本协议是您与麦小律平台之间的法律协议...
+        </view>
+      </view>
+      <!-- 更多协议内容 -->
+    </view>
+  </view>
 </view> 
