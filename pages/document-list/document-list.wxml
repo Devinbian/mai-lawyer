@@ -1,0 +1,47 @@
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <input 
+      class="search-input" 
+      placeholder="搜索{{title}}文书" 
+      value="{{keyword}}"
+      bindinput="handleSearch"
+    />
+  </view>
+
+  <!-- 文档列表 -->
+  <view class="doc-list">
+    <view 
+      class="doc-item" 
+      wx:for="{{documents}}" 
+      wx:key="id"
+    >
+      <view class="doc-header">
+        <text class="doc-title">{{item.title}}</text>
+        <text class="doc-price">{{item.price ? '￥' + item.price : '免费'}}</text>
+      </view>
+      <view class="doc-summary">{{item.summary}}</view>
+      <view class="doc-info">
+        <text class="doc-number">文书编号：{{item.docNumber}}</text>
+        <text class="doc-count">约{{item.wordCount}}字</text>
+        <text class="doc-time">{{item.createTime}}</text>
+      </view>
+      <view class="doc-actions">
+        <button 
+          class="preview-btn"
+          bindtap="handlePreview"
+          data-id="{{item.id}}"
+        >
+          预览
+        </button>
+        <button 
+          class="download-btn"
+          bindtap="handleDownload"
+          data-id="{{item.id}}"
+        >
+          下载
+        </button>
+      </view>
+    </view>
+  </view>
+</view> 

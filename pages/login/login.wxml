@@ -1,0 +1,36 @@
+<view class="login-container">
+  <view class="login-header">
+    <image class="avatar" src="/assets/images/robot-avatar.png" />
+    <view class="title-container">
+      <image class="title-img" src="/assets/images/logo-title.png" />
+      <text class="subtitle">人工智能法律服务平台</text>
+    </view>
+  </view>
+
+  <view class="agreement">
+    <checkbox-group bindchange="onAgreementChange">
+      <checkbox value="agree" />
+      <text class="agreement-text">我已阅读并同意</text>
+      <text class="link" bindtap="viewAgreement">《使用协议》</text>
+      <text class="agreement-text">和</text>
+      <text class="link" bindtap="viewPrivacy">《隐私政策》</text>
+    </checkbox-group>
+  </view>
+
+  <view class="login-buttons">
+    <button 
+      class="wechat-btn" 
+      type="primary" 
+      loading="{{loading}}"
+      bindtap="handleWechatLogin"
+    >
+      微信授权一键登录
+    </button>
+    <button 
+      class="phone-btn" 
+      bindtap="goToPhoneLogin"
+    >
+      手机号/邮箱登录
+    </button>
+  </view>
+</view> 

@@ -1,0 +1,58 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/experts/experts",
+    "pages/documents/documents",
+    "pages/profile/profile",
+    "pages/login/login",
+    "pages/agreement/agreement",
+    "pages/privacy/privacy",
+    "pages/expert-detail/expert-detail",
+    "pages/document-list/document-list"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "麦小律",
+    "navigationBarTextStyle": "black"
+  },
+  "useExtendedLib": {
+    "weui": true
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#0062FF",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/images/home.png",
+        "selectedIconPath": "static/images/home-active.png"
+      },
+      {
+        "pagePath": "pages/experts/experts",
+        "text": "专家库",
+        "iconPath": "static/images/expert.png",
+        "selectedIconPath": "static/images/expert-active.png"
+      },
+      {
+        "pagePath": "pages/documents/documents",
+        "text": "文本库",
+        "iconPath": "static/images/doc.png",
+        "selectedIconPath": "static/images/doc-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "static/images/profile.png",
+        "selectedIconPath": "static/images/profile-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

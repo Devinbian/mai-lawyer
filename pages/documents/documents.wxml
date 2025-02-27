@@ -1,0 +1,31 @@
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="title">文本库</view>
+    <view class="subtitle">平台严选</view>
+  </view>
+
+  <!-- 分类网格 -->
+  <view class="grid">
+    <view 
+      class="grid-item" 
+      wx:for="{{categories}}" 
+      wx:key="id"
+      bindtap="goToDocList"
+      data-id="{{item.id}}"
+      data-title="{{item.title}}"
+    >
+      <view class="item-content">
+        <view class="item-info">
+          <text class="item-title">{{item.title}}</text>
+          <text class="item-desc">{{item.desc}}</text>
+        </view>
+        <image class="item-icon" src="{{item.icon}}" />
+      </view>
+      <view class="item-footer">
+        <text class="item-name">{{item.title}}</text>
+        <text class="item-count">{{item.count}}份</text>
+      </view>
+    </view>
+  </view>
+</view> 

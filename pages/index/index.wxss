@@ -1,0 +1,194 @@
+/**index.wxss**/
+page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f7f7f7;
+}
+.scrollarea {
+  flex: 1;
+  overflow-y: hidden;
+}
+
+.userinfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #aaa;
+  width: 80%;
+}
+
+.userinfo-avatar {
+  overflow: hidden;
+  width: 128rpx;
+  height: 128rpx;
+  margin: 20rpx;
+  border-radius: 50%;
+}
+
+.usermotto {
+  margin-top: 200px;
+}
+
+.avatar-wrapper {
+  padding: 0;
+  width: 56px !important;
+  border-radius: 8px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.avatar {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+
+.nickname-wrapper {
+  display: flex;
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  border-top: .5px solid rgba(0, 0, 0, 0.1);
+  border-bottom: .5px solid rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+.nickname-label {
+  width: 105px;
+}
+
+.nickname-input {
+  flex: 1;
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+
+/* Banner */
+.banner {
+  margin: 16rpx;
+  padding: 32rpx;
+  background: #fff;
+  border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+}
+
+.banner-text {
+  flex: 1;
+}
+
+.title {
+  font-size: 34rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+  color: #000;
+}
+
+.subtitle {
+  font-size: 26rpx;
+  color: #888;
+}
+
+.robot-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  margin-left: 32rpx;
+}
+
+.tips {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.tips-title {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 16rpx;
+}
+
+.tip-item {
+  font-size: 26rpx;
+  color: #1890ff;
+  margin-bottom: 10rpx;
+}
+
+/* 聊天区域 */
+.chat-container {
+  flex: 1;
+  padding: 20rpx;
+  margin: 16rpx;
+  background: #fff;
+  border-radius: 8rpx;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 24rpx;
+}
+
+.message.user {
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 8rpx;
+}
+
+.content {
+  max-width: 70%;
+  padding: 20rpx;
+  margin: 0 16rpx;
+  border-radius: 4rpx;
+  font-size: 28rpx;
+  line-height: 1.4;
+}
+
+.message.ai .content {
+  background: #f7f7f7;
+  color: #333;
+}
+
+.message.user .content {
+  background: #0062FF;
+  color: #fff;
+}
+
+/* 底部输入区 */
+.input-container {
+  padding: 24rpx 16rpx;
+  background: #fff;
+  border-top: 1rpx solid #eee;
+}
+
+.weui-flex {
+  display: flex;
+  align-items: center;
+}
+
+.weui-input {
+  height: 72rpx;
+  background: #f7f7f7;
+  border-radius: 36rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+}
+
+.send-btn {
+  margin-left: 16rpx !important;
+  height: 72rpx !important;
+  padding: 0 32rpx !important;
+  font-size: 28rpx !important;
+  border-radius: 36rpx !important;
+  background: #0062FF !important;
+}
