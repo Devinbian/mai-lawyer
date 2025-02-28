@@ -14,20 +14,24 @@ Page({
     ],
     loading: false,
     navHeight: 0,
-    statusBarHeight: 20
+    statusBarHeight: 20,
+    keyboardHeight: 0,
+    isKeyboardShow: false,
+    scrollToView: "",
+    messageList: [], // 用于存储消息列表
   },
 
-  onLoad: function() {
-    console.warn('页面加载 - 测试日志');
-    
+  onLoad: function () {
+    console.warn("页面加载 - 测试日志");
+
     // 直接尝试获取组件
-    const nav = this.selectComponent('#customNav');
-    console.log('直接获取导航组件：', nav);
+    const nav = this.selectComponent("#customNav");
+    console.log("直接获取导航组件：", nav);
 
     // 延迟获取组件
     setTimeout(() => {
-      const nav2 = this.selectComponent('#customNav');
-      console.log('延迟获取导航组件：', nav2);
+      const nav2 = this.selectComponent("#customNav");
+      console.log("延迟获取导航组件：", nav2);
     }, 1000);
 
     const app = getApp();
@@ -46,16 +50,16 @@ Page({
 
     const systemInfo = wx.getSystemInfoSync();
     this.setData({
-      statusBarHeight: systemInfo.statusBarHeight
+      statusBarHeight: systemInfo.statusBarHeight,
     });
   },
 
-  onReady: function() {
-    console.log('页面ready');
+  onReady: function () {
+    console.log("页面ready");
   },
 
-  onShow: function() {
-    console.log('页面show');
+  onShow: function () {
+    console.log("页面show");
   },
 
   // 检查登录状态
@@ -180,9 +184,79 @@ Page({
 
   // 监听导航高度变化
   onNavHeight(e) {
-    console.warn('收到导航高度:', e.detail.height);
+    console.warn("收到导航高度:", e.detail.height);
     this.setData({
-      navHeight: e.detail.height
+      navHeight: e.detail.height,
     });
-  }
+  },
+
+  // 输入框获得焦点
+  onInputFocus(e) {
+    const { height } = e.detail;
+    // 键盘高度可能需要稍微调整以消除间距
+    const adjustedHeight = height - 82; // 微调高度
+    wx.nextTick(() => {
+      this.setData({
+        isKeyboardShow: true,
+        keyboardHeight: adjustedHeight,
+        // 使用绝对定位，确保紧贴键盘
+        inputStyle: `position: fixed; left: 0; right: 0; bottom: ${adjustedHeight}px;`,
+      });
+    });
+
+    this.scrollToBottom();
+  },
+
+  // 输入框失去焦点
+  onInputBlur() {
+    this.setData({
+      isKeyboardShow: false,
+      keyboardHeight: 0,
+      inputStyle: "position: fixed; left: 0; right: 0; bottom: 0;",
+    });
+  },
+
+  // 发送消息
+  sendMessage() {
+    if (!this.data.inputValue.trim()) return;
+
+    // 这里添加发送消息的逻辑
+    const message = {
+      id: `msg_${Date.now()}`,
+      content: this.data.inputValue,
+      // 其他消息属性...
+    };
+
+    this.setData(
+      {
+        messageList: [...this.data.messageList, message],
+        inputValue: "",
+      },
+      () => {
+        this.scrollToBottom();
+      },
+    );
+  },
+
+  // 滚动到底部
+  scrollToBottom() {
+    const messages = this.data.messageList;
+    if (messages.length > 0) {
+      const lastMessageId = messages[messages.length - 1].id;
+      this.setData({
+        scrollToView: lastMessageId,
+      });
+    }
+  },
+
+  // scroll-view 滚动到底部时触发
+  onScrollToLower() {
+    console.log("已滚动到底部");
+  },
+
+  // scroll-view 滚动时触发
+  onScroll(e) {
+    // 可以记录滚动位置
+    const scrollTop = e.detail.scrollTop;
+  },
 });

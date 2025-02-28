@@ -1,74 +1,69 @@
 <!--index.wxml-->
-<view class="container">
-  <custom-nav 
-    id="customNav" 
-    title="麦小律"
-    bindnavheight="onNavHeight"
-  ></custom-nav>
-  
-  <!-- Banner 区域 -->
-  <view class="banner" style="top: {{statusBarHeight + 44}}px">
-    <!-- Banner 装饰背景图 -->
-    <image class="banner-bg" src="../../static/images/index/banner.png" mode="widthFix" />
-    
-    <view class="banner-text">
-      <view class="title">您好，我是小麦</view>
-      <view class="subtitle">您的全天候智能法律顾问，随时为您解答法律问题~</view>
-    </view>
-    <image class="robot-avatar" src="../../static/images/index/robot.png" />
-  </view>
-
-  <!-- 主内容区域 - 可滚动 -->
-  <scroll-view 
-    class="main-content" 
-    scroll-y 
-    style="margin-top: {{statusBarHeight + 44 + 88}}px"
-  >
-    <image class="bg-image" src="../../static/images/index/bg.png" mode="widthFix" />
-    
-    <view class="content-wrapper">
-      <!-- 提示语 -->
-      <view class="weui-cells__title">您可以这样问我</view>
-      <view class="weui-cells weui-cells_after-title">
-        <view wx:for="{{suggestions}}" wx:key="*this" 
-          class="weui-cell weui-cell_access" 
-          hover-class="weui-cell_active"
-          bindtap="handleTapSuggestion" 
-          data-text="{{item}}"
-        >
-          <view class="weui-cell__bd">{{item}}</view>
-          <view class="weui-cell__ft weui-cell__ft_in-access"></view>
+<view class="container-bg">
+  <custom-nav title="麦小律"></custom-nav>
+  <image class="container-bg-image" src="/static/images/index/container-bg.png" mode="widthFix" />
+  <view class="container">
+    <!-- 固定不动的顶部区域 -->
+    <view class="fixed-top">
+      <view class="banner">
+        <view class="banner-text">
+          <view class="title">您好，我是小麦</view>
+          <view class="subtitle">您的全天候智能法律顾问，随时为您解答法律问题~</view>
         </view>
+        <image class="robot-avatar" src="/static/images/index/robot.png" mode="widthFix" />      
       </view>
-
-      <!-- 聊天记录 -->
+    </view>
+    
+    <!-- 可滚动的聊天区域 -->
+    <view class="chat-area {{isKeyboardShow ? 'keyboard-show' : ''}}">
+      <image class="chat-bg" src="/static/images/index/chat-content-bg.png" mode="widthFix" />
       <view class="chat-container">
-        <view class="message {{item.type}}" wx:for="{{messages}}" wx:key="index" id="msg-{{index}}">
-          <image class="avatar" src="{{item.type === 'ai' ? 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0' : userInfo.avatarUrl}}" />
-          <view class="content">{{item.content}}</view>
-        </view>
-      </view>
-    </view>
-  </scroll-view>
-
-  <!-- 输入框 - 固定在底部 -->
-  <view class="input-container">
-    <view class="weui-flex">
-      <view class="weui-flex__item">
-        <input class="weui-input" 
-          value="{{inputValue}}"
-          placeholder="请输入您的问题"
-          bindinput="onInput"
-          bindconfirm="handleSend"
-        />
-      </view>
-      <view>
-        <button class="weui-btn weui-btn_primary send-btn" 
-          bindtap="handleSend"
-          loading="{{loading}}"
+        <scroll-view 
+          class="chat-content" 
+          scroll-y="true"
+          enhanced="true"
+          show-scrollbar="false"
+          scroll-anchoring="true"
+          scroll-into-view="{{scrollToView}}"
+          bindscrolltolower="onScrollToLower"
+          bindscroll="onScroll"
         >
-          发送
-        </button>
+          <!-- 提示文本 -->
+          <view class="guide-title">您可以这样问我：</view>
+          
+          <!-- 提示消息列表 -->
+          <view class="guide-list">
+            <view class="guide-item">
+              <view class="guide-message">起诉状如何书写</view>
+            </view>
+            <view class="guide-item">
+              <view class="guide-message">恶意拖欠劳动工资，如何申请仲裁处理？</view>
+            </view>
+            <view class="guide-item">
+              <view class="guide-message">律师费如何计算</view>
+            </view>
+          </view>
+        </scroll-view>
+
+        <view class="input-area" style="{{inputStyle}}">
+          <view class="input-box">
+            <input 
+              class="chat-input" 
+              value="{{inputValue}}"
+              placeholder="请输入想要问的问题" 
+              placeholder-class="input-placeholder"
+              adjust-position="{{false}}"
+              cursor-spacing="20"
+              bindfocus="onInputFocus"
+              bindblur="onInputBlur"
+              bindinput="onInput"
+              bindconfirm="sendMessage"
+            />
+          </view>
+          <button class="send-btn" bindtap="sendMessage">
+            <image class="send-icon" src="/static/images/index/send.png" mode="widthFix" />
+          </button>
+        </view>
       </view>
     </view>
   </view>

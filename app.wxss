@@ -18,3 +18,12 @@ page {
   --weui-BTN-PRIMARY-COLOR: #fff;
   --weui-BTN-PRIMARY-ACTIVE-BG: #0056e0;
 } 
+
+/* 移除 @font-face 声明，改用系统字体 */
+.title {
+  font-family: -apple-system-font, "PingFang SC", sans-serif;
+}
+
+.subtitle {
+  font-family: "PingFang SC", "Helvetica Neue", sans-serif;
+} 
