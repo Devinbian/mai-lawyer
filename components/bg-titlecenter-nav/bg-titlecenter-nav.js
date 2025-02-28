@@ -10,7 +10,7 @@ Component({
     },
   },
   data: {
-    statusBarHeight: 20,
+    statusBarHeight: 0,
     navBarHeight: 44,
   },
   lifetimes: {
@@ -32,7 +32,7 @@ Component({
       console.warn("系统信息:", systemInfo);
 
       this.setData({
-        statusBarHeight: systemInfo.statusBarHeight || 20,
+        statusBarHeight: systemInfo.statusBarHeight,
       });
 
       // 触发事件通知页面设置内容距离顶部的距离
@@ -57,5 +57,33 @@ Component({
     test() {
       console.log("test method called");
     },
+    // 处理返回按钮点击
+    handleBack() {
+      const pages = getCurrentPages();
+      if (pages.length > 1) {
+        wx.navigateBack({
+          delta: 1
+        });
+      } else {
+        wx.switchTab({
+          url: '/pages/index/index'
+        });
+      }
+    },
+    // 处理首页按钮点击
+    handleHome() {
+      const currentPages = getCurrentPages();
+      const currentPage = currentPages[currentPages.length - 1];
+      
+      // 如果当前已经在首页，不做任何操作
+      if (currentPage.route === 'pages/index/index') {
+        return;
+      }
+
+      // 跳转到首页tab
+      wx.switchTab({
+        url: '/pages/index/index'
+      });
+    }
   },
 });

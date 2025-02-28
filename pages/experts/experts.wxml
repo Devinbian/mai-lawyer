@@ -5,7 +5,12 @@
     <image class="title-avatar" src="/static/images/experts/title-bg@2x.png" mode="aspectFill"></image>
   </view>
   <view class="experts-list">
-    <view class="expert-item" wx:for="{{experts}}" wx:key="id">
+    <view class="expert-item" 
+      wx:for="{{experts}}" 
+      wx:key="id" 
+      bindtap="navigateToDetail" 
+      data-expert="{{item}}"
+    >
       <image class="expert-bg" src="/static/images/experts/expert-bg.png" mode="aspectFill"></image>
       <view class="expert-header">
         <image class="expert-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
@@ -27,10 +32,10 @@
         </view>
       </view>
       <view class="expert-actions">
-        <button class="action-btn phone" bindtap="handlePhoneConsult" data-id="{{item.id}}">
+        <button class="action-btn phone" catchtap="handlePhoneConsult" data-id="{{item.id}}">
           <text>电话咨询</text>
         </button>
-        <button class="action-btn online" bindtap="handleOnlineConsult" data-id="{{item.id}}">
+        <button class="action-btn online" catchtap="handleOnlineConsult" data-id="{{item.id}}">
           <image class="btn-bg" src="/static/images/experts/msg-bg@2x.png" mode="adjust"></image>
           <image class="btn-icon" src="/static/images/experts/msg@2x.png"></image>
           <text>在线咨询</text>

@@ -1,0 +1,259 @@
+.container {
+  min-height: 100vh;
+  background: #F5F6F9;
+  padding-bottom: env(safe-area-inset-bottom);  /* 适配底部安全区域 */
+  box-sizing: border-box;
+}
+
+/* 通用卡片样式 */
+.lawyer-info,
+.lawyer-intro,
+.service-items {
+  background: #fff;
+  padding: 30rpx;
+  margin: 0 30rpx 30rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  width: calc(100% - 60rpx);  /* 确保宽度一致，减去左右margin */
+}
+
+/* 律师基本信息特殊样式 */
+.lawyer-info {
+  margin-top: 20rpx;  /* 顶部特殊间距 */
+  position: relative;
+  overflow: hidden;
+  height: auto;
+  min-height: 344rpx;
+}
+
+.lawyer-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.lawyer-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+  margin-left: 20rpx;
+  z-index: 1;
+}
+
+.lawyer-avatar {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: 60rpx;
+  margin-right: 20rpx;
+}
+
+.lawyer-basic {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.name-location {
+  display: flex;
+  flex-direction: column;
+}
+
+.lawyer-name {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #000;  /* 改为白色 */
+  margin-bottom: 10rpx;
+}
+
+.lawyer-location {
+  font-size: 24rpx;
+  color: #6F737C;  
+}
+
+.follow-btn {
+  padding: 8rpx 24rpx;
+  background: #0062FF;
+  color: #fff;
+  font-size: 28rpx;
+  border-radius: 8rpx;
+}
+
+/* 数据统计 */
+.stats {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1;
+  margin-bottom: 20rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;  /* 让每个item占据相等空间 */
+}
+
+/* 统计数据之间的分割线 */
+.stat-divider {
+  width: 2rpx;
+  height: 40rpx;
+  background-color: rgba(111, 115, 124, 0.2);  /* 改为半透明白色 */
+}
+
+.stat-num {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: #000;  /* 改为白色 */
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #6F737C;
+}
+
+/* 擅长领域标签 */
+.skill-tags {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  z-index: 1;
+  padding-top: 8rpx;
+}
+
+.tag {
+  padding: 6rpx 16rpx;
+  background: rgba(255, 255, 255, 0.15);
+  color: #6F737C;
+  font-size: 24rpx;
+  border-radius: 6rpx;
+  border: 1px solid rgba(111, 115, 124, 0.2);
+}
+
+/* 律师介绍 */
+.lawyer-intro {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: rgba(51, 51, 51, 1);
+  margin-bottom: 24rpx;
+  display: block;
+}
+
+.intro-text {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;  /* 默认显示4行 */
+  overflow: hidden;
+  margin-bottom: 16rpx;
+  text-overflow: ellipsis;
+  transition: all 0.3s ease;  /* 添加过渡动画 */
+}
+
+.intro-text.expanded {
+  -webkit-line-clamp: unset;  /* 展开后不限制行数 */
+  height: auto;
+}
+
+.expand-btn {
+  text-align: center;
+  color: #0062FF;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rpx 0;
+  margin-top: 8rpx;
+  cursor: pointer;
+  transition: all 0.3s ease;  /* 添加过渡动画 */
+}
+
+.expand-btn::after {
+  content: '';
+  display: inline-block;
+  width: 12rpx;
+  height: 12rpx;
+  border-right: 2rpx solid #0062FF;
+  border-bottom: 2rpx solid #0062FF;
+  transform: rotate(45deg);
+  margin-left: 8rpx;
+  margin-top: -4rpx;
+  transition: transform 0.3s ease;  /* 添加箭头旋转动画 */
+}
+
+.expand-btn.expanded::after {
+  transform: rotate(-135deg);  /* 展开时箭头向上 */
+  margin-top: 4rpx;  /* 调整箭头位置 */
+}
+
+/* 服务项目特殊样式 */
+.service-items {
+  margin-bottom: 0;  /* 移除最后一个卡片的底部间距 */
+}
+
+.service-list {
+  
+}
+
+.service-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx 0;
+  border-bottom: 1px solid rgba(243, 244, 246, 1);
+}
+
+.service-item:last-child {
+  border-bottom: none;
+}
+
+.service-left {
+  display: flex;
+  align-items: center;
+}
+
+.service-icon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-right: 20rpx;
+}
+
+.service-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.service-name {
+  font-size: 32rpx;
+  color: rgba(51, 51, 51, 1);
+  margin-bottom: 8rpx;
+}
+
+.service-desc {
+  font-size: 24rpx;
+  color: rgba(111, 115, 124, 1);
+}
+
+.service-price {
+  font-size: 24rpx;
+  color: rgba(51, 51, 51, 1);
+  font-weight: 500;
+} 

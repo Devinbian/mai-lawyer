@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "bg-titlecenter-nav": "/components/bg-titlecenter-nav/bg-titlecenter-nav"
+  },
+  "navigationStyle": "custom"
+} 

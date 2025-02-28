@@ -6,7 +6,8 @@
     "pages/profile/profile",
     "pages/agreement/agreement",
     "pages/document-list/document-list",
-    "pages/expert-detail/expert-detail",
+    "pages/experts/expert-detail/expert-detail",
+    "pages/experts/chat/chat",
     "pages/login/login",
     "pages/privacy/privacy"
   ],

@@ -15,18 +15,18 @@ Component({
   },
   lifetimes: {
     created() {
-      wx.showToast({
-        title: '导航组件created',
-        icon: 'none'
-      });
-      console.warn('导航组件created - 测试日志');
+      // wx.showToast({
+      //   title: '导航组件created',
+      //   icon: 'none'
+      // });
+      // console.warn('导航组件created - 测试日志');
     },
     attached() {
-      wx.showToast({
-        title: '导航组件attached',
-        icon: 'none'
-      });
-      console.warn('导航组件attached - 测试日志');
+      // wx.showToast({
+      //   title: '导航组件attached',
+      //   icon: 'none'
+      // });
+      // console.warn('导航组件attached - 测试日志');
       
       const systemInfo = wx.getSystemInfoSync();
       console.warn('系统信息:', systemInfo);
@@ -40,11 +40,11 @@ Component({
         height: systemInfo.statusBarHeight + this.data.navBarHeight
       });
 
-      wx.showToast({
-        title: `状态栏高度:${wx.getSystemInfoSync().statusBarHeight}`,
-        icon: 'none',
-        duration: 2000
-      });
+      // wx.showToast({
+      //   title: `状态栏高度:${wx.getSystemInfoSync().statusBarHeight}`,
+      //   icon: 'none',
+      //   duration: 2000
+      // });
     }
   },
   pageLifetimes: {
