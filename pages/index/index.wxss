@@ -133,7 +133,7 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: 20rpx;
   padding: 20rpx;
   display: flex;
   align-items: center;
