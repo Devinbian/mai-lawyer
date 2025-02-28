@@ -18,7 +18,7 @@ Page({
     keyboardHeight: 0,
     isKeyboardShow: false,
     scrollToView: "",
-    messageList: [], // 用于存储消息列表
+    messageList: [], // 消息列表
   },
 
   onLoad: function () {
@@ -75,76 +75,95 @@ Page({
   },
 
   // 发送消息
-  async handleSend() {
+  sendMessage() {
     if (!this.data.inputValue.trim()) return;
 
-    // 发送消息前检查登录状态
-    if (!this.checkLogin()) return;
-
-    const userMessage = this.data.inputValue;
-    this.setData({
-      inputValue: "",
-      loading: true,
-    });
-
-    // 添加用户消息
-    this.addMessage({
+    const userMessage = {
+      id: Date.now().toString(), // 简化ID格式
       type: "user",
-      content: userMessage,
+      content: this.data.inputValue,
+      time: this.formatTime(new Date()),
+    };
+
+    this.setData({
+      messageList: [...this.data.messageList, userMessage],
+      inputValue: "",
+      scrollToView: `msg${userMessage.id}`,
     });
 
-    try {
-      // TODO: 调用AI接口获取回复
-      const response = "这是AI的模拟回复...";
-
-      // 添加AI回复
-      this.addMessage({
+    // 模拟AI回复
+    setTimeout(() => {
+      const aiMessage = {
+        id: Date.now().toString(),
         type: "ai",
-        content: response,
+        content: this.getAIResponse(userMessage.content),
+        time: this.formatTime(new Date()),
+      };
+
+      this.setData({
+        messageList: [...this.data.messageList, aiMessage],
+        scrollToView: `msg${aiMessage.id}`,
       });
-    } catch (error) {
-      wx.showToast({
-        title: "发送失败，请重试",
-        icon: "none",
-      });
-    } finally {
-      this.setData({ loading: false });
-    }
+    }, 500);
   },
 
-  // 点击建议问题
-  handleTapSuggestion(e) {
-    // 点击建议问题前检查登录状态
-    if (!this.checkLogin()) return;
+  // 添加消息到列表
+  addMessage(message) {
+    const messageId = Date.now().toString();
+    const newMessage = {
+      ...message,
+      id: messageId,
+    };
 
-    const { text } = e.currentTarget.dataset;
-    this.setData({ inputValue: text }, () => {
-      this.handleSend();
+    this.setData({
+      messageList: [...this.data.messageList, newMessage],
+      scrollToView: `msg${messageId}`,
     });
   },
 
-  // 输入框变化
+  // 格式化时间
+  formatTime(date) {
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    return `${hour.toString().padStart(2, "0")}:${minute
+      .toString()
+      .padStart(2, "0")}`;
+  },
+
+  // 模拟AI回复
+  getAIResponse(userInput) {
+    const responses = [
+      "我明白您的问题，让我为您解答。",
+      "这是一个很好的问题，我的建议是...",
+      "根据相关法律法规，我建议您...",
+      "您说得对，关于这一点，我补充几点建议...",
+      "这个问题比较复杂，需要考虑以下几个方面...",
+    ];
+    return responses[Math.floor(Math.random() * responses.length)];
+  },
+
+  // 输入框内容变化
   onInput(e) {
     this.setData({
       inputValue: e.detail.value,
     });
   },
 
-  // 添加消息到列表
-  addMessage(message) {
-    this.setData({
-      messages: [...this.data.messages, message],
-    });
-  },
+  // 点击建议问题
+  handleTapSuggestion(e) {
+    if (!this.checkLogin()) return;
 
-  // 调用AI接口
-  async getAIResponse(message) {
-    // TODO: 实现实际的AI接口调用
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("这是AI的模拟回复，请实现实际的接口调用。");
-      }, 1000);
-    });
+    const { text } = e.currentTarget.dataset;
+    this.setData(
+      {
+        inputValue: text,
+      },
+      () => {
+        this.sendMessage();
+        // 点击建议问题后也需要滚动
+        this.scrollToBottom();
+      },
+    );
   },
 
   bindViewTap() {
@@ -193,60 +212,65 @@ Page({
   // 输入框获得焦点
   onInputFocus(e) {
     const { height } = e.detail;
-    // 键盘高度可能需要稍微调整以消除间距
-    const adjustedHeight = height - 82; // 微调高度
-    wx.nextTick(() => {
-      this.setData({
-        isKeyboardShow: true,
-        keyboardHeight: adjustedHeight,
-        // 使用绝对定位，确保紧贴键盘
-        inputStyle: `position: fixed; left: 0; right: 0; bottom: ${adjustedHeight}px;`,
-      });
-    });
-
-    this.scrollToBottom();
-  },
-
-  // 输入框失去焦点
-  onInputBlur() {
-    this.setData({
-      isKeyboardShow: false,
-      keyboardHeight: 0,
-      inputStyle: "position: fixed; left: 0; right: 0; bottom: 0;",
-    });
-  },
-
-  // 发送消息
-  sendMessage() {
-    if (!this.data.inputValue.trim()) return;
-
-    // 这里添加发送消息的逻辑
-    const message = {
-      id: `msg_${Date.now()}`,
-      content: this.data.inputValue,
-      // 其他消息属性...
-    };
+    const adjustedHeight = height - 80;
 
     this.setData(
       {
-        messageList: [...this.data.messageList, message],
-        inputValue: "",
+        isKeyboardShow: true,
+        keyboardHeight: adjustedHeight,
+        inputStyle: `position: fixed; left: 0; right: 0; bottom: ${adjustedHeight}px; background: #fff;`,
       },
       () => {
-        this.scrollToBottom();
+        // 延迟执行滚动
+        setTimeout(() => {
+          const messages = this.data.messageList;
+          if (messages.length > 0) {
+            const lastMessage = messages[messages.length - 1];
+            this.setData({
+              scrollToView: `msg${lastMessage.id}`,
+            });
+          }
+        }, 300);
       },
     );
   },
 
-  // 滚动到底部
+  // 输入框失去焦点
+  onInputBlur() {
+    this.setData(
+      {
+        isKeyboardShow: false,
+        keyboardHeight: 0,
+        inputStyle: "position: fixed; left: 0; right: 0; bottom: 0;",
+      },
+      () => {
+        // 键盘收起后也需要调整滚动位置
+        setTimeout(() => {
+          const messages = this.data.messageList;
+          if (messages.length > 0) {
+            const lastMessageId = messages[messages.length - 1].id;
+            this.setData({
+              scrollToView: lastMessageId,
+            });
+          }
+        }, 100);
+      },
+    );
+  },
+
+  // 滚动到底部的方法
   scrollToBottom() {
-    const messages = this.data.messageList;
-    if (messages.length > 0) {
-      const lastMessageId = messages[messages.length - 1].id;
-      this.setData({
-        scrollToView: lastMessageId,
+    const query = wx.createSelectorQuery();
+    query
+      .select("#scrollView")
+      .node()
+      .exec((res) => {
+        const scrollView = res[0].node;
+        scrollView.scrollTo({
+          top: 99999, // 一个足够大的数字，确保滚动到底部
+          behavior: "auto",
+        });
       });
-    }
   },
 
   // scroll-view 滚动到底部时触发

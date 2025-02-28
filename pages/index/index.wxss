@@ -71,6 +71,8 @@
   bottom: 0;
   width: 100%;
   z-index: 150;
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-container {
@@ -79,6 +81,7 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden; /* 防止内容溢出 */
 }
 
 .chat-bg {
@@ -96,10 +99,13 @@
   position: relative;
   flex: 1;
   z-index: 2;
-  overflow-y: auto;
-  padding-bottom: 100rpx; /* 减小底部间距 */
-  margin-top: 20rpx;
+  overflow-y: scroll;
+  padding-bottom: 180rpx; /* 增加底部padding */
   -webkit-overflow-scrolling: touch;
+}
+
+.chat-content.keyboard-show {
+  padding-bottom: 200rpx;
 }
 
 /* 指导提示样式 */
@@ -122,7 +128,7 @@
   display: inline-block;
   background: #fff;
   padding: 24rpx 32rpx;
-  font-size: 32rpx;
+  font-size: 28rpx;
   color: #333;
   border-radius: 20rpx 20rpx 20rpx 0;  /* 左下角直角，其他圆角 */
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
@@ -133,11 +139,15 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 20rpx;
+  bottom: 0;
   padding: 20rpx;
+  background: #ffffff;
   display: flex;
   align-items: center;
   z-index: 999;
+  transition: all 0.3s ease;
+  border-top: 1px solid #eee;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
 }
 
 .input-box {
@@ -184,4 +194,52 @@
 .send-icon {
   width: 72rpx;
   height: 72rpx;
+}
+
+/* 聊天消息样式 */
+.message-list {
+  padding: 20rpx;
+  margin-top: 40rpx;
+  padding-bottom: 150rpx; /* 增加底部padding */
+}
+
+.message-item {
+  margin-bottom: 30rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-message {
+  align-items: flex-end;
+}
+
+.ai-message {
+  align-items: flex-start;
+}
+
+.message-content {
+  max-width: 80%;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  border-radius: 12rpx;
+  word-break: break-all;
+}
+
+.user-message .message-content {
+  background: #0084ff;
+  color: #fff;
+  border-radius: 12rpx 12rpx 0 12rpx;
+}
+
+.ai-message .message-content {
+  background: #fff;
+  color: #333;
+  border-radius: 12rpx 12rpx 12rpx 0;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.message-time {
+  font-size: 24rpx;
+  color: #999;
+  margin: 10rpx 0;
 }

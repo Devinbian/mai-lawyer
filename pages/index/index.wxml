@@ -19,29 +19,32 @@
       <image class="chat-bg" src="/static/images/index/chat-content-bg.png" mode="widthFix" />
       <view class="chat-container">
         <scroll-view 
-          class="chat-content" 
+          id="scrollView"
+          class="chat-content"
           scroll-y="true"
           enhanced="true"
           show-scrollbar="false"
           scroll-anchoring="true"
           scroll-into-view="{{scrollToView}}"
-          bindscrolltolower="onScrollToLower"
-          bindscroll="onScroll"
+          scroll-with-animation="{{true}}"
+          style="height: calc(100vh - {{isKeyboardShow ? (keyboardHeight + 360) : 460}}rpx);"
         >
-          <!-- 提示文本 -->
+          <!-- 保留原有的指导提示 -->
           <view class="guide-title">您可以这样问我：</view>
-          
-          <!-- 提示消息列表 -->
           <view class="guide-list">
-            <view class="guide-item">
-              <view class="guide-message">起诉状如何书写</view>
+            <view class="guide-item" wx:for="{{suggestions}}" wx:key="*this" bindtap="handleTapSuggestion" data-text="{{item}}">
+              <view class="guide-message">{{item}}</view>
             </view>
-            <view class="guide-item">
-              <view class="guide-message">恶意拖欠劳动工资，如何申请仲裁处理？</view>
-            </view>
-            <view class="guide-item">
-              <view class="guide-message">律师费如何计算</view>
-            </view>
+          </view>
+
+          <!-- 添加聊天消息列表 -->
+          <view class="message-list">
+            <block wx:for="{{messageList}}" wx:key="id">
+              <view id="msg{{item.id}}" class="message-item {{item.type === 'user' ? 'user-message' : 'ai-message'}}">
+                <text class="message-time">{{item.time}}</text>
+                <view class="message-content">{{item.content}}</view>
+              </view>
+            </block>
           </view>
         </scroll-view>
 
