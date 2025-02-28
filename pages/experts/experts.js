@@ -15,6 +15,7 @@ Page({
         years: 15,
         consultCount: 2358,
         isOnline: true,
+        tags: ["资深专家", "平台保证"],
       },
       {
         id: 2,
@@ -26,6 +27,7 @@ Page({
         years: 12,
         consultCount: 1865,
         isOnline: false,
+        tags: ["精选专家"],
       },
       {
         id: 3,
@@ -37,6 +39,7 @@ Page({
         years: 18,
         consultCount: 3102,
         isOnline: false,
+        tags: ["高级专家", "平台保证"],
       },
       {
         id: 4,
@@ -48,6 +51,7 @@ Page({
         years: 10,
         consultCount: 1527,
         isOnline: false,
+        tags: ["高级专家", "平台保证"],
       },
       {
         id: 5,
@@ -59,6 +63,7 @@ Page({
         years: 8,
         consultCount: 986,
         isOnline: false,
+        tags: ["高级专家", "平台保证"],
       },
       {
         id: 6,
@@ -70,6 +75,7 @@ Page({
         years: 16,
         consultCount: 2145,
         isOnline: false,
+        tags: ["高级专家", "平台保证"],
       },
       {
         id: 7,
@@ -81,6 +87,7 @@ Page({
         years: 9,
         consultCount: 1236,
         isOnline: false,
+        tags: ["高级专家", "平台保证"],
       },
       {
         id: 8,
@@ -92,6 +99,7 @@ Page({
         years: 14,
         consultCount: 1892,
         isOnline: false,
+        tags: ["高级专家", "平台保证"],
       },
       {
         id: 9,
@@ -103,6 +111,7 @@ Page({
         years: 7,
         consultCount: 865,
         isOnline: false,
+        tags: ["高级专家", "平台保证"],
       },
       {
         id: 10,
@@ -114,6 +123,7 @@ Page({
         years: 20,
         consultCount: 3526,
         isOnline: false,
+        tags: ["高级专家", "平台保证"],
       },
     ],
   },

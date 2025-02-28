@@ -124,8 +124,7 @@
   margin-right: 12rpx;
 }
 
-.senior-expert,
-.plantform-guarantee {
+.tag {
   font-size: 22rpx;
   padding: 4rpx 12rpx;
   color: #FFFFFF;
@@ -133,11 +132,20 @@
 }
 
 .senior-expert {
-  background-color: #FF6B00;
+  background-color: #FB803D;
 }
 
-.plantform-guarantee {
-  background-color: #3AA0FF;
+.high-expert {
+  background-color: #0062FF;
+}
+
+.selected-expert {
+  background-color: #21BF7E;
+}
+
+.normal-tag {
+  background-color: #D4E8FF;
+  color: #007BFF;
 }
 
 .expert-fields {

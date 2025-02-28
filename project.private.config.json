@@ -3,7 +3,8 @@
   "projectname": "mai-lawyer",
   "setting": {
     "compileHotReLoad": true,
-    "urlCheck": false
+    "urlCheck": false,
+    "bigPackageSizeSupport": true
   },
   "libVersion": "trial"
 }

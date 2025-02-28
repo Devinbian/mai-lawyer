@@ -1,5 +1,5 @@
 <view class="container">
-  <bg-nav title="专家库"></bg-nav>
+  <bg-nav title="麦小律"></bg-nav>
   <view class="exp-title">
     <image class="title-name" src="/static/images/experts/title-name@2x.png" mode="heightFix"></image>
     <image class="title-avatar" src="/static/images/experts/title-bg@2x.png" mode="aspectFill"></image>
@@ -18,8 +18,7 @@
           <view class="name-tags">
             <text class="expert-name">{{item.name}}</text>
             <view class="tags">
-              <text class="senior-expert">资深专家</text>
-              <text class="plantform-guarantee">平台保证</text>
+              <text class="tag {{tag === '资深专家' ? 'senior-expert' : (tag === '高级专家' ? 'high-expert' : (tag === '精选专家' ? 'selected-expert' : 'normal-tag'))}}" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
             </view>
           </view>
           <view class="expert-fields">擅长：{{item.fields}}</view>

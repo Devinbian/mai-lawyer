@@ -5,13 +5,49 @@ Page({
    * 页面的初始数据
    */
   data: {
-    categories: [
+    documents: [
       {
         id: 1,
-        name: '合同文书',
-        icon: '/static/images/contract.png'
+        name: '合同协议',
+        icon: '/static/images/documents/contract@2x.png',
+        count: 1240,
+        desc: '专业/安全'
       },
-      // 可以添加更多分类
+      {
+        id: 2,
+        name: '起诉状',
+        icon: '/static/images/documents/lawsuit@2x.png',
+        count: 86,
+        desc: '简洁/高效'
+      },
+      {
+        id: 3,
+        name: '答辩状',
+        icon: '/static/images/documents/defense@2x.png',
+        count: 126,
+        desc: '简洁/高效'
+      },
+      {
+        id: 4,
+        name: '法律意见',
+        icon: '/static/images/documents/legal-opinion@2x.png',
+        count: 2486,
+        desc: '简洁/高效'
+      },
+      {
+        id: 5,
+        name: '申请文书',
+        icon: '/static/images/documents/application@2x.png',
+        count: 40,
+        desc: '个人/单位'
+      },
+      {
+        id: 6,
+        name: '通用文书',
+        icon: '/static/images/documents/general@2x.png',
+        count: 2240,
+        desc: '广泛/通用'
+      }
     ]
   },
 
@@ -69,5 +105,22 @@ Page({
    */
   onShareAppMessage() {
 
+  },
+
+  // 点击文档类型
+  handleDocTap(e) {
+    const docId = e.currentTarget.dataset.id;
+    const doc = this.data.documents.find(item => item.id === docId);
+    if (doc) {
+      wx.navigateTo({
+        url: `/pages/documents/list/list?type=${doc.id}&name=${doc.name}`,
+        fail(err) {
+          wx.showToast({
+            title: '打开失败',
+            icon: 'none'
+          });
+        }
+      });
+    }
   }
 })

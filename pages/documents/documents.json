@@ -1,5 +1,5 @@
 {
   "usingComponents": {
-    "custom-nav": "/components/custom-nav/custom-nav"
+    "bg-nav": "/components/bg-nav/bg-nav"
   }
 } 

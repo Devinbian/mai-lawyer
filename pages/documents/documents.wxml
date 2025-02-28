@@ -1,11 +1,32 @@
 <view class="container">
-  <custom-nav title="文本库"></custom-nav>
-  <view class="content">
-    <!-- 文档分类 -->
-    <view class="doc-categories">
-      <view class="category-item" wx:for="{{categories}}" wx:key="id">
-        <image class="category-icon" src="{{item.icon}}" />
-        <text class="category-name">{{item.name}}</text>
+  <bg-nav title="麦小律"></bg-nav>
+  
+  <!-- 平台产品标题 -->
+  <view class="platform-title">
+    <image class="title-name" src="/static/images/documents/title-name@2x.png" mode="heightFix"></image>
+    <image class="title-avatar" src="/static/images/documents/title-bg@2x.png" mode="scaleToFill"></image>
+  </view>
+
+  <!-- 文档类型列表 -->
+  <view class="documents-grid">
+    <view class="doc-wrapper" 
+      wx:for="{{documents}}" 
+      wx:key="id"
+      bindtap="handleDocTap"
+      data-id="{{item.id}}"
+    >
+      <view class="doc-item">
+        <view class="doc-content">
+          <view class="doc-info">
+            <view class="doc-name">{{item.name}}</view>
+            <view class="doc-desc">{{item.desc}}</view>
+          </view>
+          <image class="doc-icon" src="{{item.icon}}" mode="aspectFill"></image>
+        </view>
+      </view>
+      <view class="doc-bottom">
+        <view class="bottom-name">{{item.name}}</view>
+        <view class="bottom-count">{{item.count}}{{item.name === '法律意见' ? '条' : '份'}}</view>
       </view>
     </view>
   </view>
