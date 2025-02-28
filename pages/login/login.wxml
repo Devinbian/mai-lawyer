@@ -1,20 +1,17 @@
 <view class="container">
-  <custom-nav title="登录"></custom-nav>
+  <image class="bg-image" src="/static/images/login/bg.png" mode="aspectFill" />
+  <login-nav title="登录"></login-nav>
   <view class="content">
-    <view class="login-header">
-      <image class="logo" src="https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0" />
-      <view class="title">欢迎使用麦小律</view>
-    </view>
-    
     <view class="login-form">
-      <button class="weui-btn" type="primary" bindtap="handleWechatLogin">
-        微信一键登录
-      </button>
-      
       <view class="agreement-notice">
-        登录即表示同意
-        <text class="link" bindtap="gotoAgreement">《用户协议及隐私政策》</text>
+        <view class="checkbox {{isAgree ? 'checked' : ''}}" bindtap="toggleAgree"></view>
+        我已阅读并同意
+        <text class="link" bindtap="gotoAgreement">《用户协议》</text>和
+        <text class="link" bindtap="gotoAgreement">《隐私政策》</text>
       </view>
+      <button class="weui-btn" type="primary" bindtap="handleWechatLogin">
+        微信一键授权登录
+      </button>
     </view>
   </view>
 </view> 

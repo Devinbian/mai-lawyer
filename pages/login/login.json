@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "登录",
   "usingComponents": {
-    "custom-nav": "/components/custom-nav/custom-nav"
+    "login-nav": "/components/login-nav/login-nav"
   }
 }

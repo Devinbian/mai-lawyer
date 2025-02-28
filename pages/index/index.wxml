@@ -1,7 +1,7 @@
 <!--index.wxml-->
 <view class="container-bg">
   <custom-nav title="麦小律"></custom-nav>
-  <image class="container-bg-image" src="/static/images/index/container-bg.png" mode="widthFix" />
+  <image class="container-bg-image" src="/static/images/index/container-bg@2x.png" mode="widthFix" />
   <view class="container">
     <!-- 固定不动的顶部区域 -->
     <view class="fixed-top">
@@ -10,7 +10,7 @@
           <view class="title">您好，我是小麦</view>
           <view class="subtitle">您的全天候智能法律顾问，随时为您解答法律问题~</view>
         </view>
-        <image class="robot-avatar" src="/static/images/index/robot.png" mode="widthFix" />      
+        <image class="robot-avatar" src="/static/images/index/robot@2x.png" mode="widthFix" />      
       </view>
     </view>
     
@@ -64,7 +64,7 @@
             />
           </view>
           <button class="send-btn" bindtap="sendMessage">
-            <image class="send-icon" src="/static/images/index/send.png" mode="widthFix" />
+            <image class="send-icon" src="/static/images/index/send@2x.png" mode="widthFix" />
           </button>
         </view>
       </view>

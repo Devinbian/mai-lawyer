@@ -22,31 +22,31 @@
     "color": "#999999",
     "selectedColor": "#0062FF",
     "backgroundColor": "#ffffff",
-    "borderStyle":"black",
+    "borderStyle": "black",
     "list": [
       {
         "pagePath": "pages/index/index",
         "text": "首页",
         "iconPath": "/static/images/home.png",
-        "selectedIconPath": "/static/images/home-active.png"
+        "selectedIconPath": "/static/images/home-active@2x.png"
       },
       {
         "pagePath": "pages/experts/experts",
         "text": "专家库",
         "iconPath": "/static/images/expert.png",
-        "selectedIconPath": "/static/images/expert-active.png"
+        "selectedIconPath": "/static/images/expert-active@2x.png"
       },
       {
         "pagePath": "pages/documents/documents",
         "text": "文本库",
         "iconPath": "/static/images/doc.png",
-        "selectedIconPath": "/static/images/doc-active.png"
+        "selectedIconPath": "/static/images/doc-active@2x.png"
       },
       {
         "pagePath": "pages/profile/profile",
         "text": "我的",
         "iconPath": "/static/images/profile.png",
-        "selectedIconPath": "/static/images/profile-active.png"
+        "selectedIconPath": "/static/images/profile-active@2x.png"
       }
     ]
   },

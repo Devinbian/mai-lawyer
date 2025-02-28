@@ -1,0 +1,240 @@
+.container {
+  min-height: 100vh;
+  background: #F5F7FA;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.exp-title {
+  position: fixed;
+  top: 170rpx;
+  left: 0;
+  width: 100%;
+  height: 100rpx;
+  overflow: hidden;
+  border: #FFFFFF solid 1px;
+  box-shadow: 0 2rpx 12rpx rgba(255, 255, 255, 0.05);
+  background: #FFFFFF;
+  z-index: 10;
+}
+
+.title-avatar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.title-name {
+  position: absolute;
+  top: 50%;
+  left: 30rpx;
+  transform: translateY(-50%);
+  height: 52rpx;
+  width: auto;
+  z-index: 1;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.experts-list {
+  margin-top: 80rpx; /* 导航栏170rpx + title100rpx */
+  width: 100%;
+  box-sizing: border-box;
+  padding: 20rpx;
+  flex: 1;
+  overflow: auto;
+}
+
+.expert-item {
+  position: relative;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 30rpx 0;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1rpx solid rgba(231, 231, 231, 0.8);
+}
+
+.expert-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.expert-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  margin-bottom: 30rpx;
+  padding: 0 30rpx;
+}
+
+.expert-avatar {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 60rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.expert-info {
+  flex: 1;
+  padding-right: 20rpx;
+  width: 0;
+  overflow: hidden;
+}
+
+.name-tags {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.expert-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-right: 16rpx;
+}
+
+.tags {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.tag-icon {
+  width: 80rpx;
+  height: 32rpx;
+  margin-right: 12rpx;
+}
+
+.senior-expert,
+.plantform-guarantee {
+  font-size: 22rpx;
+  padding: 4rpx 12rpx;
+  color: #FFFFFF;
+  border-radius: 0 8rpx 8rpx 8rpx;
+}
+
+.senior-expert {
+  background-color: #FF6B00;
+}
+
+.plantform-guarantee {
+  background-color: #3AA0FF;
+}
+
+.expert-fields {
+  font-size: 26rpx;
+  color: #666666;
+  margin-bottom: 8rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.expert-qualifications {
+  display: flex;
+  align-items: center;
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.expert-separator {
+  margin: 0 16rpx;
+  color: #CCCCCC;
+}
+
+.expert-years {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.expert-years .number {
+  color: #007BFF;
+  font-size: 26rpx;
+  font-weight: 500;
+  margin: 0 4rpx;
+}
+
+.expert-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30rpx;
+  margin-left: 110rpx;
+  padding: 0 60rpx;
+}
+
+.action-btn {
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  margin: 0;
+  padding: 0;
+}
+
+.action-btn::after {
+  border: none;
+}
+
+.action-btn.phone {
+  flex: 2;
+  background: #fff;
+  color: #0084FF;
+  margin-right: 20rpx;
+  border: 4rpx solid #0084FF;
+}
+
+.action-btn.online {
+  flex: 3;
+  background: transparent;
+  color: #FFFFFF;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: #0084FF;
+}
+
+.btn-icon {
+  width: 34rpx;
+  height: 32rpx;
+  margin-right: 8rpx;
+  position: relative;
+  z-index: 3;
+}
+
+.action-btn.online text {
+  position: relative;
+  z-index: 3;
+  color: #FFFFFF;
+}
+

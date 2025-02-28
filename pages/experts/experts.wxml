@@ -1,14 +1,40 @@
 <view class="container">
-  <custom-nav title="专家库"></custom-nav>
-  <view class="content">
-    <!-- 专家列表 -->
-    <view class="expert-list">
-      <view class="expert-item" wx:for="{{experts}}" wx:key="id">
-        <image class="expert-avatar" src="{{item.avatar}}" />
+  <bg-nav title="专家库"></bg-nav>
+  <view class="exp-title">
+    <image class="title-name" src="/static/images/experts/title-name@2x.png" mode="heightFix"></image>
+    <image class="title-avatar" src="/static/images/experts/title-bg@2x.png" mode="aspectFill"></image>
+  </view>
+  <view class="experts-list">
+    <view class="expert-item" wx:for="{{experts}}" wx:key="id">
+      <image class="expert-bg" src="/static/images/experts/expert-bg.png" mode="aspectFill"></image>
+      <view class="expert-header">
+        <image class="expert-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
         <view class="expert-info">
-          <text class="expert-name">{{item.name}}</text>
-          <text class="expert-title">{{item.title}}</text>
+          <view class="name-tags">
+            <text class="expert-name">{{item.name}}</text>
+            <view class="tags">
+              <text class="senior-expert">资深专家</text>
+              <text class="plantform-guarantee">平台保证</text>
+            </view>
+          </view>
+          <view class="expert-fields">擅长：{{item.fields}}</view>
+          <view class="expert-qualifications">
+            <view class="expert-years">从业年限：<text class="number">{{item.years}}年</text></view>
+            <text class="expert-separator">|</text>
+            <view class="expert-years">咨询人数：<text class="number">{{item.years}}人</text></view>
+          </view>
+          
         </view>
+      </view>
+      <view class="expert-actions">
+        <button class="action-btn phone" bindtap="handlePhoneConsult" data-id="{{item.id}}">
+          <text>电话咨询</text>
+        </button>
+        <button class="action-btn online" bindtap="handleOnlineConsult" data-id="{{item.id}}">
+          <image class="btn-bg" src="/static/images/experts/msg-bg@2x.png" mode="adjust"></image>
+          <image class="btn-icon" src="/static/images/experts/msg@2x.png"></image>
+          <text>在线咨询</text>
+        </button>
       </view>
     </view>
   </view>
