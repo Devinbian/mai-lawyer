@@ -114,6 +114,7 @@
   color: #666;
   margin-bottom: 24rpx;
   padding-left: 32rpx;
+  padding-top: 20rpx;
 }
 
 .guide-list {
@@ -198,7 +199,7 @@
 
 /* 聊天消息样式 */
 .message-list {
-  padding: 20rpx;
+  padding: 32rpx;
   margin-top: 40rpx;
   padding-bottom: 150rpx; /* 增加底部padding */
 }
