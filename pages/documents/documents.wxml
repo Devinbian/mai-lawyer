@@ -1,5 +1,5 @@
 <view class="container">
-  <bg-nav title="麦小律"></bg-nav>
+  <main-nav></main-nav>
   
   <!-- 平台产品标题 -->
   <view class="platform-title">

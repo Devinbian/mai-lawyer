@@ -126,12 +126,64 @@ Page({
         tags: ["高级专家", "平台保证"],
       },
     ],
+    allExperts: [], // 存储所有专家数据
+    pageSize: 5,
+    currentPage: 1,
+    isLoading: false,
+    hasMore: true,
+    showLoadingMore: false
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options) {},
+  onLoad(options) {
+    // 保存完整的专家列表
+    this.setData({
+      allExperts: this.data.experts,
+    }, () => {
+      this.loadInitialData();
+    });
+  },
+
+  // 加载初始数据
+  loadInitialData() {
+    const { pageSize } = this.data;
+    const initialData = this.data.allExperts.slice(0, pageSize);
+    this.setData({
+      experts: initialData,
+      hasMore: this.data.allExperts.length > pageSize,
+      currentPage: 1
+    });
+  },
+
+  // 加载更多数据
+  loadMoreData() {
+    if (!this.data.hasMore || this.data.isLoading) return;
+    
+    this.setData({ isLoading: true, showLoadingMore: true });
+
+    // 模拟网络请求延迟
+    setTimeout(() => {
+      const { currentPage, pageSize, allExperts } = this.data;
+      const nextPage = currentPage + 1;
+      const start = (nextPage - 1) * pageSize;
+      const end = start + pageSize;
+      
+      const newData = [
+        ...this.data.experts,
+        ...allExperts.slice(start, end)
+      ];
+
+      this.setData({
+        experts: newData,
+        currentPage: nextPage,
+        hasMore: end < allExperts.length,
+        isLoading: false,
+        showLoadingMore: false
+      });
+    }, 500);
+  },
 
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -156,12 +208,25 @@ Page({
   /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
-  onPullDownRefresh() {},
+  onPullDownRefresh() {
+    this.setData({
+      currentPage: 1,
+      hasMore: true,
+      isLoading: false
+    }, () => {
+      this.loadInitialData();
+      wx.stopPullDownRefresh();
+    });
+  },
 
   /**
    * 页面上拉触底事件的处理函数
    */
-  onReachBottom() {},
+  onReachBottom() {
+    if (this.data.hasMore) {
+      this.loadMoreData();
+    }
+  },
 
   /**
    * 用户点击右上角分享

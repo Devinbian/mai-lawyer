@@ -28,33 +28,14 @@
   position: relative;
   display: flex;
   align-items: center;
+  justify-content: left;
   padding: 0 32rpx;
 }
 
+/* 导航标题图片 */
 .nav-title {
-  display: flex;
-  align-items: center;
+  height: 44rpx;
+  margin-left: -10rpx;  /* 微调左边距，使文字内容对齐 */
+  width: auto;
+  display: block;
 }
-
-.main-title {
-  color: #fff;
-  font-size: 36rpx;
-  font-weight: 600;
-  font-family: PingFangSC-Semibold, PingFang SC;
-  white-space: nowrap;
-}
-
-.title-separator {
-  color: #fff;
-  margin: 0 16rpx;
-  font-size: 24rpx;
-  opacity: 0.8;
-}
-
-.sub-title {
-  color: #fff;
-  font-size: 24rpx;
-  font-weight: 400;
-  font-family: PingFangSC-Regular, PingFang SC;
-  opacity: 0.8;
-} 

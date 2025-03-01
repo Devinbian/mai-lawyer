@@ -34,7 +34,7 @@
   left: 30rpx;
   transform: translateY(-50%);
   height: 52rpx;
-  width: auto;
+  width: 402rpx;
   z-index: 1;
   image-rendering: -webkit-optimize-contrast;
 }
@@ -249,5 +249,43 @@
   position: relative;
   z-index: 3;
   color: #FFFFFF;
+}
+
+/* 加载更多样式 */
+.loading-more, .no-more, .empty-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  width: 100%;
+}
+
+.loading-more text, .no-more text, .empty-list text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #999999;
+  background: #FFFFFF;
+  padding: 12rpx 24rpx;
+  border-radius: 32rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.loading-spinner {
+  width: 24rpx;
+  height: 24rpx;
+  margin-right: 8rpx;
+  border: 2rpx solid #f3f3f3;
+  border-top: 2rpx solid #007BFF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 

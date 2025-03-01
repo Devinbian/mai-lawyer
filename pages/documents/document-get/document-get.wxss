@@ -1,0 +1,172 @@
+.container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #FFFFFF;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 内容区域 */
+.content {
+  position: fixed;
+  top: 88px; /* 导航栏高度 */
+  left: 0;
+  right: 0;
+  bottom: 100rpx; /* 底部栏高度 */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 通用区块样式 */
+.section {
+  padding: 20rpx 30rpx;
+}
+
+.section + .section {
+  margin-top: 40rpx;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.section-title text {
+  font-size: 32rpx;
+  font-weight: bolder;
+  color: #333333;
+}
+
+.title-icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 12rpx;
+}
+
+/* 文档信息卡片 */
+.doc-info {
+  position: relative;
+  border-radius: 12rpx;
+  overflow: hidden;
+  height: 160rpx;
+  background: #FFFFFF;
+  border: 1rpx solid #E6E6E6;
+}
+
+.doc-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.doc-content {
+  position: relative;
+  z-index: 2;
+  padding: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.doc-type-icon {
+  width: 72rpx;
+  height: 72rpx;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.doc-title {
+  flex: 1;
+  font-size: 28rpx;
+  font-weight: bolder;
+  color: #333333;
+  line-height: 1.5;
+  letter-spacing: 0.5rpx;
+}
+
+/* 推荐服务区域 */
+.service-content {
+  background: #FFFFFF;
+  border-radius: 12rpx;
+  padding: 20rpx;
+}
+
+.service-desc {
+  font-size: 24rpx;
+  color: #666666;
+  line-height: 1.5;
+  margin-bottom: 20rpx;
+  letter-spacing: 0.5rpx;
+}
+
+.service-action {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.service-btn {
+  display: inline-flex;
+  align-items: center;
+  background: #E8F3FF;
+  padding: 12rpx 30rpx;
+  border-radius: 6rpx;
+  margin-top: 20rpx;
+}
+
+.service-btn text {
+  font-size: 26rpx;
+  color: #3B7CFF;
+  margin-right: 8rpx;
+}
+
+.arrow-icon {
+  width: 24rpx;
+  height: 24rpx;
+}
+
+/* 底部结算栏 */
+.bottom-bar {
+  position: fixed;
+  bottom: 40rpx;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.price-section {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.price-section text {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.price {
+  font-size: 48rpx;
+  color: #333333;
+  font-weight: bolder;
+}
+
+.pay-btn {
+  background: #3B7CFF;
+  color: #FFFFFF;
+  font-size: 32rpx;
+  padding: 16rpx 60rpx;
+  border-radius: 8rpx;
+}

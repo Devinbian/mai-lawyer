@@ -113,7 +113,7 @@ Page({
     const doc = this.data.documents.find(item => item.id === docId);
     if (doc) {
       wx.navigateTo({
-        url: `/pages/documents/list/list?type=${doc.id}&name=${doc.name}`,
+        url: `/pages/documents/document-list/document-list?type=${doc.id}&name=${doc.name}`,
         fail(err) {
           wx.showToast({
             title: '打开失败',

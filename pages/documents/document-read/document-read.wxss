@@ -1,0 +1,111 @@
+/* 容器 */
+.container {
+  min-height: 100vh;
+  background: #F8F8F8;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 文档阅读区域 */
+.document-reader {
+  flex: 1;
+  height: calc(100vh - 180rpx);
+  background: #FFFFFF;
+}
+
+/* 目录部分 */
+.catalog-section {
+  padding: 30rpx;
+  background: #FFFFFF;
+}
+
+.catalog-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 20rpx;
+}
+
+.catalog-list {
+  padding-left: 20rpx;
+}
+
+.catalog-item {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 2;
+  padding: 10rpx 0;
+}
+
+/* 正文部分 */
+.content-section {
+  padding: 30rpx;
+  background: #FFFFFF;
+}
+
+.content-title {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333333;
+  margin-bottom: 20rpx;
+}
+
+.content-text {
+  padding-left: 20rpx;
+}
+
+.text-item {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.8;
+  margin-bottom: 20rpx;
+}
+
+/* 底部占位 */
+.bottom-placeholder {
+  height: 120rpx;
+}
+
+/* 底部操作栏 */
+.bottom-bar {
+  position: fixed;
+  bottom: 40rpx;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.collect-btn {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.collect-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 10rpx;
+}
+
+.collect-btn text {
+  font-size: 24rpx;
+  color: #333333;
+}
+
+.download-btn {
+  background: #3B7CFF;
+  border-radius: 8rpx;
+  padding: 8rpx 60rpx;
+}
+
+.download-btn text {
+  font-size: 32rpx;
+  color: #FFFFFF;
+} 

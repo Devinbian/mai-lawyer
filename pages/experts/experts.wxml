@@ -1,5 +1,5 @@
 <view class="container">
-  <bg-nav title="麦小律"></bg-nav>
+  <main-nav></main-nav>
   <view class="exp-title">
     <image class="title-name" src="/static/images/experts/title-name@2x.png" mode="heightFix"></image>
     <image class="title-avatar" src="/static/images/experts/title-bg@2x.png" mode="aspectFill"></image>
@@ -40,6 +40,19 @@
           <text>在线咨询</text>
         </button>
       </view>
+    </view>
+
+    <!-- 加载更多提示 -->
+    <view class="loading-more" wx:if="{{showLoadingMore}}">
+      <text>
+        <view class="loading-spinner"></view>正在加载更多...
+      </text>
+    </view>
+    <view class="no-more" wx:if="{{!hasMore && experts.length > 0}}">
+      <text>没有更多数据了</text>
+    </view>
+    <view class="empty-list" wx:if="{{experts.length === 0}}">
+      <text>暂无相关数据</text>
     </view>
   </view>
 </view>

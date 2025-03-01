@@ -1,6 +1,7 @@
 {
-  "navigationStyle": "custom",
+  "navigationBarTitleText": "麦小律",
   "usingComponents": {
-    "bg-nav": "/components/bg-nav/bg-nav"
-  }
+    "main-nav": "/components/main-nav/main-nav"
+  },
+  "navigationStyle": "custom"
 }

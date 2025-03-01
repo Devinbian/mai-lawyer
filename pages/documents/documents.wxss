@@ -51,7 +51,7 @@
   width: 100%;
   padding: 20rpx 30rpx;
   display: grid;
-  grid-template-columns: repeat(3, 188rpx);
+  grid-template-columns: repeat(3, 210rpx);
   column-gap: 40rpx;
   row-gap: 20rpx;
   justify-content: center;
@@ -117,6 +117,7 @@
 
 .doc-bottom {
   margin-top: 8rpx;
+  margin-left: 40rpx;
   text-align: left;
   width: 100%;
 }

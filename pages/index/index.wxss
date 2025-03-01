@@ -25,41 +25,20 @@
 
 /* Banner区域 */
 .banner {
-  position: relative;  /* 改回相对定位 */
+  position: relative;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 30rpx;
-  margin-top: -60rpx;  /* 恢复与导航栏的距离 */
+  align-items: flex-start;
+  padding: 0 32rpx;
   z-index: 160;
 }
 
-.banner-text {
-  flex: 1;  /* 占据剩余空间 */
-  color: #fff;
-  padding-right: 10rpx;  /* 与机器人图片保持间距 */
-  margin-bottom: 80rpx;
-}
-
-.title {
-  font-size: 48rpx;
-  font-weight: bold;
-  margin-bottom: 16rpx;
-  font-family: 'Alimama ShuHeiTi', -apple-system-font, sans-serif;
-}
-
-.subtitle {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
-  line-height: 1.4;
-  font-family: 'Source Han Sans CN', "PingFang SC", sans-serif;
-}
-
-.robot-avatar {
-  width: 220rpx;  /* 固定宽度 */
-  height: auto;  /* 高度自适应 */
-  position: relative;  /* 确保z-index生效 */
-  z-index: 161;  /* 比banner更高一层 */
+.banner-title {
+  width: 703rpx;  /* 使用原图宽度 */
+  height: 248rpx;  /* 使用原图高度 */
+  display: block;
+  margin-top: -30rpx;
+  image-rendering: -webkit-optimize-contrast;  /* 优化图片渲染 */
+  transform: translateZ(0);  /* 开启GPU加速 */
 }
 
 /* 聊天区域 */

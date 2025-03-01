@@ -1,0 +1,7 @@
+<view class="nav-container">
+  <image class="nav-bg" src="/static/images/nav-bg@2x.png" mode="widthFix"></image>
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+  <view class="nav-bar" style="height: {{navBarHeight}}px">
+    <image class="nav-title" src="/static/images/nav-title@2x.png" mode="heightFix"></image>
+  </view>
+</view> 

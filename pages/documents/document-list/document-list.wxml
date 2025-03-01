@@ -1,0 +1,52 @@
+<view class="container">
+  <bg-titlecenter-nav title="合同协议"></bg-titlecenter-nav>
+  
+  <!-- 搜索框 -->
+  <view class="search-box">
+    <input 
+      class="search-input" 
+      placeholder="搜索合同文本" 
+      placeholder-class="search-placeholder"
+      value="{{searchKeyword}}"
+      bindinput="onSearchInput"
+      bindconfirm="onSearch"
+    />
+    <image class="search-icon" src="/static/images/documents/search@2x.png" mode="aspectFit"></image>
+  </view>
+
+  <!-- 文档列表 -->
+  <view class="document-list">
+    <view class="document-item" 
+      wx:for="{{filteredDocuments}}" 
+      wx:key="id"
+      bindtap="onDocumentTap"
+      data-id="{{item.id}}"
+    >
+      <view class="doc-main">
+        <view class="doc-title">{{item.title}}</view>
+        <view class="doc-desc">{{item.description}}</view>
+        <view class="doc-meta">
+          <text class="doc-number">#{{item.number}}</text>
+          <text class="doc-words">约{{item.words}}字</text>
+          <image class="doc-date-icon" src="/static/images/documents/time@2x.png" mode="aspectFit"></image>
+          <text class="doc-date">{{item.date}}</text>
+          <text class="doc-price" wx:if="{{item.price > 0}}">¥ {{item.price}}</text>
+          <text class="doc-free" wx:else>免费</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载更多提示 -->
+    <view class="loading-more" wx:if="{{showLoadingMore}}">
+      <text>
+        <view class="loading-spinner"></view>正在加载更多...
+      </text>
+    </view>
+    <view class="no-more" wx:if="{{!hasMore && filteredDocuments.length > 0}}">
+      <text>没有更多数据了</text>
+    </view>
+    <view class="empty-list" wx:if="{{filteredDocuments.length === 0}}">
+      <text>暂无相关数据</text>
+    </view>
+  </view>
+</view> 
