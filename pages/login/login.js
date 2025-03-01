@@ -104,4 +104,11 @@ Page({
       url: "/pages/agreement/agreement",
     });
   },
+   // 跳转到协议页面
+   gotoPrivacy() {
+    wx.navigateTo({
+      url: "/pages/privacy/privacy",
+    });
+  },
+
 });

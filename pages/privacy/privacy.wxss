@@ -4,21 +4,31 @@
 }
 
 .title {
-  font-size: 36rpx;
+  font-size: 32rpx;
   font-weight: bold;
-  text-align: center;
-  margin-bottom: 48rpx;
+  text-align: left;
+  line-height: 44rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.pubdate {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 44rpx;
+  text-align: left;
+  margin-bottom: 20rpx;
 }
 
 .section {
-  margin-bottom: 40rpx;
+  margin-bottom: 20rpx;
+  line-height: 44rpx;
+  letter-spacing: 0.5px;
 }
 
 .section-title {
-  font-size: 32rpx;
-  font-weight: 500;
-  margin-bottom: 24rpx;
   color: #333;
+  font-size: 28rpx;
 }
 
 .section-content {
@@ -27,7 +37,11 @@
   line-height: 1.6;
 }
 
-.item {
-  margin: 16rpx 0;
-  padding-left: 20rpx;
-} 
+.section .item {
+  line-height: 44rpx;
+  font-size: 28rpx;
+}
+
+.section-2 {
+  font-weight: bold;
+}

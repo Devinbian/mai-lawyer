@@ -5,6 +5,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    isLogin: false,
     userInfo: null
   },
 
@@ -12,13 +13,93 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    // 获取用户信息
-    const app = getApp();
-    if (app.globalData.userInfo) {
-      this.setData({
-        userInfo: app.globalData.userInfo
+    this.checkLoginStatus();
+  },
+
+  // 检查登录状态
+  checkLoginStatus() {
+    const token = wx.getStorageSync('token');
+    const userInfo = wx.getStorageSync('userInfo');
+    this.setData({
+      isLogin: !!token && !!userInfo,  // 确保token和userInfo都存在
+      userInfo: userInfo || null
+    });
+  },
+
+  // 点击登录/注册
+  handleLogin() {
+    if (!this.data.isLogin) {
+      wx.navigateTo({
+        url: '/pages/login/login'
       });
     }
+  },
+
+  // 点击订单项
+  handleOrderTap(e) {
+    if (!this.data.isLogin) {
+      this.handleLogin();
+      return;
+    }
+    // 根据点击项跳转到对应订单列表
+    // TODO: 实现订单列表页面跳转
+  },
+
+  // 点击内容项
+  handleContentTap(e) {
+    if (!this.data.isLogin) {
+      this.handleLogin();
+      return;
+    }
+    // 根据点击项跳转到对应内容页面
+    // TODO: 实现内容页面跳转
+  },
+
+  // 点击功能项
+  handleFunctionTap(e) {
+    const type = e.currentTarget.dataset.type;
+    switch(type) {
+      case 'help':
+        // TODO: 跳转到帮助反馈页面
+        break;
+      case 'contact':
+        // TODO: 跳转到联系我们页面
+        break;
+      case 'about':
+        // TODO: 跳转到关于我们页面
+        break;
+      case 'logout':
+        if (this.data.isLogin) {
+          this.handleLogout();
+        }
+        break;
+    }
+  },
+
+  // 退出登录
+  handleLogout() {
+    wx.showModal({
+      title: '提示',
+      content: '确定要退出登录吗？',
+      success: (res) => {
+        if (res.confirm) {
+          // 清除登录信息
+          wx.removeStorageSync('userInfo');
+          wx.removeStorageSync('token');
+          
+          // 更新页面状态
+          this.setData({
+            isLogin: false,
+            userInfo: {}
+          });
+          
+          wx.showToast({
+            title: '已退出登录',
+            icon: 'success'
+          });
+        }
+      }
+    });
   },
 
   /**
@@ -32,13 +113,14 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    // 页面显示时也更新用户信息
-    const app = getApp();
-    if (app.globalData.userInfo) {
-      this.setData({
-        userInfo: app.globalData.userInfo
-      });
-    }
+    // 每次显示页面时检查登录状态
+    const userInfo = wx.getStorageSync('userInfo');
+    const token = wx.getStorageSync('token');
+    
+    this.setData({
+      isLogin: !!token,
+      userInfo: userInfo || {}
+    });
   },
 
   /**

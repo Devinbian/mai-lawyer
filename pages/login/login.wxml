@@ -1,5 +1,5 @@
 <view class="container">
-  <image class="bg-image" src="/static/images/login/bg.png" mode="aspectFill" />
+  <image class="bg-image" src="/static/images/login/bg@2x.png" mode="aspectFill" />
   <login-nav title="登录"></login-nav>
   <view class="content">
     <view class="login-form">
@@ -7,7 +7,7 @@
         <view class="checkbox {{isAgree ? 'checked' : ''}}" bindtap="toggleAgree"></view>
         我已阅读并同意
         <text class="link" bindtap="gotoAgreement">《用户协议》</text>和
-        <text class="link" bindtap="gotoAgreement">《隐私政策》</text>
+        <text class="link" bindtap="gotoPrivacy">《隐私政策》</text>
       </view>
       <button class="weui-btn" type="primary" bindtap="handleWechatLogin">
         微信一键授权登录

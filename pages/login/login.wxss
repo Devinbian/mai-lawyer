@@ -7,6 +7,55 @@
   flex-direction: column;
 }
 
+.header {
+  text-align: center;
+  margin-bottom: 120rpx;
+}
+
+.logo {
+  width: 160rpx;
+  height: 160rpx;
+  margin-bottom: 40rpx;
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.login-section {
+  padding: 0 40rpx;
+}
+
+.wechat-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #07C160;
+  color: #fff;
+  height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  border: none;
+}
+
+.wechat-login-btn::after {
+  border: none;
+}
+
+.wechat-icon {
+  width: 48rpx;
+  height: 48rpx;
+  margin-right: 12rpx;
+}
+
 .bg-image {
   position: absolute;
   top: 0;
@@ -24,7 +73,7 @@
   justify-content: center;
   align-items: center;
   padding: 0 60rpx;
-  margin-top: 200rpx; /* 向上偏移，使内容更居中 */
+  margin-top: 200rpx;
 }
 
 .login-form {
@@ -34,7 +83,7 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 48rpx; /* 增加元素之间的间距 */
+  gap: 48rpx;
 }
 
 /* 登录按钮样式 */
@@ -59,7 +108,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 20rpx; /* 增加两侧内边距 */
+  padding: 0 20rpx;
 }
 
 /* 自定义checkbox样式 */
@@ -126,11 +175,6 @@
   width: 400rpx;
   height: 100rpx;
   margin-bottom: 20rpx;
-}
-
-.subtitle {
-  font-size: 28rpx;
-  color: #666;
 }
 
 .agreement {

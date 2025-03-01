@@ -1,0 +1,14 @@
+<view class="nav-container">
+  <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
+  <view class="nav-bar" style="height: {{navBarHeight}}px">
+    <view class="capsule-btn">
+      <view class="capsule-item" bindtap="handleBack">
+        <image class="icon-back" src="/static/images/profile/arrow-right@2x.png" mode="aspectFit"></image>
+      </view>
+    </view>
+    <view class="nav-title">
+      <text class="main-title">{{title}}</text>
+    </view>
+    <view class="nav-right"></view>
+  </view>
+</view> 

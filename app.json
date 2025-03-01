@@ -4,14 +4,14 @@
     "pages/experts/experts",
     "pages/documents/documents",
     "pages/profile/profile",
-    "pages/agreement/agreement",
     "pages/documents/document-list/document-list",
     "pages/documents/document-read/document-read",
     "pages/documents/document-get/document-get",
     "pages/experts/expert-detail/expert-detail",
     "pages/experts/chat/chat",
     "pages/login/login",
-    "pages/privacy/privacy"
+    "pages/privacy/privacy",
+    "pages/agreement/agreement"
   ],
   "window": {
     "navigationStyle": "custom",
@@ -30,25 +30,25 @@
       {
         "pagePath": "pages/index/index",
         "text": "首页",
-        "iconPath": "/static/images/home.png",
+        "iconPath": "/static/images/home@2x.png",
         "selectedIconPath": "/static/images/home-active@2x.png"
       },
       {
         "pagePath": "pages/experts/experts",
         "text": "专家库",
-        "iconPath": "/static/images/expert.png",
+        "iconPath": "/static/images/expert@2x.png",
         "selectedIconPath": "/static/images/expert-active@2x.png"
       },
       {
         "pagePath": "pages/documents/documents",
         "text": "文本库",
-        "iconPath": "/static/images/doc.png",
+        "iconPath": "/static/images/doc@2x.png",
         "selectedIconPath": "/static/images/doc-active@2x.png"
       },
       {
         "pagePath": "pages/profile/profile",
         "text": "我的",
-        "iconPath": "/static/images/profile.png",
+        "iconPath": "/static/images/profile@2x.png",
         "selectedIconPath": "/static/images/profile-active@2x.png"
       }
     ]
