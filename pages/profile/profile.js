@@ -61,12 +61,20 @@ Page({
     switch(type) {
       case 'help':
         // TODO: 跳转到帮助反馈页面
+        wx.navigateTo({
+          url: '/pages/profile/account/account'
+        });
         break;
       case 'contact':
         // TODO: 跳转到联系我们页面
         break;
       case 'about':
         // TODO: 跳转到关于我们页面
+        break;
+      case 'account':
+        wx.navigateTo({
+          url: '/pages/profile/account/account'
+        });
         break;
       case 'logout':
         if (this.data.isLogin) {

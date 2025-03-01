@@ -11,7 +11,8 @@
     "pages/experts/chat/chat",
     "pages/login/login",
     "pages/privacy/privacy",
-    "pages/agreement/agreement"
+    "pages/agreement/agreement",
+    "pages/profile/account/account"
   ],
   "window": {
     "navigationStyle": "custom",

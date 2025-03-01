@@ -1,0 +1,143 @@
+.container {
+  min-height: 100vh;
+  background: #F5F7FA;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.content {
+  position: fixed;
+  top: 20rpx;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 176rpx;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.info-section {
+  background: #FFFFFF;
+  margin-bottom: 20rpx;
+  width: 702rpx;
+  border-radius: 8rpx 8rpx 8rpx 8rpx;
+  margin-left: 24rpx;
+}
+
+/* 性别section的特殊间距 */
+.info-section.gender-section {
+  margin-top: 60rpx;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 112rpx;
+  padding: 0 32rpx;
+  position: relative;
+}
+
+.info-item.has-border::after {
+  content: '';
+  position: absolute;
+  left: 32rpx;
+  right: 32rpx;
+  bottom: 0;
+  height: 1rpx;
+  background-color: #F5F7FA;
+}
+
+.label {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.value-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.value {
+  font-size: 28rpx;
+  color: #666666;
+  margin-right: 16rpx;
+}
+
+.arrow {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.avatar-item {
+  height: 112rpx;
+  padding: 0 32rpx;
+}
+
+.avatar-container {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: #E9F1FF;
+  margin-right: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.gender-options {
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+}
+
+.gender-option {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.radio-container {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 50%;
+  border: 2rpx solid #CCCCCC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.radio-container.checked {
+  border-color: #1890FF;
+  background: #1890FF;
+}
+
+.radio-container.checked::after {
+  content: '';
+  width: 16rpx;
+  height: 8rpx;
+  border: 2rpx solid #fff;
+  border-top: none;
+  border-right: none;
+  transform: rotate(-45deg);
+  position: absolute;
+  top: 8rpx;
+  left: 6rpx;
+}
+
+.gender-label {
+  font-size: 28rpx;
+  color: #666666;
+}

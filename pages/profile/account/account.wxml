@@ -1,0 +1,80 @@
+<view class="container">
+  <bg-titlecenter-nav title="账户管理" bindnavheight="onNavHeight"></bg-titlecenter-nav>
+  <view class="content">
+    <!-- 头像 -->
+    <view class="info-section">
+      <view class="info-item avatar-item" bindtap="changeAvatar">
+        <text class="label">头像</text>
+        <view class="value-wrap">
+          <view class="avatar-container">
+            <image class="avatar" src="{{userInfo.avatarUrl || '/static/images/profile/default-avatar@2x.png'}}" mode="aspectFill" />
+          </view>
+          <image class="arrow" src="/static/images/profile/arrow-right@2x.png" mode="aspectFit" />
+        </view>
+      </view>
+    </view>
+    
+    <!-- 姓名 -->
+    <view class="info-section">
+      <view class="info-item" bindtap="changeNickname">
+        <text class="label">姓名</text>
+        <view class="value-wrap">
+          <text class="value">{{userInfo.nickName || '未设置'}}</text>
+          <image class="arrow" src="/static/images/profile/arrow-right@2x.png" mode="aspectFit" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 绑定信息 -->
+    <view class="info-section">
+      <!-- 手机号 -->
+      <view class="info-item has-border" bindtap="bindPhone">
+        <text class="label">绑定手机号</text>
+        <view class="value-wrap">
+          <text class="value">{{userInfo.phoneNumber || '未绑定'}}</text>
+          <image class="arrow" src="/static/images/profile/arrow-right@2x.png" mode="aspectFit" />
+        </view>
+      </view>
+
+      <!-- 邮箱 -->
+      <view class="info-item" bindtap="bindEmail">
+        <text class="label">绑定邮箱</text>
+        <view class="value-wrap">
+          <text class="value">{{userInfo.email || '未绑定'}}</text>
+          <image class="arrow" src="/static/images/profile/arrow-right@2x.png" mode="aspectFit" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 性别 -->
+    <view class="info-section gender-section">
+      <view class="info-item" bindtap="changeGender">
+        <text class="label">性别</text>
+        <view class="value-wrap">
+          <view class="gender-options">
+            <view class="gender-option" catchtap="selectGender" data-gender="1">
+              <view class="radio-container {{userInfo.gender === 1 ? 'checked' : ''}}"></view>
+              <text class="gender-label">男</text>
+            </view>
+            <view class="gender-option" catchtap="selectGender" data-gender="2">
+              <view class="radio-container {{userInfo.gender === 2 ? 'checked' : ''}}"></view>
+              <text class="gender-label">女</text>
+            </view>
+          </view>
+          <image class="arrow" src="/static/images/profile/arrow-right@2x.png" mode="aspectFit" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 生日 -->
+    <view class="info-section">
+      <view class="info-item" bindtap="changeBirthday">
+        <text class="label">生日</text>
+        <view class="value-wrap">
+          <text class="value">{{userInfo.birthday || '未设置'}}</text>
+          <image class="arrow" src="/static/images/profile/arrow-right@2x.png" mode="aspectFit" />
+        </view>
+      </view>
+    </view>
+  </view>
+</view> 
