@@ -126,8 +126,6 @@
   align-items: flex-start;
   z-index: 999;
   transition: all 0.3s ease;
-  background: #FFFFFF;
-  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
 }
 
 .input-box {
@@ -136,7 +134,6 @@
   margin-right: 10rpx;
   display: flex;
   align-items: flex-start;
-  background: #FFFFFF;
 }
 
 .chat-input {
@@ -148,7 +145,7 @@
   line-height: 40rpx;
   box-sizing: border-box;
   color: #333333;
-  background: #FFFFFF;
+  /* background: #FFFFFF; */
   box-shadow: 0px 0px 8px 0px rgba(167,178,190,0.1);
   border-radius: 4px 4px 4px 4px;
   border: 1px solid #D1E3FD;
