@@ -1,0 +1,78 @@
+<view class="container">
+  <bg-titlecenter-nav title="帮助反馈"></bg-titlecenter-nav>
+
+  <view class="feedback-content">
+    <!-- 反馈类型 -->
+    <view class="section feedback-type">
+      <text class="type-title">反馈类型</text>
+      <view class="feedback-tabs">
+        <view 
+          class="tab-item {{currentTab === 'suggest' ? 'active' : ''}}" 
+          bindtap="switchTab" 
+          data-tab="suggest"
+        >建议</view>
+        <view 
+          class="tab-item {{currentTab === 'bug' ? 'active' : ''}}" 
+          bindtap="switchTab" 
+          data-tab="bug"
+        >bug</view>
+        <view 
+          class="tab-item {{currentTab === 'other' ? 'active' : ''}}" 
+          bindtap="switchTab" 
+          data-tab="other"
+        >其他</view>
+      </view>
+    </view>
+
+    <!-- 反馈内容 -->
+    <view class="section feedback-form">
+      <view class="form-inner">
+        <textarea 
+          class="feedback-input" 
+          placeholder="请简单描述您的问题" 
+          placeholder-class="placeholder"
+          maxlength="500"
+          value="{{content}}"
+          bindinput="handleContentInput"
+        ></textarea>
+        <view class="word-count">{{contentLength}}/500</view>
+      </view>
+    </view>
+
+    <!-- 图片上传 -->
+    <view class="section upload-section">
+      <view class="section-inner">
+        <view class="upload-title">上传图片：</view>
+        <view class="upload-list">
+          <view class="upload-item" wx:for="{{uploadImages}}" wx:key="index">
+            <image class="upload-img" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-index="{{index}}"/>
+            <view class="delete-btn" catchtap="deleteImage" data-index="{{index}}">×</view>
+          </view>
+          <view class="upload-btn" bindtap="chooseImage" wx:if="{{uploadImages.length < 3}}">
+            <image class="plus-icon" src="{{imgUrls.plus}}" mode="aspectFit"/>
+            <text class="upload-text">最多3张</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="section contact-section">
+      <view class="section-inner">
+        <view class="contact-title">联系方式</view>
+        <input 
+          class="contact-input" 
+          placeholder="请输入您的联系方式" 
+          placeholder-class="placeholder"
+          value="{{contact}}"
+          bindinput="handleContactInput"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-btn {{canSubmit ? '' : 'disabled'}}" bindtap="handleSubmit">
+    提交
+  </view>
+</view> 

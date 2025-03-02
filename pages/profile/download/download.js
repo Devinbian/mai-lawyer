@@ -19,11 +19,7 @@ Page({
 
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: {
-        word: imageUtil.getImageByPixelRatio('/static/images/documents/word'),
-        pdf: imageUtil.getImageByPixelRatio('/static/images/documents/pdf'),
-        empty: imageUtil.getImageByPixelRatio('/static/images/documents/empty')
-      }
+      imgUrls: imageUtil.getCommonImages('documentGet')
     });
   },
 

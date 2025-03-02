@@ -78,7 +78,9 @@ Page({
         });
         break;
       case 'history':
-        // 处理咨询历史
+        wx.navigateTo({
+          url: '/pages/profile/history/history'
+        });
         break;
     }
   },
@@ -88,13 +90,20 @@ Page({
     const type = e.currentTarget.dataset.type;
     switch(type) {
       case 'help':
-        // TODO: 跳转到帮助反馈页面
         wx.navigateTo({
-          url: '/pages/profile/account/account'
+          url: '/pages/profile/feedback/feedback'
         });
         break;
       case 'contact':
-        // TODO: 跳转到联系我们页面
+        wx.makePhoneCall({
+          phoneNumber: '400-000-0000', // 替换为实际的客服电话
+          fail(err) {
+            wx.showToast({
+              title: '拨号失败',
+              icon: 'none'
+            });
+          }
+        });
         break;
       case 'about':
         // TODO: 跳转到关于我们页面

@@ -42,12 +42,7 @@ Page({
 
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: {
-        word: imageUtil.getImageByPixelRatio('/static/images/documents/word'),
-        pdf: imageUtil.getImageByPixelRatio('/static/images/documents/pdf'),
-        favorite: imageUtil.getImageByPixelRatio('/static/images/documents/favorited'),
-        empty: imageUtil.getImageByPixelRatio('/static/images/documents/empty')
-      }
+      imgUrls: imageUtil.getCommonImages('profile')
     });
   },
 

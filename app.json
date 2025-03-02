@@ -14,7 +14,9 @@
     "pages/agreement/agreement",
     "pages/profile/account/account",
     "pages/profile/favorite/favorite",
-    "pages/profile/download/download"
+    "pages/profile/download/download",
+    "pages/profile/history/history",
+    "pages/profile/feedback/feedback"
   ],
   "window": {
     "navigationStyle": "custom",

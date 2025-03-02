@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "bg-titlecenter-nav": "/components/bg-titlecenter-nav/bg-titlecenter-nav"
+  },
+  "navigationBarTitleText": "咨询历史",
+  "navigationStyle": "custom"
+} 

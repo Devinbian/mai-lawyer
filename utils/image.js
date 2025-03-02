@@ -42,7 +42,8 @@ function getCommonImages(type) {
       waitpay: getImageByPixelRatio(`${baseImagePath}/profile/wait-pay`),
       paid: getImageByPixelRatio(`${baseImagePath}/profile/paid`),
       refund: getImageByPixelRatio(`${baseImagePath}/profile/refund`),
-      all: getImageByPixelRatio(`${baseImagePath}/profile/all`)
+      all: getImageByPixelRatio(`${baseImagePath}/profile/all`),
+      plus: getImageByPixelRatio(`${baseImagePath}/experts/add`)
     },
     index: {
       containerBg: getImageByPixelRatio(`${baseImagePath}/index/container-bg`),
