@@ -43,7 +43,10 @@ function getCommonImages(type) {
       paid: getImageByPixelRatio(`${baseImagePath}/profile/paid`),
       refund: getImageByPixelRatio(`${baseImagePath}/profile/refund`),
       all: getImageByPixelRatio(`${baseImagePath}/profile/all`),
-      plus: getImageByPixelRatio(`${baseImagePath}/experts/add`)
+      plus: getImageByPixelRatio(`${baseImagePath}/experts/add`),
+      orderphone: getImageByPixelRatio(`${baseImagePath}/profile/order-phone`),
+      ordertext: getImageByPixelRatio(`${baseImagePath}/profile/order-text`),
+      noorder: getImageByPixelRatio(`${baseImagePath}/noorder`),
     },
     index: {
       containerBg: getImageByPixelRatio(`${baseImagePath}/index/container-bg`),
@@ -76,7 +79,8 @@ function getCommonImages(type) {
       defense: getImageByPixelRatio(`${baseImagePath}/documents/defense`),
       legalOpinion: getImageByPixelRatio(`${baseImagePath}/documents/legal-opinion`),
       application: getImageByPixelRatio(`${baseImagePath}/documents/application`),
-      general: getImageByPixelRatio(`${baseImagePath}/documents/general`)
+      general: getImageByPixelRatio(`${baseImagePath}/documents/general`),
+      noorder: getImageByPixelRatio(`${baseImagePath}/profile/nodata`)
     },
     documentList: {
       search: getImageByPixelRatio(`${baseImagePath}/documents/search`),
@@ -96,8 +100,9 @@ function getCommonImages(type) {
     },
     default: {
       logo: getImageByPixelRatio(`${baseImagePath}/login/logo`),
+      noorder: getImageByPixelRatio(`${baseImagePath}/offline`)
     }
-  };
+  }
 
   return imageConfigs[type] || {};
 }

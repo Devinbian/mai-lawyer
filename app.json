@@ -17,7 +17,9 @@
     "pages/profile/download/download",
     "pages/profile/history/history",
     "pages/profile/feedback/feedback",
-    "pages/profile/about/about"
+    "pages/profile/about/about",
+    "pages/profile/order/order",
+    "pages/profile/order/refund/refund"
   ],
   "window": {
     "navigationStyle": "custom",

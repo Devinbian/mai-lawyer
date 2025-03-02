@@ -45,26 +45,28 @@ Page({
     }
   },
 
-  // 点击订单项
-  handleOrderTap(e) {
-    if (!this.data.isLogin) {
-      this.handleLogin();
-      return;
-    }
-    // 根据点击项跳转到对应订单列表
-    // TODO: 实现订单列表页面跳转
+  // 处理订单状态点击
+  handleOrderStatusTap(e) {
+    // if (!this.data.isLogin) {
+    //   this.handleLogin();
+    //   return;
+    // }
+    const status = e.currentTarget.dataset.status;
+    wx.navigateTo({
+      url: `/pages/profile/order/order?status=${status}`
+    });
   },
 
   // 点击内容项
   handleContentTap(e) {
     const { type } = e.currentTarget.dataset;
     
-    // if (!this.data.isLogin) {
-    //   wx.navigateTo({
-    //     url: '/pages/login/login'
-    //   });
-    //   return;
-    // }
+    if (!this.data.isLogin) {
+      wx.navigateTo({
+        url: '/pages/login/login'
+      });
+      return;
+    }
 
     switch(type) {
       case 'favorite':

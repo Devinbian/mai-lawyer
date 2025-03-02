@@ -21,19 +21,19 @@
   <view class="card order-card">
     <view class="card-title">我的订单</view>
     <view class="order-list">
-      <view class="order-item" bindtap="handleOrderTap" data-type="wait-pay">
+      <view class="order-item" bindtap="handleOrderStatusTap" data-status="pending">
         <image class="order-icon" src="{{imgUrls.waitpay}}" />
         <text>待支付</text>
       </view>
-      <view class="order-item" bindtap="handleOrderTap" data-type="paid">
+      <view class="order-item" bindtap="handleOrderStatusTap" data-status="paid">
         <image class="order-icon" src="{{imgUrls.paid}}" />
         <text>已支付</text>
       </view>
-      <view class="order-item" bindtap="handleOrderTap" data-type="refund">
+      <view class="order-item" bindtap="handleOrderStatusTap" data-status="refunded">
         <image class="order-icon" src="{{imgUrls.refund}}" />
         <text>已退款</text>
       </view>
-      <view class="order-item" bindtap="handleOrderTap" data-type="all">
+      <view class="order-item" bindtap="handleOrderStatusTap" data-status="all">
         <image class="order-icon" src="{{imgUrls.all}}" />
         <text>全部</text>
       </view>
