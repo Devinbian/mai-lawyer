@@ -96,7 +96,7 @@ Page({
         break;
       case 'contact':
         wx.makePhoneCall({
-          phoneNumber: '400-000-0000', // 替换为实际的客服电话
+          phoneNumber: '021-50280097',
           fail(err) {
             wx.showToast({
               title: '拨号失败',
@@ -106,7 +106,9 @@ Page({
         });
         break;
       case 'about':
-        // TODO: 跳转到关于我们页面
+        wx.navigateTo({
+          url: '/pages/profile/about/about'
+        });
         break;
       case 'account':
         wx.navigateTo({

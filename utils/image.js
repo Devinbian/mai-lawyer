@@ -93,6 +93,9 @@ function getCommonImages(type) {
     documentRead: {
       collectActive: getImageByPixelRatio(`${baseImagePath}/documents/collect-active`),
       collect: getImageByPixelRatio(`${baseImagePath}/documents/collect`),
+    },
+    default: {
+      logo: getImageByPixelRatio(`${baseImagePath}/login/logo`),
     }
   };
 

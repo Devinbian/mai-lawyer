@@ -16,7 +16,8 @@
     "pages/profile/favorite/favorite",
     "pages/profile/download/download",
     "pages/profile/history/history",
-    "pages/profile/feedback/feedback"
+    "pages/profile/feedback/feedback",
+    "pages/profile/about/about"
   ],
   "window": {
     "navigationStyle": "custom",
