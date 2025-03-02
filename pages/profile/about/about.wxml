@@ -1,32 +1,34 @@
-<view class="container">
+<view class="container {{needScroll ? 'need-scroll' : ''}}">
   <bg-titlecenter-nav title="关于我们"></bg-titlecenter-nav>
 
   <view class="about-content">
-    <!-- Logo区域 -->
-    <view class="logo-section">
-      <image class="logo" src="{{imgUrls.logo}}" mode="aspectFit"/>
-      <view class="version">麦小律V1.0.0版本</view>
-    </view>
-
-    <!-- 公司介绍 -->
-    <view class="intro-section">
-      <view class="title">公司介绍：</view>
-      <view class="content">公司汇聚了来自算法科学、电子工程等领域的顶尖人才，他们凭借深厚的专业知识和丰富的行业经验，不断探索技术边界。在人工智能、大数据分析等核心技术上取得了多项突破性进展，产品已应用于金融、医疗、教育等行业，助力各行各业提质增效。使用数字化手段为企业开展合规服务，为用户提供合规咨询服务。我们与多家企业建立了深度合作伙伴关系，共同助力科技创新，为构建和谐社会贡献力量。</view>
-    </view>
-
-    <!-- 联系信息 -->
-    <view class="contact-section">
-      <view class="contact-item">
-        <text class="label">客户电话</text>
-        <text class="value">021-50280097</text>
+    <view class="main-content">
+      <!-- Logo区域 -->
+      <view class="logo-section">
+        <image class="logo" src="{{imgUrls.logo}}" mode="aspectFit"/>
+        <view class="version">麦小律V1.0.0版本</view>
       </view>
-      <view class="contact-item">
-        <text class="label">工作日</text>
-        <text class="value">9:00-17:30</text>
+
+      <!-- 公司介绍 -->
+      <view class="intro-section">
+        <view class="title">公司介绍：</view>
+        <view class="content">公司汇聚了来自算法科学、电子工程等领域的顶尖人才，他们凭借深厚的专业知识和丰富的行业经验，不断探索技术边界。在人工智能、大数据分析等核心技术上取得了多项突破性进展，产品已应用于金融、医疗、教育等行业，助力各行各业提质增效。使用数字化手段为企业开展合规服务，为用户提供合规咨询服务。我们与多家企业建立了深度合作伙伴关系，共同助力科技创新，为构建和谐社会贡献力量。</view>
       </view>
-      <view class="contact-item">
-        <text class="label">客服邮箱</text>
-        <text class="value">d.cmu@ptblemn.nt</text>
+
+      <!-- 联系信息 -->
+      <view class="contact-section">
+        <view class="contact-item">
+          <text class="label">客户电话</text>
+          <text class="value">021-50280097</text>
+        </view>
+        <view class="contact-item">
+          <text class="label">工作日</text>
+          <text class="value">9:00-17:30</text>
+        </view>
+        <view class="contact-item">
+          <text class="label">客服邮箱</text>
+          <text class="value">d.cmu@ptblemn.nt</text>
+        </view>
       </view>
     </view>
 
