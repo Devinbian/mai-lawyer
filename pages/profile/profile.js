@@ -57,12 +57,30 @@ Page({
 
   // 点击内容项
   handleContentTap(e) {
-    if (!this.data.isLogin) {
-      this.handleLogin();
-      return;
+    const { type } = e.currentTarget.dataset;
+    
+    // if (!this.data.isLogin) {
+    //   wx.navigateTo({
+    //     url: '/pages/login/login'
+    //   });
+    //   return;
+    // }
+
+    switch(type) {
+      case 'favorite':
+        wx.navigateTo({
+          url: '/pages/profile/favorite/favorite'
+        });
+        break;
+      case 'download':
+        wx.navigateTo({
+          url: '/pages/profile/download/download'
+        });
+        break;
+      case 'history':
+        // 处理咨询历史
+        break;
     }
-    // 根据点击项跳转到对应内容页面
-    // TODO: 实现内容页面跳转
   },
 
   // 点击功能项

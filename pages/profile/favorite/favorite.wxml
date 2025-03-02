@@ -1,0 +1,34 @@
+<view class="container">
+  <bg-titlecenter-nav title="我的收藏"></bg-titlecenter-nav>
+
+  <!-- 收藏列表 -->
+  <scroll-view 
+    class="favorite-content"
+    scroll-y="true"
+    bindscrolltolower="loadMore"
+    enhanced="true"
+    show-scrollbar="{{false}}"
+  >
+    <view class="favorite-list" wx:if="{{favoriteList.length > 0}}">
+      <view class="favorite-item" wx:for="{{favoriteList}}" wx:key="id" bindtap="handleItemClick" data-id="{{item.id}}">
+        <view class="doc-info">
+          <view class="doc-title" data-id="{{item.id}}">{{item.title}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:elif="{{!isLoading && favoriteList.length === 0}}">
+      <image class="empty-icon" src="{{imgUrls.empty}}" mode="aspectFit"/>
+      <text class="empty-text">暂无收藏内容</text>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="loading-more" wx:if="{{isLoading && favoriteList.length > 0}}">
+      <text>加载中...</text>
+    </view>
+    <view class="no-more" wx:if="{{!hasMore && favoriteList.length > 0}}">
+      <text>没有更多了</text>
+    </view>
+  </scroll-view>
+</view> 

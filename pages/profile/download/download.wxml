@@ -1,0 +1,94 @@
+<view class="container">
+  <bg-titlecenter-nav title="下载记录"></bg-titlecenter-nav>
+
+  <!-- 一级分类 -->
+  <view class="main-tabs">
+    <view 
+      class="main-tab {{downloadStatus === 'completed' ? 'active' : ''}}" 
+      bindtap="switchMainTab" 
+      data-status="completed"
+    >已下载</view>
+    <view 
+      class="main-tab {{downloadStatus === 'downloading' ? 'active' : ''}}" 
+      bindtap="switchMainTab" 
+      data-status="downloading"
+    >下载中</view>
+  </view>
+
+  <!-- 二级分类标签 -->
+  <view class="category-tags">
+    <view 
+      class="tag-item {{currentTab === 'all' ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-tab="all"
+    >全部</view>
+    <view 
+      class="tag-item {{currentTab === 'contract' ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-tab="contract"
+    >合同协议</view>
+    <view 
+      class="tag-item {{currentTab === 'statement' ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-tab="statement"
+    >起诉状</view>
+    <view 
+      class="tag-item {{currentTab === 'reply' ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-tab="reply"
+    >答辩状</view>
+    <view 
+      class="tag-item {{currentTab === 'legal' ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-tab="legal"
+    >法律意见</view>
+    <view 
+      class="tag-item {{currentTab === 'application' ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-tab="application"
+    >申请文书</view>
+    <view 
+      class="tag-item {{currentTab === 'common' ? 'active' : ''}}" 
+      bindtap="switchTab" 
+      data-tab="common"
+    >通用文书</view>
+  </view>
+
+  <!-- 下载列表 -->
+  <scroll-view 
+    class="download-content"
+    scroll-y="true"
+    bindscrolltolower="loadMore"
+    enhanced="true"
+    show-scrollbar="{{false}}"
+  >
+    <view class="download-list" wx:if="{{downloadList.length > 0}}">
+      <view class="download-item" wx:for="{{downloadList}}" wx:key="id">
+        <view class="doc-icon-wrap">
+          <image class="doc-icon" src="{{imgUrls[item.type]}}" mode="aspectFit"/>
+        </view>
+        <view class="doc-info">
+          <view class="doc-title">{{item.title}}</view>
+          <view class="doc-meta">
+            <text class="download-date">下载日期：{{item.date}}</text>
+            <text class="doc-price">{{item.price === 0 ? '免费' : '¥' + item.price}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:elif="{{!isLoading && downloadList.length === 0}}">
+      <image class="empty-icon" src="{{imgUrls.empty}}" mode="aspectFit"/>
+      <text class="empty-text">暂无下载记录</text>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="loading-more" wx:if="{{isLoading && downloadList.length > 0}}">
+      <text>加载中...</text>
+    </view>
+    <view class="no-more" wx:if="{{!hasMore && downloadList.length > 0}}">
+      <text>没有更多了</text>
+    </view>
+  </scroll-view>
+</view> 

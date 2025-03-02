@@ -12,7 +12,9 @@
     "pages/login/login",
     "pages/privacy/privacy",
     "pages/agreement/agreement",
-    "pages/profile/account/account"
+    "pages/profile/account/account",
+    "pages/profile/favorite/favorite",
+    "pages/profile/download/download"
   ],
   "window": {
     "navigationStyle": "custom",
