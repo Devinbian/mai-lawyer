@@ -46,13 +46,16 @@
 
         <view class="input-area" style="{{inputStyle}}">
           <view class="input-box">
-            <input 
+            <textarea 
               class="chat-input" 
               value="{{inputValue}}"
               placeholder="请输入想要问的问题" 
               placeholder-class="input-placeholder"
               adjust-position="{{false}}"
               cursor-spacing="20"
+              auto-height="{{true}}"
+              show-confirm-bar="{{false}}"
+              maxlength="{{500}}"
               bindfocus="onInputFocus"
               bindblur="onInputBlur"
               bindinput="onInput"

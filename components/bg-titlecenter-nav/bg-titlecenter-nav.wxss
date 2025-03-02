@@ -36,7 +36,7 @@
 /* 胶囊按钮 */
 .capsule-btn {
   position: absolute;
-  left: 32rpx;
+  left: 20rpx;
   display: flex;
   align-items: center;
   height: 64rpx;
