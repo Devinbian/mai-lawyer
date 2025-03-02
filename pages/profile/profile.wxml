@@ -1,13 +1,14 @@
 <view class="container">
   <!-- 导航栏 -->
   <main-nav></main-nav>
-
+  <view class="content">
+  
   <!-- 登录注册区域 -->
   <view class="login-section" bindtap="handleLogin">
-    <image class="login-bg" src="/static/images/profile/banner@2x.png" mode="widthFix" />
+    <image class="login-bg" src="{{imgUrls.banner}}" mode="aspectFill" />
     <view class="login-content">
       <view class="avatar-wrap">
-        <image class="avatar" src="{{userInfo.avatarUrl || '/static/images/profile/default-avatar@2x.png'}}" />
+        <image class="avatar" src="{{userInfo.avatarUrl || imgUrls.avatar}}" />
       </view>
       <view class="login-info">
         <view class="login-text">{{isLogin ? userInfo.nickName : '登录注册'}}</view>
@@ -21,19 +22,19 @@
     <view class="card-title">我的订单</view>
     <view class="order-list">
       <view class="order-item" bindtap="handleOrderTap" data-type="wait-pay">
-        <image class="order-icon" src="/static/images/profile/wait-pay@2x.png" />
+        <image class="order-icon" src="{{imgUrls.waitpay}}" />
         <text>待支付</text>
       </view>
       <view class="order-item" bindtap="handleOrderTap" data-type="paid">
-        <image class="order-icon" src="/static/images/profile/paid@2x.png" />
+        <image class="order-icon" src="{{imgUrls.paid}}" />
         <text>已支付</text>
       </view>
       <view class="order-item" bindtap="handleOrderTap" data-type="refund">
-        <image class="order-icon" src="/static/images/profile/refund@2x.png" />
+        <image class="order-icon" src="{{imgUrls.refund}}" />
         <text>已退款</text>
       </view>
       <view class="order-item" bindtap="handleOrderTap" data-type="all">
-        <image class="order-icon" src="/static/images/profile/all@2x.png" />
+        <image class="order-icon" src="{{imgUrls.all}}" />
         <text>全部</text>
       </view>
     </view>
@@ -44,15 +45,15 @@
     <view class="card-title">我的内容</view>
     <view class="content-list">
       <view class="content-item" bindtap="handleContentTap" data-type="favorite">
-        <image class="content-icon" src="/static/images/profile/favorite@2x.png" />
+        <image class="content-icon" src="{{imgUrls.favorite}}" />
         <text>我的收藏</text>
       </view>
       <view class="content-item" bindtap="handleContentTap" data-type="download">
-        <image class="content-icon" src="/static/images/profile/download@2x.png" />
+        <image class="content-icon" src="{{imgUrls.download}}" />
         <text>下载记录</text>
       </view>
       <view class="content-item" bindtap="handleContentTap" data-type="history">
-        <image class="content-icon" src="/static/images/profile/history@2x.png" />
+        <image class="content-icon" src="{{imgUrls.history}}" />
         <text>咨询历史</text>
       </view>
     </view>
@@ -61,24 +62,26 @@
   <!-- 底部功能区 -->
   <view class="bottom-section">
     <view class="function-item" bindtap="handleFunctionTap" data-type="help">
-      <image class="function-icon" src="/static/images/profile/help@2x.png" />
+      <image class="function-icon" src="{{imgUrls.help}}" />
       <text>帮助反馈</text>
-      <image class="arrow" src="/static/images/profile/arrow-right@2x.png" />
+      <image class="arrow" src="{{imgUrls.arrow}}" />
     </view>
     <view class="function-item" bindtap="handleFunctionTap" data-type="contact">
-      <image class="function-icon" src="/static/images/profile/contact@2x.png" />
+      <image class="function-icon" src="{{imgUrls.contact}}" />
       <text>联系我们</text>
-      <image class="arrow" src="/static/images/profile/arrow-right@2x.png" />
+      <image class="arrow" src="{{imgUrls.arrow}}" />
     </view>
     <view class="function-item" bindtap="handleFunctionTap" data-type="about">
-      <image class="function-icon" src="/static/images/profile/about@2x.png" />
+      <image class="function-icon" src="{{imgUrls.about}}" />
       <text>关于我们</text>
-      <image class="arrow" src="/static/images/profile/arrow-right@2x.png" />
+      <image class="arrow" src="{{imgUrls.arrow}}" />
     </view>
     <view class="function-item" bindtap="handleFunctionTap" data-type="logout" wx:if="{{isLogin}}">
-      <image class="function-icon" src="/static/images/profile/logout@2x.png" />
+      <image class="function-icon" src="{{imgUrls.logout}}" />
       <text>退出登录</text>
-      <image class="arrow" src="/static/images/profile/arrow-right@2x.png" />
+      <image class="arrow" src="{{imgUrls.arrow}}" />
     </view>
   </view>
+  </view>
+
 </view>

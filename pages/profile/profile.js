@@ -1,3 +1,4 @@
+const imageUtil = require('../../utils/image.js');
 // pages/profile/profile.js
 Page({
 
@@ -6,23 +7,32 @@ Page({
    */
   data: {
     isLogin: false,
-    userInfo: null
+    userInfo: null,
+    imgUrls: null
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-    this.checkLoginStatus();
+    this.setImagesByPixelRatio();
+    this.getUserInfo();
   },
 
-  // 检查登录状态
-  checkLoginStatus() {
-    const token = wx.getStorageSync('token');
-    const userInfo = wx.getStorageSync('userInfo');
+  // 根据设备像素比选择图片
+  setImagesByPixelRatio() {
     this.setData({
-      isLogin: !!token && !!userInfo,  // 确保token和userInfo都存在
-      userInfo: userInfo || null
+      imgUrls: imageUtil.getCommonImages('profile')
+    });
+  },
+
+  getUserInfo() {
+    const app = getApp();
+    const userInfo = app.globalData.userInfo || wx.getStorageSync('userInfo');
+    const isLogin = !!userInfo;
+    this.setData({
+      userInfo: userInfo || {},
+      isLogin
     });
   },
 

@@ -1,44 +1,67 @@
 .container {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
+  min-height: 100vh;
   height: 100vh;
   background: #F5F7FA;
   box-sizing: border-box;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
   overflow: hidden;
+}
+
+.content {
+  position: absolute;
+  top: 376rpx;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20rpx;
+  box-sizing: border-box;
 }
 
 /* 登录注册区域 */
 .login-section {
-  position: relative;
+  position: fixed;
+  top: 200rpx;
+  left: 20rpx;
+  right: 20rpx;
   width: calc(100% - 40rpx);
-  margin: -40rpx 20rpx -10rpx;
+  height: 180rpx;
   border-radius: 16rpx;
+  background: #FFFFFF;
+  box-sizing: border-box;
   overflow: hidden;
+  z-index: 10;
 }
 
 .login-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  height: auto;
-  display: block;
+  height: 100%;
+  object-fit: cover;
 }
 
 .login-content {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
   left: 0;
   width: 100%;
-  padding: 32rpx;
+  height: 100%;
+  padding: 0 32rpx;
   display: flex;
   align-items: center;
+  z-index: 1;
+  box-sizing: border-box;
 }
 
 .avatar-wrap {
-  width: 92rpx;
-  height: 92rpx;
-  border-radius: 46rpx;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
   overflow: hidden;
   margin-right: 24rpx;
   flex-shrink: 0;
@@ -50,8 +73,8 @@
 }
 
 .avatar {
-  width: 42rpx;
-  height: 52rpx;
+  width: 48rpx;
+  height: 48rpx;
 }
 
 .login-info {
@@ -60,23 +83,23 @@
 
 .login-text {
   font-size: 32rpx;
-  font-weight: bold;
+  font-weight: 500;
   color: #333;
-  margin-bottom: 8rpx;
+  margin-bottom: 4rpx;
 }
 
 .login-desc {
   font-size: 24rpx;
-  color: #666666;
+  color: #999999;
 }
 
 /* 卡片通用样式 */
 .card {
   background: #FFFFFF;
   border-radius: 16rpx;
-  margin: 90rpx 20rpx -100rpx;  /* 增加负margin */
+  margin-bottom: 20rpx;
   padding: 32rpx;
-  width: calc(100% - 40rpx);
+  width: 100%;
   box-sizing: border-box;
 }
 
@@ -89,7 +112,7 @@
 
 /* 订单区域 */
 .order-card {
-  margin-top: 0;  /* 移除额外的margin-top */
+  margin-bottom: 20rpx;
 }
 
 .order-list {
@@ -140,10 +163,10 @@
 /* 底部功能区 */
 .bottom-section {
   background: #FFFFFF;
-  width: calc(100% - 40rpx);
-  margin: 90rpx 20rpx 20rpx;  /* 调整上边距 */
+  width: 100%;
   border-radius: 16rpx;
   box-sizing: border-box;
+  margin-bottom: 20rpx;
 }
 
 .function-item {
@@ -177,8 +200,8 @@
 
 /* 退出登录按钮特殊样式 */
 .function-item[data-type="logout"] {
-  margin-top: 10rpx;  /* 调整为10rpx */
-  color: #FF3B30;  /* 使用警示性的红色 */
+  margin: 20rpx 20rpx;  /* 统一间距 */
+  color: #FF3B30;
 }
 
 .function-item[data-type="logout"] text {

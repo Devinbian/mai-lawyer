@@ -1,11 +1,23 @@
+const imageUtils = require('../../../utils/image.js');
+
 Page({
   data: {
     userInfo: null,
-    navHeight: 0
+    navHeight: 0,
+    imgUrls: null
   },
 
   onLoad() {
     this.getUserInfo();
+    // 根据设备像素比选择合适的图片
+    this.setImagesByPixelRatio();
+  },
+
+  // 根据设备像素比选择图片
+  setImagesByPixelRatio() {
+    this.setData({
+      imgUrls: imageUtils.getCommonImages('profile')
+    });
   },
 
   onNavHeight(e) {
