@@ -1,3 +1,5 @@
+const imageUtils = require('../../utils/image.js');
+
 // pages/experts/experts.js
 Page({
   /**
@@ -133,16 +135,25 @@ Page({
     hasMore: true,
     showLoadingMore: false
   },
+  imgUrls: null,
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+         // 根据设备像素比选择合适的图片
+         this.setImagesByPixelRatio();
     // 保存完整的专家列表
     this.setData({
       allExperts: this.data.experts,
     }, () => {
       this.loadInitialData();
+    });
+  },
+
+  setImagesByPixelRatio() {
+    this.setData({
+      imgUrls: imageUtils.getCommonImages('experts')
     });
   },
 

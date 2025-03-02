@@ -1,3 +1,5 @@
+const imageUtil = require('../../../utils/image.js');
+
 Page({
   data: {
     searchKeyword: '',
@@ -138,11 +140,19 @@ Page({
     currentPage: 1,
     isLoading: false,
     hasMore: true,
-    showLoadingMore: false
+    showLoadingMore: false,
+    imgUrls: null
   },
 
   onLoad() {
+    this.setImagesByPixelRatio();
     this.loadInitialData();
+  },
+
+  setImagesByPixelRatio() {
+    this.setData({
+      imgUrls: imageUtil.getCommonImages('documentList')
+    });
   },
 
   // 加载初始数据

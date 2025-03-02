@@ -1,4 +1,6 @@
 // app.js
+const imageUtil = require('./utils/image.js');
+
 App({
   globalData: {
     userInfo: null,
@@ -7,8 +9,37 @@ App({
   },
 
   onLaunch() {
+    this.setTabBarIcons();
     // 检查登录状态
     this.checkLoginStatus();
+  },
+
+  setTabBarIcons() {
+    const tabBarIcons = imageUtil.getCommonImages('tabBar');
+    
+    wx.setTabBarItem({
+      index: 0,
+      iconPath: tabBarIcons.home,
+      selectedIconPath: tabBarIcons.homeActive
+    });
+    
+    wx.setTabBarItem({
+      index: 1,
+      iconPath: tabBarIcons.expert,
+      selectedIconPath: tabBarIcons.expertActive
+    });
+    
+    wx.setTabBarItem({
+      index: 2,
+      iconPath: tabBarIcons.doc,
+      selectedIconPath: tabBarIcons.docActive
+    });
+    
+    wx.setTabBarItem({
+      index: 3,
+      iconPath: tabBarIcons.profile,
+      selectedIconPath: tabBarIcons.profileActive
+    });
   },
 
   checkLoginStatus() {

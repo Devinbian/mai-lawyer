@@ -1,9 +1,12 @@
+const imageUtil = require('../../../utils/image.js');
+
 Page({
   data: {
     isCollected: false,
     documentId: '',
     documentInfo: null,
-    document: null
+    document: null,
+    imgUrls: null
   },
 
   onLoad(options) {
@@ -15,6 +18,7 @@ Page({
       });
       this.loadDocumentInfo(options.id);
     }
+    this.setImagesByPixelRatio();
   },
 
   // 加载文档信息
@@ -87,6 +91,12 @@ Page({
     wx.showToast({
       title: `跳转到: ${this.data.documentInfo.catalog[index]}`,
       icon: 'none'
+    });
+  },
+
+  setImagesByPixelRatio() {
+    this.setData({
+      imgUrls: imageUtil.getCommonImages('documentRead')
     });
   }
 }); 

@@ -1,3 +1,5 @@
+const imageUtils = require('../../../utils/image.js');
+
 Page({
   data: {
     expert: null,
@@ -41,8 +43,9 @@ Page({
       }
     ]
   },
-
+  imgUrls: null,
   onLoad(options) {
+    this.setImagesByPixelRatio();
     if (options.expert) {
       try {
         const expertInfo = JSON.parse(decodeURIComponent(options.expert));
@@ -64,6 +67,12 @@ Page({
         });
       }
     }
+  },
+
+  setImagesByPixelRatio() {
+    this.setData({
+      imgUrls: imageUtils.getCommonImages('expertsDetail')
+    });
   },
 
   // 切换简介展开/收起状态

@@ -1,8 +1,8 @@
 <view class="container">
   <main-nav></main-nav>
   <view class="exp-title">
-    <image class="title-name" src="/static/images/experts/title-name@2x.png" mode="heightFix"></image>
-    <image class="title-avatar" src="/static/images/experts/title-bg@2x.png" mode="aspectFill"></image>
+    <image class="title-name" src="{{imgUrls.titleName}}" mode="heightFix"></image>
+    <image class="title-avatar" src="{{imgUrls.titleBg}}" mode="aspectFill"></image>
   </view>
   <view class="experts-list">
     <view class="expert-item" 
@@ -11,7 +11,7 @@
       bindtap="navigateToDetail" 
       data-expert="{{item}}"
     >
-      <image class="expert-bg" src="/static/images/experts/expert-bg.png" mode="aspectFill"></image>
+      <image class="expert-bg" src="{{imgUrls.expertBg}}" mode="aspectFill"></image>
       <view class="expert-header">
         <image class="expert-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
         <view class="expert-info">
@@ -35,8 +35,8 @@
           <text>电话咨询</text>
         </button>
         <button class="action-btn online" catchtap="handleOnlineConsult" data-id="{{item.id}}">
-          <image class="btn-bg" src="/static/images/experts/msg-bg@2x.png" mode="adjust"></image>
-          <image class="btn-icon" src="/static/images/experts/msg@2x.png"></image>
+          <image class="btn-bg" src="{{imgUrls.btnBg}}" mode="adjust"></image>
+          <image class="btn-icon" src="{{imgUrls.btnIcon}}"></image>
           <text>在线咨询</text>
         </button>
       </view>

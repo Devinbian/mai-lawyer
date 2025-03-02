@@ -30,27 +30,19 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "首页",
-        "iconPath": "/static/images/home@2x.png",
-        "selectedIconPath": "/static/images/home-active@2x.png"
+        "text": "首页"
       },
       {
         "pagePath": "pages/experts/experts",
-        "text": "专家库",
-        "iconPath": "/static/images/expert@2x.png",
-        "selectedIconPath": "/static/images/expert-active@2x.png"
+        "text": "专家库"
       },
       {
         "pagePath": "pages/documents/documents",
-        "text": "文本库",
-        "iconPath": "/static/images/doc@2x.png",
-        "selectedIconPath": "/static/images/doc-active@2x.png"
+        "text": "文本库"
       },
       {
         "pagePath": "pages/profile/profile",
-        "text": "我的",
-        "iconPath": "/static/images/profile@2x.png",
-        "selectedIconPath": "/static/images/profile-active@2x.png"
+        "text": "我的"
       }
     ]
   },

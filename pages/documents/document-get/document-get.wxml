@@ -8,10 +8,10 @@
         <text>文档信息</text>
       </view>
       <view class="doc-info">
-        <image class="doc-bg" src="/static/images/documents/title-bg@2x.png" mode="aspectFill"></image>
+        <image class="doc-bg" src="{{imgUrls.titleBg}}" mode="aspectFill"></image>
         <view class="doc-content">
           <image class="doc-type-icon" 
-            src="{{document.type ? '/static/images/documents/' + document.type + '@2x.png' : '/static/images/documents/word@2x.png'}}"
+            src="{{imgUrls[document.type]}}"
             mode="aspectFit"
           ></image>
           <view class="doc-title">{{document.title}}</view>
@@ -22,7 +22,7 @@
     <!-- 推荐服务区域 -->
     <view class="section">
       <view class="section-title">
-        <image class="title-icon" src="/static/images/documents/service@2x.png" mode="aspectFit"></image>
+        <image class="title-icon" src="{{imgUrls.service}}" mode="aspectFit"></image>
         <text>推荐专家审核服务</text>
       </view>
       <view class="service-content">
@@ -30,7 +30,7 @@
         <view class="service-action">
           <view class="service-btn" bindtap="showServiceDetail">
             <text>前往专家审核</text>
-            <image class="arrow-icon" src="/static/images/documents/arrow@2x.png" mode="aspectFit"></image>
+            <image class="arrow-icon" src="{{imgUrls.arrow}}" mode="aspectFit"></image>
           </view>
         </view>
       </view>

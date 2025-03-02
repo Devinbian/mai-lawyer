@@ -1,3 +1,5 @@
+const imageUtils = require('../../../utils/image.js');
+
 Page({
   data: {
     expert: null,
@@ -11,6 +13,7 @@ Page({
     keyboardHeight: 0,
     isKeyboardShow: false
   },
+  imgUrls: null,
 
   onLoad(options) {
     if (options.expert) {
@@ -18,7 +21,7 @@ Page({
       // 添加在线状态属性，这里应该从后端获取实际的在线状态
       expert.isOnline = true; // 暂时默认在线
       this.setData({ expert });
-      
+      this.setImagesByPixelRatio();
       // 模拟一些初始消息
       this.setData({
         messages: [
@@ -63,6 +66,12 @@ Page({
     } else {
       this.setData({ userInfo });
     }
+  },
+
+  setImagesByPixelRatio() {
+    this.setData({
+      imgUrls: imageUtils.getCommonImages('index')
+    });
   },
 
   // 输入框获得焦点

@@ -3,8 +3,8 @@
   
   <!-- 平台产品标题 -->
   <view class="platform-title">
-    <image class="title-name" src="/static/images/documents/title-name@2x.png" mode="heightFix"></image>
-    <image class="title-avatar" src="/static/images/documents/title-bg@2x.png" mode="scaleToFill"></image>
+    <image class="title-name" src="{{imgUrls.titleName}}" mode="heightFix"></image>
+    <image class="title-avatar" src="{{imgUrls.titleBg}}" mode="scaleToFill"></image>
   </view>
 
   <!-- 文档类型列表 -->
@@ -21,7 +21,7 @@
             <view class="doc-name">{{item.name}}</view>
             <view class="doc-desc">{{item.desc}}</view>
           </view>
-          <image class="doc-icon" src="{{item.icon}}" mode="aspectFill"></image>
+          <image class="doc-icon" src="{{imgUrls[item.iconKey]}}" mode="aspectFill"></image>
         </view>
       </view>
       <view class="doc-bottom">
@@ -29,5 +29,34 @@
         <view class="bottom-count">{{item.count}}{{item.name === '法律意见' ? '条' : '份'}}</view>
       </view>
     </view>
+  </view>
+
+  <!-- 文档列表 -->
+  <view class="document-list" wx:if="{{documents.length > 0}}">
+    <view class="document-item" wx:for="{{documents}}" wx:key="id">
+      <view class="doc-icon-wrap">
+        <image class="doc-icon" src="{{item.type === 'word' ? imgUrls.word : imgUrls.pdf}}" />
+      </view>
+      <view class="doc-info">
+        <view class="doc-title">{{item.title}}</view>
+        <view class="doc-desc">{{item.description}}</view>
+        <view class="doc-meta">
+          <text class="doc-date">{{item.date}}</text>
+          <text class="doc-size">{{item.size}}</text>
+        </view>
+      </view>
+      <view class="doc-actions">
+        <image class="action-icon" src="{{imgUrls.download}}" bindtap="handleDownload" data-id="{{item.id}}" />
+        <image class="action-icon" src="{{imgUrls.share}}" bindtap="handleShare" data-id="{{item.id}}" />
+        <image class="action-icon" src="{{item.isFavorite ? imgUrls.favorited : imgUrls.favorite}}" bindtap="handleFavorite" data-id="{{item.id}}" />
+        <image class="action-icon" src="{{imgUrls.preview}}" bindtap="handlePreview" data-id="{{item.id}}" />
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:else>
+    <image class="empty-icon" src="{{imgUrls.empty}}" />
+    <text class="empty-text">暂无文档</text>
   </view>
 </view>

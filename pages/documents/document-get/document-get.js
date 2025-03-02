@@ -1,9 +1,12 @@
+const imageUtil = require('../../../utils/image.js');
+
 Page({
   data: {
     document: null,
     selectedService: false,
     totalPrice: 0,
-    servicePrice: 30 // 专家服务价格
+    servicePrice: 30, // 专家服务价格
+    imgUrls: null
   },
 
   onLoad(options) {
@@ -25,6 +28,13 @@ Page({
         });
       }
     }
+    this.setImagesByPixelRatio();
+  },
+
+  setImagesByPixelRatio() {
+    this.setData({
+      imgUrls: imageUtil.getCommonImages('documentGet')
+    });
   },
 
   // 切换专家服务

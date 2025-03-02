@@ -32,7 +32,7 @@
   <view class="bottom-bar">
     <view class="collect-btn" bindtap="toggleCollect">
       <image class="collect-icon" 
-        src="/static/images/documents/{{isCollected ? 'collect-active' : 'collect'}}@2x.png" 
+        src="{{isCollected ? imgUrls.collectActive : imgUrls.collect}}" 
         mode="aspectFit"
       ></image>
       <text>{{isCollected ? '已收藏' : '收藏'}}</text>

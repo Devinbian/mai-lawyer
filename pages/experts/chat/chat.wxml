@@ -59,7 +59,7 @@
         />
       </view>
       <button class="send-btn {{inputValue ? 'active' : ''}}" bindtap="sendMessage">
-        <image class="send-icon" src="/static/images/index/send@2x.png" mode="widthFix" />
+        <image class="send-icon" src="{{imgUrls.sendIcon}}" mode="widthFix" />
       </button>
     </view>
   </view>

@@ -1,4 +1,6 @@
 // pages/documents/documents.js
+const imageUtil = require('../../utils/image.js');
+
 Page({
 
   /**
@@ -9,53 +11,54 @@ Page({
       {
         id: 1,
         name: '合同协议',
-        icon: '/static/images/documents/contract@2x.png',
+        iconKey: 'contract',
         count: 1240,
         desc: '专业/安全'
       },
       {
         id: 2,
         name: '起诉状',
-        icon: '/static/images/documents/lawsuit@2x.png',
+        iconKey: 'lawsuit',
         count: 86,
         desc: '简洁/高效'
       },
       {
         id: 3,
         name: '答辩状',
-        icon: '/static/images/documents/defense@2x.png',
+        iconKey: 'defense',
         count: 126,
         desc: '简洁/高效'
       },
       {
         id: 4,
         name: '法律意见',
-        icon: '/static/images/documents/legal-opinion@2x.png',
+        iconKey: 'legalOpinion',
         count: 2486,
         desc: '简洁/高效'
       },
       {
         id: 5,
         name: '申请文书',
-        icon: '/static/images/documents/application@2x.png',
+        iconKey: 'application',
         count: 40,
         desc: '个人/单位'
       },
       {
         id: 6,
         name: '通用文书',
-        icon: '/static/images/documents/general@2x.png',
+        iconKey: 'general',
         count: 2240,
         desc: '广泛/通用'
       }
-    ]
+    ],
+    imgUrls: null
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-
+    this.setImagesByPixelRatio();
   },
 
   /**
@@ -122,5 +125,11 @@ Page({
         }
       });
     }
+  },
+
+  setImagesByPixelRatio() {
+    this.setData({
+      imgUrls: imageUtil.getCommonImages('documents')
+    });
   }
 })

@@ -3,7 +3,7 @@
   
   <!-- 律师基本信息 -->
   <view class="lawyer-info">
-    <image class="lawyer-bg" src="/static/images/experts/expert-bg@2x.png" mode="widthFix"></image>
+    <image class="lawyer-bg" src="{{imgUrls.expertBg}}" mode="widthFix"></image>
     <view class="lawyer-header">
       <image class="lawyer-avatar" src="{{expert.avatar}}" mode="aspectFill"></image>
       <view class="lawyer-basic">
@@ -58,7 +58,7 @@
     <view class="service-list">
       <view class="service-item" bindtap="handleTextConsult">
         <view class="service-left">
-          <image class="service-icon" src="/static/images/experts/chat@2x.png" mode="aspectFit"></image>
+          <image class="service-icon" src="{{imgUrls.chat}}" mode="aspectFit"></image>
           <view class="service-info">
             <text class="service-name">图文咨询</text>
             <text class="service-desc">通过图文与律师在线沟通</text>
@@ -69,7 +69,7 @@
 
       <view class="service-item">
         <view class="service-left">
-          <image class="service-icon" src="/static/images/experts/phone@2x.png" mode="aspectFit"></image>
+          <image class="service-icon" src="{{imgUrls.phone}}" mode="aspectFit"></image>
           <view class="service-info">
             <text class="service-name">电话咨询</text>
             <text class="service-desc">高效沟通解决问题，便捷服务</text>
@@ -80,7 +80,7 @@
 
       <view class="service-item">
         <view class="service-left">
-          <image class="service-icon" src="/static/images/experts/meeting@2x.png" mode="aspectFit"></image>
+          <image class="service-icon" src="{{imgUrls.meeting}}" mode="aspectFit"></image>
           <view class="service-info">
             <text class="service-name">见面咨询</text>
             <text class="service-desc">当面沟通</text>
@@ -91,7 +91,7 @@
 
       <view class="service-item">
         <view class="service-left">
-          <image class="service-icon" src="/static/images/experts/case@2x.png" mode="aspectFit"></image>
+          <image class="service-icon" src="{{imgUrls.case}}" mode="aspectFit"></image>
           <view class="service-info">
             <text class="service-name">代理诉讼案</text>
             <text class="service-desc">低成本起诉（待写诉状）提供方案，高效</text>
@@ -102,7 +102,7 @@
 
       <view class="service-item">
         <view class="service-left">
-          <image class="service-icon" src="/static/images/experts/document@2x.png" mode="aspectFit"></image>
+          <image class="service-icon" src="{{imgUrls.document}}" mode="aspectFit"></image>
           <view class="service-info">
             <text class="service-name">律师函</text>
             <text class="service-desc">专业人员办理</text>

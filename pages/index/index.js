@@ -1,3 +1,5 @@
+
+const imageUtils = require('../../utils/image.js');
 // index.js
 const defaultAvatarUrl =
   "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
@@ -19,10 +21,12 @@ Page({
     isKeyboardShow: false,
     scrollToView: "",
     messageList: [], // 消息列表
+    imgUrls: null,
   },
 
   onLoad: function () {
-    console.warn("页面加载 - 测试日志");
+        // 根据设备像素比选择合适的图片
+        this.setImagesByPixelRatio();
 
     // 直接尝试获取组件
     const nav = this.selectComponent("#customNav");
@@ -61,6 +65,13 @@ Page({
   onShow: function () {
     console.log("页面show");
   },
+
+    // 根据设备像素比选择图片
+    setImagesByPixelRatio() {
+      this.setData({
+        imgUrls: imageUtils.getCommonImages('index')
+      });
+    },
 
   // 检查登录状态
   checkLogin() {

@@ -1,18 +1,18 @@
 <!--index.wxml-->
 <view class="container-bg">
   <main-nav></main-nav>
-  <image class="container-bg-image" src="/static/images/index/container-bg@2x.png" mode="widthFix" />
+  <image class="container-bg-image" src="{{imgUrls.containerBg}}" mode="widthFix" />
   <view class="container">
     <!-- 固定不动的顶部区域 -->
     <view class="fixed-top">
       <view class="banner">
-        <image class="banner-title" src="/static/images/index/banner-title@2x.png" mode="widthFix" />  
+        <image class="banner-title" src="{{imgUrls.bannerTitle}}" mode="widthFix" />  
       </view>
     </view>
     
     <!-- 可滚动的聊天区域 -->
     <view class="chat-area {{isKeyboardShow ? 'keyboard-show' : ''}}">
-      <image class="chat-bg" src="/static/images/index/chat-content-bg.png" mode="widthFix" />
+      <image class="chat-bg" src="{{imgUrls.chatContentBg}}" mode="widthFix" />
       <view class="chat-container">
         <scroll-view 
           id="scrollView"
@@ -60,7 +60,7 @@
             />
           </view>
           <button class="send-btn" bindtap="sendMessage">
-            <image class="send-icon" src="/static/images/index/send@2x.png" mode="widthFix" />
+            <image class="send-icon" src="{{imgUrls.sendIcon}}" mode="widthFix" />
           </button>
         </view>
       </view>
