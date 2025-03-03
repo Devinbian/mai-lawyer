@@ -1,0 +1,78 @@
+<view class="container">
+  <bg-titlecenter-nav title="取消订单"></bg-titlecenter-nav>
+
+  <view class="cancel-header">
+    <image class="header-bg" src="{{imgUrls.ordercancelbanner}}" mode="aspectFill"></image>
+    <view class="header-text">
+      <text class="title">订单已取消</text>
+      <text class="desc">订单取消成功，欢迎您再次购买</text>
+    </view>
+    <image class="cancel-icon" src="{{imgUrls.all}}" mode="aspectFit"></image>
+  </view>
+
+  <view class="service-card">
+    <image class="card-bg" src="{{imgUrls.msgbanner}}" mode="aspectFill"></image>
+    <view class="service-type">
+      <image class="service-icon" src="{{imgUrls.ordertext}}"></image>
+      <text class="service-title">图文咨询服务</text>
+      <text class="price">¥ {{refundAmount}}</text>
+    </view>
+
+    <view class="lawyer-info">
+      <image class="avatar" src="https://imgapi.cn/api.php?fl=dongman&gs=images" mode="aspectFill"></image>
+      <view class="lawyer-detail">
+        <view class="name-title">
+          <text class="name">{{lawyer}}</text>
+          <text class="title">上海（资深律师事务所）主任</text>
+        </view>
+      </view>
+      <view class="service-time">
+        <text class="time">30分钟（律师开始接答计算时长）：8:30-18:00（春节假日）</text>
+      </view>
+    </view>
+
+    <view class="service-features">
+      <view class="feature-item">
+        <image src="{{imgUrls.paid}}"></image>
+        <text>深度沟通，提供专业解答</text>
+      </view>
+      <view class="feature-item">
+        <image src="{{imgUrls.paid}}"></image>
+        <text>服务时间内不限电话和次数</text>
+      </view>
+      <view class="feature-item">
+        <image src="{{imgUrls.paid}}"></image>
+        <text>服务有保障，未服务可退款</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="order-info">
+    <text class="section-title">订单信息：</text>
+    <view class="info-item">
+      <text class="label">订单编号：</text>
+      <text class="value">{{orderId}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">下单时间：</text>
+      <text class="value">{{orderTime}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">取消时间：</text>
+      <text class="value">{{cancelTime}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">服务律师：</text>
+      <text class="value">{{lawyer}}</text>
+    </view>
+    <view class="info-item">
+      <text class="label">取消原因：</text>
+      <text class="value">{{cancelReason}}</text>
+    </view>
+  </view>
+
+  <view class="btn-group">
+    <button class="btn delete" bindtap="deleteOrder">删除订单</button>
+    <button class="btn buy-again" bindtap="buyAgain">再次购买</button>
+  </view>
+</view> 

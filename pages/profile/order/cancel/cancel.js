@@ -6,11 +6,9 @@ Page({
     orderTime: "",
     cancelTime: "",
     lawyer: "",
-    refundDesc: "",
+    cancelReason: "",
     refundAmount: "",
-    refundTime: "",
     imgUrls: null,
-    refundStatus: 2, // 1: 提交申请, 2: 正在处理, 3: 退款成功
   },
 
   onLoad(options) {
@@ -23,10 +21,8 @@ Page({
         orderTime: "2025-02-07 14:00:03",
         cancelTime: "2025-02-07 14:00:03",
         lawyer: "雷军",
-        refundDesc: "这是一条退款说明，最多显示两行",
+        cancelReason: "系统自动取消",
         refundAmount: "64",
-        refundTime: "2025-02-07 14:00:03",
-        refundStatus: options.status ? parseInt(options.status) : 2,
       });
     }
   },
@@ -48,6 +44,29 @@ Page({
   goToHome() {
     wx.switchTab({
       url: "/pages/index/index",
+    });
+  },
+
+  // 删除订单
+  deleteOrder() {
+    wx.showModal({
+      title: "提示",
+      content: "确定要删除该订单吗？",
+      success: (res) => {
+        if (res.confirm) {
+          // TODO: 调用删除订单接口
+          wx.navigateBack({
+            delta: 1,
+          });
+        }
+      },
+    });
+  },
+
+  // 再次购买
+  buyAgain() {
+    wx.navigateTo({
+      url: "/pages/service/detail/detail",
     });
   },
 });

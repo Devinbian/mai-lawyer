@@ -20,7 +20,8 @@
     "pages/profile/about/about",
     "pages/profile/order/order",
     "pages/profile/order/refund/refund",
-    "pages/profile/order/refund-success/refund-success"
+    "pages/profile/order/refund-success/refund-success",
+    "pages/profile/order/cancel/cancel"
   ],
   "window": {
     "navigationStyle": "custom",

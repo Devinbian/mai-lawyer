@@ -2,6 +2,6 @@
   "usingComponents": {
     "bg-titlecenter-nav": "/components/bg-titlecenter-nav/bg-titlecenter-nav"
   },
-  "navigationBarTitleText": "退款详情",
+  "navigationBarTitleText": "取消订单",
   "navigationStyle": "custom"
 }

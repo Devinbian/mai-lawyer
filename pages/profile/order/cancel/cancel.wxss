@@ -1,0 +1,276 @@
+.container {
+  min-height: 100vh;
+  background-color: #F3F4F6;
+  box-sizing: border-box;
+  padding: 0;
+  position: relative;
+}
+
+.cancel-header {
+  position: absolute;
+  top: 180rpx;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  background: #fff;
+  height: 176rpx;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  padding-left: 50rpx;
+}
+
+.header-text .title {
+  font-size: 32rpx;
+  color: rgba(51, 51, 51, 1);
+  font-weight: bold;
+  margin-bottom: 16rpx;
+}
+
+.header-text .desc {
+  font-size: 20rpx;
+  color: rgba(170, 170, 170, 1);
+}
+
+.cancel-icon {
+  width: 120rpx;
+  height: 120rpx;
+  position: relative;
+  z-index: 2;
+  padding-right: 50rpx;
+}
+
+.service-card {
+  position: absolute;
+  top: 380rpx;
+  left: 32rpx;
+  right: 32rpx;
+  background: #fff;
+  border-radius: 8rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+.card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  border-radius: 8rpx;
+}
+
+.service-type {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.service-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 12rpx;
+}
+
+.service-type text {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+}
+
+.service-type .price {
+  margin-left: auto;
+  color: #333;
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.lawyer-info {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 32rpx 10rpx;
+  border-top: 2rpx solid #F3F4F6;
+  border-bottom: 2rpx solid #F3F4F6;
+}
+
+.lawyer-info .avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  margin-right: 24rpx;
+}
+
+.lawyer-detail {
+  flex: 1;
+}
+
+.name-title {
+  margin-bottom: 12rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.name-title .name {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.name-title .title {
+  font-size: 24rpx;
+  color: #6F737C;
+  line-height: 1.5;
+}
+
+.service-time {
+  width: 100%;
+  padding-left: 10rpx;
+  margin-top: 16rpx;
+  background: rgba(255, 170, 0, 0.10);
+}
+
+.service-time .time {
+  font-size: 20rpx;
+  color: #FF8C00;
+  line-height: 50rpx;
+}
+
+.service-features {
+  position: relative;
+  z-index: 2;
+  padding-top: 32rpx;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.feature-item:last-child {
+  margin-bottom: 0;
+}
+
+.feature-item image {
+  width: 27rpx;
+  height: 27rpx;
+  margin-right: 12rpx;
+}
+
+.feature-item text {
+  font-size: 24rpx;
+  color: rgba(51, 51, 51, 1);
+}
+
+.order-info {
+  position: absolute;
+  top: 950rpx;
+  left: 32rpx;
+  right: 32rpx;
+  background: #fff;
+  border-radius: 8rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  z-index: 2;
+}
+
+.section-title {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 32rpx;
+  display: block;
+  border-bottom: 2rpx solid #F3F4F6;
+  padding: 0 0 20rpx 0;
+  text-align: left;
+}
+
+.info-item {
+  display: flex;
+  margin-bottom: 20rpx;
+  align-items: flex-start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+}
+
+.info-item .label {
+  color: #666;
+  font-size: 28rpx;
+  width: 140rpx;
+  flex-shrink: 0;
+  text-align: left;
+}
+
+.info-item .value {
+  color: #333;
+  font-size: 28rpx;
+  flex: 1;
+  text-align: left;
+  padding-left: 20rpx;
+}
+
+.btn-group {
+  position: fixed;
+  bottom: 10rpx;
+  left: 0;
+  right: 0;
+  padding: 32rpx;
+  display: flex;
+  gap: 24rpx;
+  z-index: 3;
+  background: #fff;
+  justify-content: flex-end;
+}
+
+.btn {
+  height: 80rpx;
+  border-radius: 88rpx;
+  font-size: 32rpx;
+  line-height: 80rpx;
+  text-align: right;
+  padding: 0;
+  margin: 0;
+  padding: 0 40rpx;
+}
+
+.btn.delete {
+  background: #fff;
+  color: #4E5969;
+  border: 2rpx solid #EDEEF0;
+}
+
+.btn.buy-again {
+  background: rgba(0, 123, 255, 1);
+  color: #fff;
+} 

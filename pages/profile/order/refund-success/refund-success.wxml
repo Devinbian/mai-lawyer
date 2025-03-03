@@ -1,19 +1,24 @@
 <view class="container">
-  <bg-titlecenter-nav title="退款成功"></bg-titlecenter-nav>
+  <bg-titlecenter-nav title="退款详情"></bg-titlecenter-nav>
 
   <view class="progress-section">
     <image class="banner-img" src="{{imgUrls.refundbanner}}" mode="widthFix"></image>
     <view class="progress-bar">
       <view class="progress-item">
-        <view class="progress-dot active"></view>
-        <text class="progress-label active">提交申请</text>
+        <view class="progress-dot {{refundStatus >= 2 ? 'finished' : (refundStatus === 1 ? 'active' : '')}}"></view>
+        <text class="progress-label">提交申请</text>
       </view>
-      <view class="progress-line active"></view>
+      <view class="progress-line {{refundStatus >= 2 ? 'finished' : (refundStatus === 1 ? 'active' : '')}}"></view>
       <view class="progress-item">
-        <view class="progress-dot active check">
-          <view class="check-icon"></view>
+        <view class="progress-dot {{refundStatus === 2 ? 'active' : (refundStatus === 3 ? 'finished' : '')}}"></view>
+        <text class="progress-label">正在处理</text>
+      </view>
+      <view class="progress-line {{refundStatus === 2 ? 'active' : (refundStatus === 3 ? 'finished' : '')}}"></view>
+      <view class="progress-item">
+        <view class="progress-dot {{refundStatus === 3 ? 'active check' : ''}}">
+          <view class="check-icon" wx:if="{{refundStatus === 3}}"></view>
         </view>
-        <text class="progress-label active">退款到账</text>
+        <text class="progress-label">退款成功</text>
       </view>
     </view>
   </view>
@@ -22,9 +27,11 @@
     <view class="success-status">
       <view class="status-text">
         <view class="status-dot"></view>
-        <text>退款成功</text>
+        <text>{{refundStatus === 1 ? '您已成功发起退款申请' : refundStatus === 2 ? '您已成功发起退款申请，请耐心等待商家处理' : '退款成功'}}</text>
       </view>
-      <view class="status-desc">成功退款 <text class="amount">{{refundAmount}}</text> 元，已原路退还至您的支付账户</view>
+      <view class="status-desc" wx:if="{{refundStatus === 1}}">请耐心等待商家处理</view>
+      <view class="status-desc" wx:elif="{{refundStatus === 2}}">如果商家拒绝，您可以修改退款申请后再次发起，商家会重新处理</view>
+      <view class="status-desc" wx:else>成功退款 <text class="amount">{{refundAmount}}</text> 元，已原路退还至您的支付账户</view>
       <text class="status-time">{{refundTime}}</text>
     </view>
 

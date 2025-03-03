@@ -48,6 +48,13 @@
   margin-top: 100rpx;
   padding: 20rpx;
   height: calc(100vh - 280rpx);
+  display: flex;
+  flex-direction: column;
+}
+
+.order-list-content {
+  flex: 1;
+  overflow: auto;
 }
 
 .order-item {
@@ -92,6 +99,10 @@
 
 .order-status.paid {
   color: #999;
+}
+
+.order-status.refunding {
+  color: rgba(243, 78, 78, 1);
 }
 
 .order-status.refunded {
@@ -139,10 +150,52 @@
   border-top: 1rpx solid #F3F4F6;
 }
 
+.dropdown {
+  position: relative;
+  margin-right: auto;
+}
+
 .more {
   font-size: 28rpx;
-  color: rgba(170, 170, 170, 1);
-  margin-right: auto;
+  color: #666666;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #FFFFFF;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+  border-radius: 8rpx;
+  min-width: 160rpx;
+  z-index: 100;
+  display: none;
+  margin-top: 10rpx;
+}
+
+.dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -16rpx;
+  left: 20rpx;
+  border: 8rpx solid transparent;
+  border-bottom-color: #FFFFFF;
+  filter: drop-shadow(0 -2rpx 2rpx rgba(0, 0, 0, 0.1));
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-item {
+  padding: 20rpx 32rpx;
+  font-size: 28rpx;
+  color: #333;
+  white-space: nowrap;
+}
+
+.dropdown-item:active {
+  background-color: #F6F7F9;
 }
 
 .action-btn {
@@ -177,9 +230,12 @@
 }
 
 .action-btn.delete {
+  margin-right: auto;
+  margin-left: 0;
   color: #666;
   background: #fff;
-  border: 2rpx solid #EDEEF0;
+  border: none;
+  padding: 0;
 }
 
 .action-btn.refund {
@@ -206,4 +262,10 @@
 .empty-state text {
   font-size: 28rpx;
   color: #999;
+}
+
+.safe-area-inset-bottom {
+  height: constant(safe-area-inset-bottom);
+  height: env(safe-area-inset-bottom);
+  background-color: #F6F7F9;
 } 
