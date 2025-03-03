@@ -4,7 +4,7 @@
  * @returns {string} - 返回适配当前设备的图片路径
  */
 function getImageByPixelRatio(basePath) {
-  const pixelRatio = wx.getSystemInfoSync().pixelRatio;
+  const pixelRatio = wx.getWindowInfo().pixelRatio;
   const suffix = pixelRatio >= 2 ? "@2x" : "";
   return `${basePath}${suffix}.png`;
 }
@@ -32,6 +32,7 @@ function getCommonImages(type) {
       avatar: getImageByPixelRatio(`${baseImagePath}/profile/default-avatar`),
       arrow: getImageByPixelRatio(`${baseImagePath}/profile/arrow-right`),
       banner: getImageByPixelRatio(`${baseImagePath}/profile/banner`),
+      service: getImageByPixelRatio(`${baseImagePath}/profile/service`),
       help: getImageByPixelRatio(`${baseImagePath}/profile/help`),
       contact: getImageByPixelRatio(`${baseImagePath}/profile/contact`),
       about: getImageByPixelRatio(`${baseImagePath}/profile/about`),
@@ -54,6 +55,11 @@ function getCommonImages(type) {
         `${baseImagePath}/profile/ordercancel-banner`,
       ),
       msgbanner: getImageByPixelRatio(`${baseImagePath}/profile/msgbanner`),
+      support: getImageByPixelRatio(`${baseImagePath}/profile/support`),
+      shield: getImageByPixelRatio(`${baseImagePath}/profile/shield`),
+      ordercanceltitle: getImageByPixelRatio(
+        `${baseImagePath}/profile/ordercanceltitle`,
+      ),
     },
     index: {
       containerBg: getImageByPixelRatio(`${baseImagePath}/index/container-bg`),
@@ -105,12 +111,16 @@ function getCommonImages(type) {
       word: getImageByPixelRatio(`${baseImagePath}/documents/word`),
       pdf: getImageByPixelRatio(`${baseImagePath}/documents/pdf`),
       excel: getImageByPixelRatio(`${baseImagePath}/documents/excel`),
+      ring: getImageByPixelRatio(`${baseImagePath}/profile/ring`),
     },
     documentRead: {
       collectActive: getImageByPixelRatio(
         `${baseImagePath}/documents/collect-active`,
       ),
       collect: getImageByPixelRatio(`${baseImagePath}/documents/collect`),
+      collectActive: getImageByPixelRatio(
+        `${baseImagePath}/documents/collect-active`,
+      ),
     },
     default: {
       logo: getImageByPixelRatio(`${baseImagePath}/login/logo`),

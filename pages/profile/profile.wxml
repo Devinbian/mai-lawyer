@@ -61,6 +61,11 @@
 
   <!-- 底部功能区 -->
   <view class="bottom-section">
+    <view class="function-item" bindtap="handleFunctionTap" data-type="service">
+      <image class="function-icon" src="{{imgUrls.support}}" />
+      <text>人工客服</text>
+      <image class="arrow" src="{{imgUrls.arrow}}" />
+    </view>
     <view class="function-item" bindtap="handleFunctionTap" data-type="help">
       <image class="function-icon" src="{{imgUrls.help}}" />
       <text>帮助反馈</text>

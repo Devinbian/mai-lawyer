@@ -1,5 +1,4 @@
-
-const imageUtils = require('../../utils/image.js');
+const imageUtils = require("../../utils/image.js");
 // index.js
 const defaultAvatarUrl =
   "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
@@ -22,11 +21,12 @@ Page({
     scrollToView: "",
     messageList: [], // 消息列表
     imgUrls: null,
+    navBarHeight: 44,
   },
 
   onLoad: function () {
-        // 根据设备像素比选择合适的图片
-        this.setImagesByPixelRatio();
+    // 根据设备像素比选择合适的图片
+    this.setImagesByPixelRatio();
 
     // 直接尝试获取组件
     const nav = this.selectComponent("#customNav");
@@ -52,9 +52,11 @@ Page({
       });
     }
 
-    const systemInfo = wx.getSystemInfoSync();
+    // 获取窗口信息
+    const windowInfo = wx.getWindowInfo();
     this.setData({
-      statusBarHeight: systemInfo.statusBarHeight,
+      statusBarHeight: windowInfo.statusBarHeight,
+      navBarHeight: windowInfo.navigationBarHeight || 44,
     });
   },
 
@@ -66,12 +68,12 @@ Page({
     console.log("页面show");
   },
 
-    // 根据设备像素比选择图片
-    setImagesByPixelRatio() {
-      this.setData({
-        imgUrls: imageUtils.getCommonImages('index')
-      });
-    },
+  // 根据设备像素比选择图片
+  setImagesByPixelRatio() {
+    this.setData({
+      imgUrls: imageUtils.getCommonImages("index"),
+    });
+  },
 
   // 检查登录状态
   checkLogin() {

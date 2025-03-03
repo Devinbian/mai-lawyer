@@ -3,7 +3,7 @@
   <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
   <view class="nav-bar" style="height: {{navBarHeight}}px">
     <view class="capsule-btn">
-      <view class="capsule-item" bindtap="handleBack">
+      <view class="capsule-item" bindtap="goBack">
         <image class="icon-back" src="/static/images/experts/chevron-left@2x.png" mode="aspectFit"></image>
       </view>
       <view class="capsule-divider"></view>

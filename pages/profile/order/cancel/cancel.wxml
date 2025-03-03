@@ -7,7 +7,7 @@
       <text class="title">订单已取消</text>
       <text class="desc">订单取消成功，欢迎您再次购买</text>
     </view>
-    <image class="cancel-icon" src="{{imgUrls.all}}" mode="aspectFit"></image>
+    <image class="cancel-icon" src="{{imgUrls.ordercanceltitle}}" mode="aspectFit"></image>
   </view>
 
   <view class="service-card">
@@ -33,15 +33,15 @@
 
     <view class="service-features">
       <view class="feature-item">
-        <image src="{{imgUrls.paid}}"></image>
+        <image src="{{imgUrls.shield}}"></image>
         <text>深度沟通，提供专业解答</text>
       </view>
       <view class="feature-item">
-        <image src="{{imgUrls.paid}}"></image>
+        <image src="{{imgUrls.shield}}"></image>
         <text>服务时间内不限电话和次数</text>
       </view>
       <view class="feature-item">
-        <image src="{{imgUrls.paid}}"></image>
+        <image src="{{imgUrls.shield}}"></image>
         <text>服务有保障，未服务可退款</text>
       </view>
     </view>

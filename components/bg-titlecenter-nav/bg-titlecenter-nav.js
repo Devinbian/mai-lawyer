@@ -8,10 +8,14 @@ Component({
       type: String,
       value: "麦小律",
     },
+    showBack: {
+      type: Boolean,
+      value: true,
+    },
   },
   data: {
     statusBarHeight: 0,
-    navBarHeight: 44,
+    navBarHeight: 0,
   },
   lifetimes: {
     created() {
@@ -28,16 +32,17 @@ Component({
       // });
       // console.warn("导航组件attached - 测试日志");
 
-      const systemInfo = wx.getSystemInfoSync();
-      console.warn("系统信息:", systemInfo);
+      const windowInfo = wx.getWindowInfo();
+      console.warn("系统信息:", windowInfo);
 
       this.setData({
-        statusBarHeight: systemInfo.statusBarHeight,
+        statusBarHeight: windowInfo.statusBarHeight,
+        navBarHeight: windowInfo.navigationBarHeight || 44,
       });
 
       // 触发事件通知页面设置内容距离顶部的距离
       this.triggerEvent("navheight", {
-        height: systemInfo.statusBarHeight + this.data.navBarHeight,
+        height: windowInfo.statusBarHeight + this.data.navBarHeight,
       });
 
       // wx.showToast({
@@ -58,15 +63,15 @@ Component({
       console.log("test method called");
     },
     // 处理返回按钮点击
-    handleBack() {
+    goBack() {
       const pages = getCurrentPages();
       if (pages.length > 1) {
         wx.navigateBack({
-          delta: 1
+          delta: 1,
         });
       } else {
         wx.switchTab({
-          url: '/pages/index/index'
+          url: "/pages/index/index",
         });
       }
     },
@@ -74,16 +79,16 @@ Component({
     handleHome() {
       const currentPages = getCurrentPages();
       const currentPage = currentPages[currentPages.length - 1];
-      
+
       // 如果当前已经在首页，不做任何操作
-      if (currentPage.route === 'pages/index/index') {
+      if (currentPage.route === "pages/index/index") {
         return;
       }
 
       // 跳转到首页tab
       wx.switchTab({
-        url: '/pages/index/index'
+        url: "/pages/index/index",
       });
-    }
+    },
   },
 });

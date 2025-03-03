@@ -16,11 +16,12 @@ Page({
       });
     }
     this.loadOrders();
+  },
 
-    // 添加点击页面关闭下拉菜单的事件
-    wx.onTapEvent(() => {
+  onTouchStart() {
+    if (this.data.activeDropdown !== null) {
       this.closeDropdown();
-    });
+    }
   },
 
   setImagesByPixelRatio() {

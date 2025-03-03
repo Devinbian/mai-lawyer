@@ -42,8 +42,8 @@
 }
 
 .title-icon {
-  width: 36rpx;
-  height: 36rpx;
+  width: 42rpx;
+  height: 42rpx;
   margin-right: 12rpx;
 }
 
@@ -152,7 +152,7 @@
   gap: 8rpx;
 }
 
-.price-section text {
+.price-label {
   font-size: 28rpx;
   color: #333333;
 }

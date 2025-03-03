@@ -8,10 +8,14 @@ Component({
       type: String,
       value: "麦小律",
     },
+    showBack: {
+      type: Boolean,
+      value: true,
+    },
   },
   data: {
-    statusBarHeight: 20,
-    navBarHeight: 44,
+    statusBarHeight: 0,
+    navBarHeight: 0,
   },
   lifetimes: {
     created() {
@@ -28,16 +32,17 @@ Component({
       // });
       // console.warn("导航组件attached - 测试日志");
 
-      const systemInfo = wx.getSystemInfoSync();
-      console.warn("系统信息:", systemInfo);
+      const windowInfo = wx.getWindowInfo();
+      console.warn("系统信息:", windowInfo);
 
       this.setData({
-        statusBarHeight: systemInfo.statusBarHeight || 20,
+        statusBarHeight: windowInfo.statusBarHeight,
+        navBarHeight: windowInfo.navigationBarHeight || 44,
       });
 
       // 触发事件通知页面设置内容距离顶部的距离
       this.triggerEvent("navheight", {
-        height: systemInfo.statusBarHeight + this.data.navBarHeight,
+        height: windowInfo.statusBarHeight + this.data.navBarHeight,
       });
 
       // wx.showToast({
@@ -56,6 +61,11 @@ Component({
     // 添加一个测试方法
     test() {
       console.log("test method called");
+    },
+    goBack() {
+      wx.navigateBack({
+        delta: 1,
+      });
     },
   },
 });

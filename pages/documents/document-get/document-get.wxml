@@ -22,7 +22,7 @@
     <!-- 推荐服务区域 -->
     <view class="section">
       <view class="section-title">
-        <image class="title-icon" src="{{imgUrls.service}}" mode="aspectFit"></image>
+        <image class="title-icon" src="{{imgUrls.ring}}" mode="aspectFit"></image>
         <text>推荐专家审核服务</text>
       </view>
       <view class="service-content">
@@ -40,7 +40,7 @@
   <!-- 底部结算栏 -->
   <view class="bottom-bar">
     <view class="price-section">
-      <text>总计：</text>
+      <text class="price-label">总计：</text>
       <text class="price">¥{{totalPrice}}</text>
     </view>
     <view class="pay-btn" bindtap="onPayTap">确认支付</view>
