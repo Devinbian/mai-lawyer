@@ -4,55 +4,78 @@
     <image class="title-name" src="{{imgUrls.titleName}}" mode="heightFix"></image>
     <image class="title-avatar" src="{{imgUrls.titleBg}}" mode="aspectFill"></image>
   </view>
-  <view class="experts-list">
-    <view class="expert-item" 
-      wx:for="{{experts}}" 
-      wx:key="id" 
-      bindtap="navigateToDetail" 
-      data-expert="{{item}}"
-    >
-      <image class="expert-bg" src="{{imgUrls.expertBg}}" mode="aspectFill"></image>
-      <view class="expert-header">
-        <image class="expert-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
-        <view class="expert-info">
-          <view class="name-tags">
-            <text class="expert-name">{{item.name}}</text>
-            <view class="tags">
-              <text class="tag {{tag === '资深专家' ? 'senior-expert' : (tag === '高级专家' ? 'high-expert' : (tag === '精选专家' ? 'selected-expert' : 'normal-tag'))}}" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+
+  <!-- 下拉刷新提示 -->
+  <view wx:if="{{isRefreshing}}" class="refresh-loading">
+    <view class="loading-icon"></view>
+    <text>刷新中...</text>
+  </view>
+
+  <scroll-view 
+    class="experts-list"
+    scroll-y="true"
+    bindscrolltolower="onReachBottom"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{isRefreshing}}"
+    bindrefresherrefresh="onPullDownRefresh"
+    enhanced="true"
+    show-scrollbar="{{false}}"
+    refresher-default-style="none"
+    refresher-background="#F6F7F9"
+  >
+    <block wx:if="{{experts.length > 0}}">
+      <view class="expert-item" 
+        wx:for="{{experts}}" 
+        wx:key="id" 
+        bindtap="navigateToDetail" 
+        data-expert="{{item}}"
+      >
+        <image class="expert-bg" src="{{imgUrls.expertBg}}" mode="aspectFill"></image>
+        <view class="expert-header">
+          <image class="expert-avatar" src="{{item.avatar}}" mode="aspectFill"></image>
+          <view class="expert-info">
+            <view class="name-tags">
+              <text class="expert-name">{{item.name}}</text>
+              <view class="tags">
+                <text class="tag {{tag === '资深专家' ? 'senior-expert' : (tag === '高级专家' ? 'high-expert' : (tag === '精选专家' ? 'selected-expert' : 'normal-tag'))}}" wx:for="{{item.tags}}" wx:key="*this" wx:for-item="tag">{{tag}}</text>
+              </view>
+            </view>
+            <view class="expert-fields">擅长：{{item.fields}}</view>
+            <view class="expert-qualifications">
+              <view class="expert-years">从业年限：<text class="number">{{item.years}}年</text></view>
+              <text class="expert-separator">|</text>
+              <view class="expert-years">咨询人数：<text class="number">{{item.consultCount}}人</text></view>
             </view>
           </view>
-          <view class="expert-fields">擅长：{{item.fields}}</view>
-          <view class="expert-qualifications">
-            <view class="expert-years">从业年限：<text class="number">{{item.years}}年</text></view>
-            <text class="expert-separator">|</text>
-            <view class="expert-years">咨询人数：<text class="number">{{item.years}}人</text></view>
-          </view>
-          
+        </view>
+        <view class="expert-actions">
+          <button class="action-btn phone" catchtap="handlePhoneConsult" data-id="{{item.id}}">
+            <text>电话咨询</text>
+          </button>
+          <button class="action-btn online" catchtap="handleOnlineConsult" data-id="{{item.id}}">
+            <image class="btn-bg" src="{{imgUrls.btnBg}}" mode="adjust"></image>
+            <image class="btn-icon" src="{{imgUrls.btnIcon}}"></image>
+            <text>在线咨询</text>
+          </button>
         </view>
       </view>
-      <view class="expert-actions">
-        <button class="action-btn phone" catchtap="handlePhoneConsult" data-id="{{item.id}}">
-          <text>电话咨询</text>
-        </button>
-        <button class="action-btn online" catchtap="handleOnlineConsult" data-id="{{item.id}}">
-          <image class="btn-bg" src="{{imgUrls.btnBg}}" mode="adjust"></image>
-          <image class="btn-icon" src="{{imgUrls.btnIcon}}"></image>
-          <text>在线咨询</text>
-        </button>
-      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:elif="{{!isLoading && experts.length === 0}}">
+      <image class="empty-icon" src="{{imgUrls.noorder}}" mode="aspectFit"/>
+      <text class="empty-text">暂无专家</text>
     </view>
 
-    <!-- 加载更多提示 -->
-    <view class="loading-more" wx:if="{{showLoadingMore}}">
-      <text>
-        <view class="loading-spinner"></view>正在加载更多...
-      </text>
+    <!-- 加载更多 -->
+    <view class="loading-more" wx:if="{{isLoading && experts.length > 0}}">
+      <text>加载中...</text>
     </view>
     <view class="no-more" wx:if="{{!hasMore && experts.length > 0}}">
-      <text>没有更多数据了</text>
+      <text>没有更多了</text>
     </view>
-    <view class="empty-list" wx:if="{{experts.length === 0}}">
-      <text>暂无相关数据</text>
-    </view>
-  </view>
+
+    <!-- 底部填充 -->
+    <view style="height: {{bottomPadding}}px" wx:if="{{!hasMore && bottomPadding > 0}}"></view>
+  </scroll-view>
 </view>

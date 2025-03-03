@@ -1,4 +1,4 @@
-const imageUtils = require('../../utils/image.js');
+const imageUtils = require("../../utils/image.js");
 
 // pages/experts/experts.js
 Page({
@@ -6,7 +6,229 @@ Page({
    * 页面的初始数据
    */
   data: {
-    experts: [
+    experts: [],
+    allExperts: [], // 存储所有专家数据
+    pageSize: 10,
+    currentPage: 1,
+    isLoading: false,
+    hasMore: true,
+    isRefreshing: false,
+    imgUrls: null,
+    bottomPadding: 0,
+  },
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad(options) {
+    wx.showToast({
+      title: "加载中...",
+      icon: "loading",
+      duration: 2000,
+    });
+
+    this.setImagesByPixelRatio();
+    this.loadInitialData();
+  },
+
+  setImagesByPixelRatio() {
+    this.setData({
+      imgUrls: imageUtils.getCommonImages("experts"),
+    });
+  },
+
+  // 加载初始数据
+  loadInitialData() {
+    const mockExperts = this.getMockExperts();
+
+    setTimeout(() => {
+      this.setData(
+        {
+          allExperts: mockExperts,
+          experts: mockExperts.slice(0, this.data.pageSize),
+          hasMore: mockExperts.length > this.data.pageSize,
+          currentPage: 1,
+          isLoading: false,
+          isRefreshing: false,
+        },
+        () => {
+          wx.hideToast();
+        },
+      );
+    }, 1000);
+  },
+
+  // 加载更多数据
+  loadMoreData() {
+    if (!this.data.hasMore || this.data.isLoading) return;
+
+    this.setData({ isLoading: true });
+
+    setTimeout(() => {
+      const { currentPage, pageSize, allExperts } = this.data;
+      const nextPage = currentPage + 1;
+      const start = (nextPage - 1) * pageSize;
+      const end = start + pageSize;
+
+      const newData = [...this.data.experts, ...allExperts.slice(start, end)];
+
+      // 提前计算是否还有更多数据
+      const hasMore = end < allExperts.length;
+
+      // 如果已经是最后一页，多显示一些空白
+      if (!hasMore) {
+        wx.createSelectorQuery()
+          .select(".experts-list")
+          .boundingClientRect((rect) => {
+            if (rect && rect.height < wx.getSystemInfoSync().windowHeight) {
+              // 如果内容高度小于屏幕高度，填充一些空白
+              this.setData({
+                bottomPadding:
+                  wx.getSystemInfoSync().windowHeight - rect.height,
+              });
+            }
+          })
+          .exec();
+      }
+
+      this.setData({
+        experts: newData,
+        currentPage: nextPage,
+        hasMore,
+        isLoading: false,
+      });
+    }, 1000);
+  },
+
+  /**
+   * 生命周期函数--监听页面初次渲染完成
+   */
+  onReady() {},
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow() {},
+
+  /**
+   * 生命周期函数--监听页面隐藏
+   */
+  onHide() {},
+
+  /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload() {},
+
+  // 下拉刷新
+  onPullDownRefresh() {
+    if (this.data.isLoading) {
+      wx.stopPullDownRefresh();
+      return;
+    }
+
+    // 获取当前滚动位置
+    wx.createSelectorQuery()
+      .select(".experts-list")
+      .scrollOffset((res) => {
+        // 只有在滚动到顶部时才触发刷新
+        if (res && res.scrollTop <= 0) {
+          this.setData(
+            {
+              isRefreshing: true,
+              currentPage: 1,
+              bottomPadding: 0,
+            },
+            () => {
+              this.loadInitialData();
+              wx.stopPullDownRefresh();
+            },
+          );
+        } else {
+          wx.stopPullDownRefresh();
+        }
+      })
+      .exec();
+  },
+
+  // 上拉加载更多
+  onReachBottom() {
+    if (this.data.hasMore && !this.data.isLoading) {
+      // 如果距离底部还有100px就开始加载
+      this.loadMoreData();
+    }
+  },
+
+  /**
+   * 用户点击右上角分享
+   */
+  onShareAppMessage() {},
+
+  // 跳转到专家详情页
+  navigateToDetail(e) {
+    const expert = e.currentTarget.dataset.expert;
+    // 将专家信息转换为查询字符串
+    const expertInfo = encodeURIComponent(JSON.stringify(expert));
+    wx.navigateTo({
+      url: `./expert-detail/expert-detail?expert=${expertInfo}`,
+      fail(err) {
+        wx.showToast({
+          title: "打开详情页失败",
+          icon: "none",
+        });
+      },
+    });
+  },
+
+  // 电话咨询
+  handlePhoneConsult(e) {
+    const expertId = e.currentTarget.dataset.id;
+    const expert = this.data.experts.find((item) => item.id === expertId);
+    if (expert) {
+      wx.makePhoneCall({
+        phoneNumber: "400-000-0000", // 这里替换为实际的咨询电话
+        fail(err) {
+          wx.showToast({
+            title: "拨打电话失败",
+            icon: "none",
+          });
+        },
+      });
+    }
+  },
+
+  // 在线咨询
+  handleOnlineConsult(e) {
+    const expertId = e.currentTarget.dataset.id;
+    const expert = this.data.experts.find((item) => item.id === expertId);
+    if (expert) {
+      // 构建专家信息对象
+      const expertInfo = {
+        id: expert.id,
+        name: expert.name,
+        avatar: expert.avatar,
+        years: expert.years,
+        consultCount: expert.consultCount,
+        fields: expert.fields,
+      };
+
+      wx.navigateTo({
+        url:
+          "/pages/experts/chat/chat?expert=" +
+          encodeURIComponent(JSON.stringify(expertInfo)),
+        fail(err) {
+          wx.showToast({
+            title: "打开聊天失败",
+            icon: "none",
+          });
+        },
+      });
+    }
+  },
+
+  // 获取模拟数据
+  getMockExperts() {
+    const baseExperts = [
       {
         id: 1,
         name: "张律师",
@@ -127,180 +349,22 @@ Page({
         isOnline: false,
         tags: ["高级专家", "平台保证"],
       },
-    ],
-    allExperts: [], // 存储所有专家数据
-    pageSize: 5,
-    currentPage: 1,
-    isLoading: false,
-    hasMore: true,
-    showLoadingMore: false
-  },
-  imgUrls: null,
+    ];
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-         // 根据设备像素比选择合适的图片
-         this.setImagesByPixelRatio();
-    // 保存完整的专家列表
-    this.setData({
-      allExperts: this.data.experts,
-    }, () => {
-      this.loadInitialData();
-    });
-  },
-
-  setImagesByPixelRatio() {
-    this.setData({
-      imgUrls: imageUtils.getCommonImages('experts')
-    });
-  },
-
-  // 加载初始数据
-  loadInitialData() {
-    const { pageSize } = this.data;
-    const initialData = this.data.allExperts.slice(0, pageSize);
-    this.setData({
-      experts: initialData,
-      hasMore: this.data.allExperts.length > pageSize,
-      currentPage: 1
-    });
-  },
-
-  // 加载更多数据
-  loadMoreData() {
-    if (!this.data.hasMore || this.data.isLoading) return;
-    
-    this.setData({ isLoading: true, showLoadingMore: true });
-
-    // 模拟网络请求延迟
-    setTimeout(() => {
-      const { currentPage, pageSize, allExperts } = this.data;
-      const nextPage = currentPage + 1;
-      const start = (nextPage - 1) * pageSize;
-      const end = start + pageSize;
-      
-      const newData = [
-        ...this.data.experts,
-        ...allExperts.slice(start, end)
-      ];
-
-      this.setData({
-        experts: newData,
-        currentPage: nextPage,
-        hasMore: end < allExperts.length,
-        isLoading: false,
-        showLoadingMore: false
-      });
-    }, 500);
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {},
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {},
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {},
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {},
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-    this.setData({
-      currentPage: 1,
-      hasMore: true,
-      isLoading: false
-    }, () => {
-      this.loadInitialData();
-      wx.stopPullDownRefresh();
-    });
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-    if (this.data.hasMore) {
-      this.loadMoreData();
-    }
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {},
-
-  // 跳转到专家详情页
-  navigateToDetail(e) {
-    const expert = e.currentTarget.dataset.expert;
-    // 将专家信息转换为查询字符串
-    const expertInfo = encodeURIComponent(JSON.stringify(expert));
-    wx.navigateTo({
-      url: `./expert-detail/expert-detail?expert=${expertInfo}`,
-      fail(err) {
-        wx.showToast({
-          title: '打开详情页失败',
-          icon: 'none'
-        });
-      }
-    });
-  },
-
-  // 电话咨询
-  handlePhoneConsult(e) {
-    const expertId = e.currentTarget.dataset.id;
-    const expert = this.data.experts.find((item) => item.id === expertId);
-    if (expert) {
-      wx.makePhoneCall({
-        phoneNumber: "400-000-0000", // 这里替换为实际的咨询电话
-        fail(err) {
-          wx.showToast({
-            title: "拨打电话失败",
-            icon: "none",
-          });
-        },
+    // 生成更多模拟数据
+    const moreExperts = [];
+    for (let i = 0; i < 20; i++) {
+      const baseExpert = baseExperts[i % baseExperts.length];
+      moreExperts.push({
+        ...baseExpert,
+        id: baseExperts.length + i + 1,
+        name: `${baseExpert.name}${Math.floor(i / baseExperts.length) + 1}`,
+        consultCount:
+          baseExpert.consultCount + Math.floor(Math.random() * 1000),
+        isOnline: Math.random() > 0.7,
       });
     }
-  },
 
-  // 在线咨询
-  handleOnlineConsult(e) {
-    const expertId = e.currentTarget.dataset.id;
-    const expert = this.data.experts.find((item) => item.id === expertId);
-    if (expert) {
-      // 构建专家信息对象
-      const expertInfo = {
-        id: expert.id,
-        name: expert.name,
-        avatar: expert.avatar,
-        years: expert.years,
-        consultCount: expert.consultCount,
-        fields: expert.fields
-      };
-      
-      wx.navigateTo({
-        url: '/pages/experts/chat/chat?expert=' + encodeURIComponent(JSON.stringify(expertInfo)),
-        fail(err) {
-          wx.showToast({
-            title: "打开聊天失败",
-            icon: "none",
-          });
-        },
-      });
-    }
+    return [...baseExperts, ...moreExperts];
   },
 });

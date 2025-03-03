@@ -3,11 +3,21 @@ Page({
   data: {
     currentTab: "all",
     orderList: [],
-    mgUrls: null,
+    imgUrls: null,
     activeDropdown: null, // 当前展开的下拉菜单ID
+    isRefreshing: false, // 是否正在刷新
+    isLoading: false, // 是否正在加载更多
+    hasMore: true, // 是否还有更多数据
+    pageNum: 1, // 当前页码
+    pageSize: 10, // 每页数量
   },
 
   onLoad(options) {
+    wx.showToast({
+      title: "加载中...",
+      icon: "loading",
+      duration: 2000,
+    });
     this.setImagesByPixelRatio();
     // 如果从个人中心跳转时带有状态参数
     if (options.status) {
@@ -33,14 +43,27 @@ Page({
   // 切换标签
   switchTab(e) {
     const type = e.currentTarget.dataset.type;
-    this.setData({
-      currentTab: type,
-    });
-    this.loadOrders();
+    this.setData(
+      {
+        currentTab: type,
+        pageNum: 1,
+        hasMore: true,
+        orderList: [],
+      },
+      () => {
+        this.loadOrders();
+      },
+    );
   },
 
   // 加载订单列表
-  loadOrders() {
+  loadOrders(isLoadMore = false) {
+    if (this.data.isLoading) return;
+
+    this.setData({
+      isLoading: true,
+    });
+
     // 模拟订单数据
     const mockOrders = [
       {
@@ -85,17 +108,61 @@ Page({
       },
     ];
 
-    // 根据当前标签筛选订单
-    let filteredOrders = mockOrders;
-    if (this.data.currentTab !== "all") {
-      filteredOrders = mockOrders.filter(
-        (order) => order.status === this.data.currentTab,
+    // 模拟API请求延迟
+    setTimeout(() => {
+      // 根据当前标签筛选订单
+      let filteredOrders = mockOrders;
+      if (this.data.currentTab !== "all") {
+        filteredOrders = mockOrders.filter(
+          (order) => order.status === this.data.currentTab,
+        );
+      }
+
+      // 模拟分页
+      const startIndex = (this.data.pageNum - 1) * this.data.pageSize;
+      const endIndex = startIndex + this.data.pageSize;
+      const currentPageOrders = filteredOrders.slice(startIndex, endIndex);
+
+      this.setData(
+        {
+          orderList: isLoadMore
+            ? [...this.data.orderList, ...currentPageOrders]
+            : currentPageOrders,
+          isLoading: false,
+          isRefreshing: false,
+          hasMore: currentPageOrders.length === this.data.pageSize,
+        },
+        () => {
+          if (!isLoadMore) {
+            wx.hideToast(); // 初始加载完成后隐藏toast
+          }
+        },
       );
-    }
+    }, 1000);
+  },
+
+  // 下拉刷新
+  onRefresh() {
+    if (this.data.isLoading) return;
 
     this.setData({
-      orderList: filteredOrders,
+      isRefreshing: true,
+      pageNum: 1,
+      hasMore: true,
     });
+
+    this.loadOrders();
+  },
+
+  // 加载更多
+  onLoadMore() {
+    if (this.data.isLoading || !this.data.hasMore) return;
+
+    this.setData({
+      pageNum: this.data.pageNum + 1,
+    });
+
+    this.loadOrders(true);
   },
 
   // 切换下拉菜单

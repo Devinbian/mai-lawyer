@@ -60,5 +60,8 @@
     "weui": true
   },
   "componentFramework": "glass-easel",
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "style": "v2",
+  "usingComponents": {},
+  "resizable": true
 }

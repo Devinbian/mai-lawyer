@@ -6,9 +6,19 @@
     class="history-content"
     scroll-y="true"
     bindscrolltolower="loadMore"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{isRefreshing}}"
+    bindrefresherrefresh="onRefresh"
     enhanced="true"
     show-scrollbar="{{false}}"
+    refresher-default-style="none"
+    refresher-background="#F6F7F9"
   >
+    <view wx:if="{{isRefreshing}}" class="refresh-loading">
+      <view class="loading-icon"></view>
+      <text>刷新中...</text>
+    </view>
+
     <view class="history-list" wx:if="{{historyList.length > 0}}">
       <view class="history-item" wx:for="{{historyList}}" wx:key="id" bindtap="handleItemClick" data-id="{{item.id}}">
         <view class="expert-avatar">

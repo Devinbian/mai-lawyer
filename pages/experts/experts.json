@@ -3,5 +3,7 @@
   "usingComponents": {
     "main-nav": "/components/main-nav/main-nav"
   },
-  "navigationStyle": "custom"
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }

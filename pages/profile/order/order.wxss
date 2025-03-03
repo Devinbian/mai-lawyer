@@ -45,16 +45,18 @@
 
 /* 订单列表 */
 .order-list {
-  margin-top: 100rpx;
-  padding: 20rpx;
-  height: calc(100vh - 280rpx);
-  display: flex;
-  flex-direction: column;
+  position: fixed;
+  top: 300rpx;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 20rpx;
+  box-sizing: border-box;
 }
 
 .order-list-content {
-  flex: 1;
-  overflow: auto;
+  padding-bottom: calc(constant(safe-area-inset-bottom) + 20rpx);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 20rpx);
 }
 
 .order-item {
@@ -62,8 +64,6 @@
   border-radius: 16rpx;
   padding: 30rpx;
   margin-bottom: 20rpx;
-  margin-left: 20rpx;
-  margin-right: 20rpx;
 }
 
 /* 订单类型 */
@@ -250,7 +250,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 160rpx;
+  padding-top: 360rpx;
 }
 
 .empty-state image {
@@ -268,4 +268,58 @@
   height: constant(safe-area-inset-bottom);
   height: env(safe-area-inset-bottom);
   background-color: #F6F7F9;
+}
+
+/* 加载更多 */
+.loading-more {
+  text-align: center;
+  padding: 30rpx 0;
+}
+
+.loading-more text {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* 自定义下拉刷新样式 */
+.refresh-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  background: #F6F7F9;
+  z-index: 2;
+}
+
+.loading-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 16rpx;
+  border: 4rpx solid #4768F3;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: loading 0.8s linear infinite;
+}
+
+@keyframes loading {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.refresh-loading text {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+/* 底部安全区域 */
+.safe-area-bottom {
+  display: none;
 } 

@@ -8,12 +8,51 @@
   right: 0;
 }
 
+/* 一级分类样式 */
+/* .main-tabs {
+  display: flex;
+  background: #FFFFFF;
+  border-bottom: 1rpx solid #EEEEEE;
+  justify-content: center;
+  width: 100%;
+}
+
+.main-tab {
+  width: 200rpx;
+  text-align: center;
+  padding: 28rpx 0;
+  font-size: 28rpx;
+  color: #86909C;
+  position: relative;
+  margin: 0 40rpx;
+}
+
+.main-tab.active {
+  color: #1D2129;
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+.main-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 4rpx;
+  background: #007BFF;
+  border-radius: 2rpx;
+} */
+
 /* 咨询列表样式 */
 .history-content {
   height: calc(100vh - 180rpx);
+  position: relative;
 }
 
 .history-list {
+  padding: 20rpx;
   padding: 20rpx 20rpx;
 }
 
@@ -110,4 +149,42 @@
   padding: 20rpx 0;
   font-size: 24rpx;
   color: #999999;
+}
+
+/* 自定义下拉刷新样式 */
+.refresh-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  background: #F6F7F9;
+  z-index: 2;
+}
+
+.loading-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 16rpx;
+  border: 4rpx solid #4768F3;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: loading 0.8s linear infinite;
+}
+
+@keyframes loading {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.refresh-loading text {
+  font-size: 28rpx;
+  color: #666666;
 } 

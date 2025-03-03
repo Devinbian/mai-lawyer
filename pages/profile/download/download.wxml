@@ -61,9 +61,19 @@
     bindscrolltolower="loadMore"
     enhanced="true"
     show-scrollbar="{{false}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{isRefreshing}}"
+    bindrefresherrefresh="onRefresh"
+    refresher-default-style="none"
+    refresher-background="#F6F7F9"
   >
+    <view wx:if="{{isRefreshing}}" class="refresh-loading">
+      <view class="loading-icon"></view>
+      <text>刷新中...</text>
+    </view>
+
     <view class="download-list" wx:if="{{downloadList.length > 0}}">
-      <view class="download-item" wx:for="{{downloadList}}" wx:key="id">
+      <view class="download-item" wx:for="{{downloadList}}" wx:key="id" bindtap="handleItemClick" data-id="{{item.id}}">
         <view class="doc-icon-wrap">
           <image class="doc-icon" src="{{imgUrls[item.type]}}" mode="aspectFit"/>
         </view>

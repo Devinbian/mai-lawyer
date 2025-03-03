@@ -3,5 +3,7 @@
     "bg-titlecenter-nav": "/components/bg-titlecenter-nav/bg-titlecenter-nav"
   },
   "navigationBarTitleText": "我的收藏",
-  "navigationStyle": "custom"
-} 
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}
