@@ -1,0 +1,16 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+
+# Your rule content
+
+- You can @ files here
+- You can use markdown but dont have to
+
+这是一个微信小程序项目
+
+所有的编码规范需要满足官方小程序的要求
+
+图片资源不支持在样式文件中通过url的方式来引用

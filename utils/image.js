@@ -5,7 +5,7 @@
  */
 function getImageByPixelRatio(basePath) {
   const pixelRatio = wx.getSystemInfoSync().pixelRatio;
-  const suffix = pixelRatio >= 2 ? '@2x' : '';
+  const suffix = pixelRatio >= 2 ? "@2x" : "";
   return `${basePath}${suffix}.png`;
 }
 
@@ -15,8 +15,8 @@ function getImageByPixelRatio(basePath) {
  * @returns {Object} - 返回该类型下所有图片的路径对象
  */
 function getCommonImages(type) {
-  const baseImagePath = '/static/images';
-  
+  const baseImagePath = "/static/images";
+
   const imageConfigs = {
     tabBar: {
       home: getImageByPixelRatio(`${baseImagePath}/home`),
@@ -26,7 +26,7 @@ function getCommonImages(type) {
       doc: getImageByPixelRatio(`${baseImagePath}/doc`),
       docActive: getImageByPixelRatio(`${baseImagePath}/doc-active`),
       profile: getImageByPixelRatio(`${baseImagePath}/profile`),
-      profileActive: getImageByPixelRatio(`${baseImagePath}/profile-active`)
+      profileActive: getImageByPixelRatio(`${baseImagePath}/profile-active`),
     },
     profile: {
       avatar: getImageByPixelRatio(`${baseImagePath}/profile/default-avatar`),
@@ -47,13 +47,21 @@ function getCommonImages(type) {
       orderphone: getImageByPixelRatio(`${baseImagePath}/profile/order-phone`),
       ordertext: getImageByPixelRatio(`${baseImagePath}/profile/order-text`),
       noorder: getImageByPixelRatio(`${baseImagePath}/noorder`),
+      refundbanner: getImageByPixelRatio(
+        `${baseImagePath}/profile/refund-banner`,
+      ),
+      ordercancelbanner: getImageByPixelRatio(
+        `${baseImagePath}/profile/ordercancel-banner`,
+      ),
+      msgbanner: getImageByPixelRatio(`${baseImagePath}/profile/msgbanner`),
     },
     index: {
       containerBg: getImageByPixelRatio(`${baseImagePath}/index/container-bg`),
       bannerTitle: getImageByPixelRatio(`${baseImagePath}/index/banner-title`),
-      chatContentBg: getImageByPixelRatio(`${baseImagePath}/index/chat-content-bg`),
+      chatContentBg: getImageByPixelRatio(
+        `${baseImagePath}/index/chat-content-bg`,
+      ),
       sendIcon: getImageByPixelRatio(`${baseImagePath}/index/send`),
-      
     },
     experts: {
       titleName: getImageByPixelRatio(`${baseImagePath}/experts/title-name`),
@@ -77,10 +85,14 @@ function getCommonImages(type) {
       contract: getImageByPixelRatio(`${baseImagePath}/documents/contract`),
       lawsuit: getImageByPixelRatio(`${baseImagePath}/documents/lawsuit`),
       defense: getImageByPixelRatio(`${baseImagePath}/documents/defense`),
-      legalOpinion: getImageByPixelRatio(`${baseImagePath}/documents/legal-opinion`),
-      application: getImageByPixelRatio(`${baseImagePath}/documents/application`),
+      legalOpinion: getImageByPixelRatio(
+        `${baseImagePath}/documents/legal-opinion`,
+      ),
+      application: getImageByPixelRatio(
+        `${baseImagePath}/documents/application`,
+      ),
       general: getImageByPixelRatio(`${baseImagePath}/documents/general`),
-      noorder: getImageByPixelRatio(`${baseImagePath}/profile/nodata`)
+      noorder: getImageByPixelRatio(`${baseImagePath}/profile/nodata`),
     },
     documentList: {
       search: getImageByPixelRatio(`${baseImagePath}/documents/search`),
@@ -92,22 +104,24 @@ function getCommonImages(type) {
       service: getImageByPixelRatio(`${baseImagePath}/documents/service`),
       word: getImageByPixelRatio(`${baseImagePath}/documents/word`),
       pdf: getImageByPixelRatio(`${baseImagePath}/documents/pdf`),
-      excel: getImageByPixelRatio(`${baseImagePath}/documents/excel`)
+      excel: getImageByPixelRatio(`${baseImagePath}/documents/excel`),
     },
     documentRead: {
-      collectActive: getImageByPixelRatio(`${baseImagePath}/documents/collect-active`),
+      collectActive: getImageByPixelRatio(
+        `${baseImagePath}/documents/collect-active`,
+      ),
       collect: getImageByPixelRatio(`${baseImagePath}/documents/collect`),
     },
     default: {
       logo: getImageByPixelRatio(`${baseImagePath}/login/logo`),
-      noorder: getImageByPixelRatio(`${baseImagePath}/offline`)
-    }
-  }
+      noorder: getImageByPixelRatio(`${baseImagePath}/offline`),
+    },
+  };
 
   return imageConfigs[type] || {};
 }
 
 module.exports = {
   getImageByPixelRatio: getImageByPixelRatio,
-  getCommonImages: getCommonImages
-}; 
+  getCommonImages: getCommonImages,
+};

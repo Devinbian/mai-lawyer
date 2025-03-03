@@ -19,7 +19,8 @@
     "pages/profile/feedback/feedback",
     "pages/profile/about/about",
     "pages/profile/order/order",
-    "pages/profile/order/refund/refund"
+    "pages/profile/order/refund/refund",
+    "pages/profile/order/refund-success/refund-success"
   ],
   "window": {
     "navigationStyle": "custom",
