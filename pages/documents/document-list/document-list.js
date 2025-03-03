@@ -136,15 +136,23 @@ Page({
       }
     ],
     filteredDocuments: [],
-    pageSize: 5,
+    pageSize: 10,
     currentPage: 1,
     isLoading: false,
     hasMore: true,
-    showLoadingMore: false,
-    imgUrls: null
+    isRefreshing: false,
+    imgUrls: null,
+    canRefresh: true,
+    scrollTop: 0
   },
 
   onLoad() {
+    wx.showToast({
+      title: "加载中...",
+      icon: "loading",
+      duration: 2000,
+    });
+
     this.setImagesByPixelRatio();
     this.loadInitialData();
   },
@@ -157,28 +165,68 @@ Page({
 
   // 加载初始数据
   loadInitialData() {
-    const { pageSize } = this.data;
-    const initialData = this.data.documents.slice(0, pageSize);
+    const { pageSize, documents } = this.data;
+    const initialData = documents.slice(0, pageSize);
+
+    setTimeout(() => {
+      this.setData({
+        filteredDocuments: initialData,
+        hasMore: documents.length > pageSize,
+        currentPage: 1,
+        isLoading: false,
+        isRefreshing: false,
+      }, () => {
+        wx.hideToast();
+      });
+    }, 1000);
+  },
+
+  // 监听滚动事件
+  onScroll(e) {
+    const scrollTop = e.detail.scrollTop;
     this.setData({
-      filteredDocuments: initialData,
-      hasMore: this.data.documents.length > pageSize,
-      currentPage: 1
+      scrollTop,
+      canRefresh: scrollTop <= 0
     });
   },
 
-  // 加载更多数据
-  loadMoreData() {
-    if (!this.data.hasMore || this.data.isLoading) return;
-    
-    this.setData({ isLoading: true, showLoadingMore: true });
+  // 下拉刷新
+  onPullDownRefresh() {
+    if (!this.data.canRefresh) {
+      wx.stopPullDownRefresh();
+      return;
+    }
 
-    // 模拟网络请求延迟
+    this.setData({
+      isRefreshing: true,
+      currentPage: 1
+    });
+
+    // 模拟刷新延迟
+    setTimeout(() => {
+      this.loadInitialData();
+      this.setData({
+        isRefreshing: false
+      });
+      wx.stopPullDownRefresh();
+    }, 1000);
+  },
+
+  // 滚动到底部
+  onReachBottom() {
+    if (this.data.isLoading || !this.data.hasMore) return;
+    
+    this.setData({
+      isLoading: true
+    });
+
+    // 模拟加载更多
     setTimeout(() => {
       const { currentPage, pageSize, documents, searchKeyword } = this.data;
       const nextPage = currentPage + 1;
       const start = (nextPage - 1) * pageSize;
       const end = start + pageSize;
-      
+
       let newData;
       if (searchKeyword) {
         // 如果有搜索关键词，从过滤后的结果中加载
@@ -204,29 +252,9 @@ Page({
       this.setData({
         filteredDocuments: newData,
         currentPage: nextPage,
-        isLoading: false,
-        showLoadingMore: false
+        isLoading: false
       });
-    }, 500);
-  },
-
-  // 监听滚动到底部
-  onReachBottom() {
-    if (this.data.hasMore) {
-      this.loadMoreData();
-    }
-  },
-
-  // 下拉刷新
-  onPullDownRefresh() {
-    this.setData({
-      currentPage: 1,
-      hasMore: true,
-      isLoading: false
-    }, () => {
-      this.loadInitialData();
-      wx.stopPullDownRefresh();
-    });
+    }, 1000);
   },
 
   // 搜索输入
@@ -244,11 +272,16 @@ Page({
 
     const filtered = this.filterDocumentsList(keyword);
     const initialFiltered = filtered.slice(0, this.data.pageSize);
-    
+
     this.setData({
       filteredDocuments: initialFiltered,
       hasMore: filtered.length > this.data.pageSize
     });
+  },
+
+  // 搜索确认
+  onSearch() {
+    this.onSearchInput({ detail: { value: this.data.searchKeyword } });
   },
 
   // 过滤文档列表
@@ -265,7 +298,7 @@ Page({
     });
   },
 
-  // 文档点击事件
+  // 点击文档
   onDocumentTap(e) {
     const { id } = e.currentTarget.dataset;
     // 从filteredDocuments中获取完整的文档对象

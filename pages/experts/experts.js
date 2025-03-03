@@ -15,6 +15,8 @@ Page({
     isRefreshing: false,
     imgUrls: null,
     bottomPadding: 0,
+    canRefresh: true,  // 控制是否可以触发下拉刷新
+    scrollTop: 0      // 记录滚动位置
   },
 
   /**
@@ -120,43 +122,55 @@ Page({
    */
   onUnload() {},
 
+  // 监听滚动事件
+  onScroll(e) {
+    const scrollTop = e.detail.scrollTop;
+    this.setData({
+      scrollTop,
+      canRefresh: scrollTop <= 0
+    });
+  },
+
   // 下拉刷新
   onPullDownRefresh() {
-    if (this.data.isLoading) {
+    if (!this.data.canRefresh) {
       wx.stopPullDownRefresh();
       return;
     }
 
-    // 获取当前滚动位置
-    wx.createSelectorQuery()
-      .select(".experts-list")
-      .scrollOffset((res) => {
-        // 只有在滚动到顶部时才触发刷新
-        if (res && res.scrollTop <= 0) {
-          this.setData(
-            {
-              isRefreshing: true,
-              currentPage: 1,
-              bottomPadding: 0,
-            },
-            () => {
-              this.loadInitialData();
-              wx.stopPullDownRefresh();
-            },
-          );
-        } else {
-          wx.stopPullDownRefresh();
-        }
-      })
-      .exec();
+    this.setData({
+      isRefreshing: true,
+      currentPage: 1,
+      bottomPadding: 0
+    });
+
+    // 模拟刷新延迟
+    setTimeout(() => {
+      this.loadInitialData();
+      this.setData({
+        isRefreshing: false
+      });
+      wx.stopPullDownRefresh();
+    }, 1000);
   },
 
-  // 上拉加载更多
+  // 滚动到底部
   onReachBottom() {
-    if (this.data.hasMore && !this.data.isLoading) {
-      // 如果距离底部还有100px就开始加载
-      this.loadMoreData();
-    }
+    if (this.data.isLoading || !this.data.hasMore) return;
+    
+    this.setData({
+      isLoading: true
+    });
+
+    // 模拟加载更多
+    setTimeout(() => {
+      const newExperts = [...this.data.experts, ...this.getMockExperts()];
+      this.setData({
+        experts: newExperts,
+        isLoading: false,
+        hasMore: newExperts.length < 30
+      });
+    }, 1000);
   },
 
   /**

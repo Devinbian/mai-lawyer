@@ -14,39 +14,62 @@
     <image class="search-icon" src="{{imgUrls.search}}" mode="aspectFit"></image>
   </view>
 
-  <!-- 文档列表 -->
-  <view class="document-list">
-    <view class="document-item" 
-      wx:for="{{filteredDocuments}}" 
-      wx:key="id"
-      bindtap="onDocumentTap"
-      data-id="{{item.id}}"
+  <!-- 列表容器 -->
+  <view class="list-container">
+    <scroll-view
+      scroll-y
+      class="document-list"
+      bindscroll="onScroll"
+      bindscrolltolower="onReachBottom"
+      refresher-enabled="{{true}}"
+      refresher-triggered="{{isRefreshing}}"
+      refresher-background="#F6F7F9"
+      refresher-default-style="none"
+      bindrefresherrefresh="onPullDownRefresh"
+      enhanced="true"
+      show-scrollbar="{{false}}"
+      bounces="{{false}}"
+      style="height: 100%;"
     >
-      <view class="doc-main">
-        <view class="doc-title">{{item.title}}</view>
-        <view class="doc-desc">{{item.description}}</view>
-        <view class="doc-meta">
-          <text class="doc-number">#{{item.number}}</text>
-          <text class="doc-words">约{{item.words}}字</text>
-          <image class="doc-date-icon" src="{{imgUrls.time}}" mode="aspectFit"></image>
-          <text class="doc-date">{{item.date}}</text>
-          <text class="doc-price" wx:if="{{item.price > 0}}">¥ {{item.price}}</text>
-          <text class="doc-free" wx:else>免费</text>
+      <!-- 下拉刷新提示 -->
+      <view class="refresh-loading" wx:if="{{isRefreshing}}">
+        <view class="loading-icon"></view>
+        <text>刷新中...</text>
+      </view>
+
+      <view class="document-item" 
+        wx:for="{{filteredDocuments}}" 
+        wx:key="id"
+        bindtap="onDocumentTap"
+        data-id="{{item.id}}"
+      >
+        <view class="doc-main">
+          <view class="doc-title">{{item.title}}</view>
+          <view class="doc-desc">{{item.description}}</view>
+          <view class="doc-meta">
+            <text class="doc-number">#{{item.number}}</text>
+            <text class="doc-words">约{{item.words}}字</text>
+            <image class="doc-date-icon" src="{{imgUrls.time}}" mode="aspectFit"></image>
+            <text class="doc-date">{{item.date}}</text>
+            <text class="doc-price" wx:if="{{item.price > 0}}">¥ {{item.price}}</text>
+            <text class="doc-free" wx:else>免费</text>
+          </view>
         </view>
       </view>
-    </view>
 
-    <!-- 加载更多提示 -->
-    <view class="loading-more" wx:if="{{showLoadingMore}}">
-      <text>
-        <view class="loading-spinner"></view>正在加载更多...
-      </text>
-    </view>
-    <view class="no-more" wx:if="{{!hasMore && filteredDocuments.length > 0}}">
-      <text>没有更多数据了</text>
-    </view>
-    <view class="empty-list" wx:if="{{filteredDocuments.length === 0}}">
-      <text>暂无相关数据</text>
-    </view>
+      <!-- 空状态 -->
+      <view class="empty-state" wx:if="{{filteredDocuments.length === 0 && !isLoading}}">
+        <image class="empty-icon" src="{{imgUrls.noorder}}" mode="aspectFit"/>
+        <text class="empty-text">暂无相关数据</text>
+      </view>
+
+      <!-- 加载更多 -->
+      <view class="loading-more" wx:if="{{isLoading && filteredDocuments.length > 0}}">
+        <text>加载中...</text>
+      </view>
+      <view class="no-more" wx:if="{{!hasMore && filteredDocuments.length > 0}}">
+        <text>没有更多了</text>
+      </view>
+    </scroll-view>
   </view>
 </view> 

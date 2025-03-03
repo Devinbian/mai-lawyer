@@ -51,17 +51,53 @@ Page({
 
   // 收藏文档
   toggleCollect() {
+    const that = this;
     const isCollected = !this.data.isCollected;
+    
+    // 先更新本地状态
     this.setData({
       isCollected
     });
 
-    wx.showToast({
-      title: isCollected ? '收藏成功' : '取消收藏',
-      icon: 'success'
-    });
-
-    // TODO: 这里应该调用服务器接口更新收藏状态
+    // 调用收藏接口
+    // wx.request({
+    //   url: `${app.globalData.baseUrl}/api/documents/collect`,
+    //   method: 'POST',
+    //   header: {
+    //     'Authorization': `Bearer ${wx.getStorageSync('token')}`
+    //   },
+    //   data: {
+    //     documentId: this.data.document.id,
+    //     isCollected: isCollected
+    //   },
+    //   success: function(res) {
+    //     if (res.data.code === 0) {
+    //       wx.showToast({
+    //         title: isCollected ? '收藏成功' : '已取消收藏',
+    //         icon: 'success'
+    //       });
+    //     } else {
+    //       // 如果接口调用失败，回滚状态
+    //       that.setData({
+    //         isCollected: !isCollected
+    //       });
+    //       wx.showToast({
+    //         title: res.data.message || '操作失败',
+    //         icon: 'none'
+    //       });
+    //     }
+    //   },
+    //   fail: function() {
+    //     // 如果请求失败，回滚状态
+    //     that.setData({
+    //       isCollected: !isCollected
+    //     });
+    //     wx.showToast({
+    //       title: '网络错误',
+    //       icon: 'none'
+    //     });
+    //   }
+    // });
   },
 
   // 获取文档

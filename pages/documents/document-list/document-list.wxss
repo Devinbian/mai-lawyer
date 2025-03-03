@@ -53,13 +53,20 @@
   color: #999999;
 }
 
-.document-list {
+.list-container {
+  flex: 1;
   margin-top: 100rpx;
+  position: relative;
+  height: calc(100vh - 288rpx);
+  overflow: hidden;
+}
+
+.document-list {
   width: 100%;
+  height: 100%;
   box-sizing: border-box;
   padding: 0 20rpx;
-  flex: 1;
-  overflow: auto;
+  overflow: hidden;
 }
 
 .document-item {
@@ -70,6 +77,10 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+}
+
+.document-item:first-child {
+  margin-top: 0;
 }
 
 .document-item:last-child {
@@ -169,31 +180,83 @@
   width: 100%;
 }
 
-.loading-more text, .no-more text, .empty-list text {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24rpx;
-  color: #999999;
-  background: #FFFFFF;
-  padding: 12rpx 24rpx;
-  border-radius: 32rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
-.loading-spinner {
-  width: 24rpx;
-  height: 24rpx;
-  margin-right: 8rpx;
+.refresh-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  background: #F6F7F9;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+.loading-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 10rpx;
   border: 2rpx solid #f3f3f3;
   border-top: 2rpx solid #007BFF;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  display: inline-block;
-  vertical-align: middle;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.refresh-loading text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  width: 100%;
+}
+
+.loading-more text {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.loading-more text::before {
+  display: none;
+}
+
+.no-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 0;
+  width: 100%;
+}
+
+.no-more text {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.empty-icon {
+  width: 240rpx;
+  height: 240rpx;
+  margin-bottom: 40rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999999;
 } 

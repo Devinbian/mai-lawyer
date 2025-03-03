@@ -75,6 +75,7 @@ function getCommonImages(type) {
       expertBg: getImageByPixelRatio(`${baseImagePath}/experts/expert-bg`),
       btnBg: getImageByPixelRatio(`${baseImagePath}/experts/msg-bg`),
       btnIcon: getImageByPixelRatio(`${baseImagePath}/experts/msg`),
+      noorder: getImageByPixelRatio(`${baseImagePath}/profile/nodata`),
     },
     expertsDetail: {
       expertBg: getImageByPixelRatio(`${baseImagePath}/experts/expert-bg`),
@@ -103,6 +104,7 @@ function getCommonImages(type) {
     documentList: {
       search: getImageByPixelRatio(`${baseImagePath}/documents/search`),
       time: getImageByPixelRatio(`${baseImagePath}/documents/time`),
+      noorder: getImageByPixelRatio(`${baseImagePath}/profile/nodata`),
     },
     documentGet: {
       titleBg: getImageByPixelRatio(`${baseImagePath}/documents/title-bg`),
@@ -115,16 +117,13 @@ function getCommonImages(type) {
     },
     documentRead: {
       collectActive: getImageByPixelRatio(
-        `${baseImagePath}/documents/collect-active`,
+        `${baseImagePath}/documents/collectActive`,
       ),
       collect: getImageByPixelRatio(`${baseImagePath}/documents/collect`),
-      collectActive: getImageByPixelRatio(
-        `${baseImagePath}/documents/collect-active`,
-      ),
     },
     default: {
       logo: getImageByPixelRatio(`${baseImagePath}/login/logo`),
-      noorder: getImageByPixelRatio(`${baseImagePath}/offline`),
+      offline: getImageByPixelRatio(`${baseImagePath}/offline`),
     },
   };
 
