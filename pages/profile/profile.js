@@ -21,7 +21,7 @@ Page({
   // 根据设备像素比选择图片
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtil.getCommonImages("profile"),
+      imgUrls: imageUtil.getCommonImages(["profile", "default"]),
     });
   },
 

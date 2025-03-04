@@ -1,8 +1,11 @@
 const imageUtil = require("../../../utils/image.js");
+const refreshLoadingBehavior = require("../../../behaviors/refresh-loading.js");
+
 Page({
+  behaviors: [refreshLoadingBehavior],
+
   data: {
     currentTab: "all",
-    orderList: [],
     imgUrls: null,
     activeDropdown: null, // 当前展开的下拉菜单ID
     isRefreshing: false, // 是否正在刷新
@@ -25,7 +28,7 @@ Page({
         currentTab: options.status,
       });
     }
-    this.loadOrders();
+    this.initList();
   },
 
   onTouchStart() {
@@ -36,133 +39,121 @@ Page({
 
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtil.getCommonImages("profile"),
+      imgUrls: imageUtil.getCommonImages(["profile", "default"]),
     });
   },
 
   // 切换标签
   switchTab(e) {
     const type = e.currentTarget.dataset.type;
+    if (type === this.data.currentTab) return;
+
     this.setData(
       {
         currentTab: type,
-        pageNum: 1,
-        hasMore: true,
-        orderList: [],
       },
       () => {
-        this.loadOrders();
+        this.initList();
       },
     );
   },
 
-  // 加载订单列表
-  loadOrders(isLoadMore = false) {
-    if (this.data.isLoading) return;
-
-    this.setData({
-      isLoading: true,
-    });
-
-    // 模拟订单数据
-    const mockOrders = [
-      {
-        orderId: "202502000714000300000",
-        typeName: "电话咨询",
-        type: "phone",
-        status: "pending",
-        statusText: "待支付",
-        consultTime: "2025-02-07 14:00:03",
-        price: 64,
-        lawyer: "雷军",
-      },
-      {
-        orderId: "202502000714000300001",
-        typeName: "图文咨询",
-        type: "text",
-        status: "paid",
-        statusText: "已支付",
-        consultTime: "2025-02-07 14:00:03",
-        price: 128,
-        lawyer: "马云",
-      },
-      {
-        orderId: "202502000714000300003",
-        typeName: "图文咨询",
-        type: "text",
-        status: "refunding",
-        statusText: "退款中",
-        consultTime: "2025-02-07 14:00:03",
-        price: 256,
-        lawyer: "马化腾",
-      },
-      {
-        orderId: "202502000714000300002",
-        typeName: "图文咨询",
-        type: "text",
-        status: "refunded",
-        statusText: "已退款",
-        consultTime: "2025-02-07 14:00:03",
-        price: 64,
-        lawyer: "雷军",
-      },
-    ];
-
-    // 模拟API请求延迟
-    setTimeout(() => {
-      // 根据当前标签筛选订单
-      let filteredOrders = mockOrders;
-      if (this.data.currentTab !== "all") {
-        filteredOrders = mockOrders.filter(
-          (order) => order.status === this.data.currentTab,
-        );
-      }
-
-      // 模拟分页
-      const startIndex = (this.data.pageNum - 1) * this.data.pageSize;
-      const endIndex = startIndex + this.data.pageSize;
-      const currentPageOrders = filteredOrders.slice(startIndex, endIndex);
-
-      this.setData(
-        {
-          orderList: isLoadMore
-            ? [...this.data.orderList, ...currentPageOrders]
-            : currentPageOrders,
-          isLoading: false,
-          isRefreshing: false,
-          hasMore: currentPageOrders.length === this.data.pageSize,
-        },
-        () => {
-          if (!isLoadMore) {
-            wx.hideToast(); // 初始加载完成后隐藏toast
-          }
-        },
-      );
-    }, 1000);
-  },
-
   // 下拉刷新
-  onRefresh() {
-    if (this.data.isLoading) return;
+  onPullDownRefresh() {
+    if (this.data.isLoading || this.data.isRefreshing) {
+      wx.stopPullDownRefresh();
+      return;
+    }
 
+    console.log("开始下拉刷新");
     this.setData({
       isRefreshing: true,
       pageNum: 1,
       hasMore: true,
     });
 
-    this.loadOrders();
+    // 模拟刷新延迟
+    setTimeout(() => {
+      this.initList();
+      // 确保数据加载完成后再关闭刷新状态
+      setTimeout(() => {
+        this.setData({
+          isRefreshing: false,
+        });
+        wx.stopPullDownRefresh();
+        console.log("下拉刷新完成");
+      }, 500);
+    }, 1000);
   },
 
-  // 加载更多
-  onLoadMore() {
-    if (this.data.isLoading || !this.data.hasMore) return;
+  // 实现 loadData 方法，这是 behavior 中约定的接口
+  loadData(isLoadMore = false) {
+    return new Promise((resolve) => {
+      // 模拟订单数据
+      const mockOrders = [
+        {
+          orderId: "202502000714000300000",
+          typeName: "电话咨询",
+          type: "phone",
+          status: "pending",
+          statusText: "待支付",
+          consultTime: "2025-02-07 14:00:03",
+          price: 64,
+          lawyer: "雷军",
+        },
+        {
+          orderId: "202502000714000300001",
+          typeName: "图文咨询",
+          type: "text",
+          status: "paid",
+          statusText: "已支付",
+          consultTime: "2025-02-07 14:00:03",
+          price: 128,
+          lawyer: "马云",
+        },
+        {
+          orderId: "202502000714000300003",
+          typeName: "图文咨询",
+          type: "text",
+          status: "refunding",
+          statusText: "退款中",
+          consultTime: "2025-02-07 14:00:03",
+          price: 256,
+          lawyer: "马化腾",
+        },
+        {
+          orderId: "202502000714000300002",
+          typeName: "图文咨询",
+          type: "text",
+          status: "refunded",
+          statusText: "已退款",
+          consultTime: "2025-02-07 14:00:03",
+          price: 64,
+          lawyer: "雷军",
+        },
+      ];
 
-    this.setData({
-      pageNum: this.data.pageNum + 1,
+      // 模拟API请求延迟
+      setTimeout(() => {
+        // 根据当前标签筛选订单
+        let filteredOrders = mockOrders;
+        if (this.data.currentTab !== "all") {
+          filteredOrders = mockOrders.filter(
+            (order) => order.status === this.data.currentTab,
+          );
+        }
+
+        // 模拟分页
+        const startIndex = (this.data.pageNum - 1) * this.data.pageSize;
+        const endIndex = startIndex + this.data.pageSize;
+        const currentPageOrders = filteredOrders.slice(startIndex, endIndex);
+
+        resolve({
+          list: currentPageOrders,
+          hasMore: currentPageOrders.length === this.data.pageSize,
+        });
+      }, 1000);
     });
-
-    this.loadOrders(true);
   },
 
   // 切换下拉菜单
@@ -209,7 +200,7 @@ Page({
       success: (res) => {
         if (res.confirm) {
           // TODO: 调用删除订单接口
-          this.loadOrders();
+          this.initList();
         }
       },
     });
@@ -235,14 +226,8 @@ Page({
   // 去支付
   payOrder(e) {
     const orderId = e.currentTarget.dataset.id;
-    // TODO: 调用支付接口
-  },
-
-  // 查看售后详情
-  showRefundDetail(e) {
-    const orderId = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: `/pages/profile/order/refund-success/refund-success?id=${orderId}`,
+      url: `/pages/profile/order/pay/pay?id=${orderId}`,
     });
   },
 
@@ -251,6 +236,14 @@ Page({
     const orderId = e.currentTarget.dataset.id;
     wx.navigateTo({
       url: `/pages/profile/order/refund/refund?id=${orderId}`,
+    });
+  },
+
+  // 查看退款详情
+  showRefundDetail(e) {
+    const orderId = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/profile/order/refund-detail/refund-detail?id=${orderId}`,
     });
   },
 });

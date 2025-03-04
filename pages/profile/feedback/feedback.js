@@ -1,13 +1,13 @@
-const imageUtil = require('../../../utils/image.js');
+const imageUtil = require("../../../utils/image.js");
 Page({
   data: {
-    currentTab: 'suggest',
-    content: '',
+    currentTab: "suggest",
+    content: "",
     contentLength: 0,
     uploadImages: [],
-    contact: '',
+    contact: "",
     canSubmit: false,
-    imgUrls: null
+    imgUrls: null,
   },
 
   onLoad() {
@@ -18,9 +18,9 @@ Page({
   switchTab(e) {
     const tab = e.currentTarget.dataset.tab;
     if (tab === this.data.currentTab) return;
-    
+
     this.setData({
-      currentTab: tab
+      currentTab: tab,
     });
   },
 
@@ -29,7 +29,7 @@ Page({
     const content = e.detail.value;
     this.setData({
       content,
-      contentLength: content.length
+      contentLength: content.length,
     });
     this.checkCanSubmit();
   },
@@ -37,7 +37,7 @@ Page({
   // 输入联系方式
   handleContactInput(e) {
     this.setData({
-      contact: e.detail.value
+      contact: e.detail.value,
     });
     this.checkCanSubmit();
   },
@@ -47,13 +47,13 @@ Page({
     const count = 3 - this.data.uploadImages.length;
     wx.chooseImage({
       count,
-      sizeType: ['compressed'],
-      sourceType: ['album', 'camera'],
+      sizeType: ["compressed"],
+      sourceType: ["album", "camera"],
       success: (res) => {
         this.setData({
-          uploadImages: [...this.data.uploadImages, ...res.tempFilePaths]
+          uploadImages: [...this.data.uploadImages, ...res.tempFilePaths],
         });
-      }
+      },
     });
   },
 
@@ -62,7 +62,7 @@ Page({
     const index = e.currentTarget.dataset.index;
     wx.previewImage({
       current: this.data.uploadImages[index],
-      urls: this.data.uploadImages
+      urls: this.data.uploadImages,
     });
   },
 
@@ -85,8 +85,8 @@ Page({
     if (!this.data.canSubmit) return;
 
     wx.showLoading({
-      title: '提交中',
-      mask: true
+      title: "提交中",
+      mask: true,
     });
 
     // 这里应该调用后端API提交反馈
@@ -94,21 +94,21 @@ Page({
     setTimeout(() => {
       wx.hideLoading();
       wx.showToast({
-        title: '提交成功',
-        icon: 'success',
+        title: "提交成功",
+        icon: "success",
         duration: 2000,
         success: () => {
           setTimeout(() => {
             wx.navigateBack();
           }, 2000);
-        }
+        },
       });
     }, 1500);
   },
 
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtil.getCommonImages('profile')
+      imgUrls: imageUtil.getCommonImages(["profile", "default"]),
     });
-  }
-}); 
+  },
+});

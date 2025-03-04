@@ -241,16 +241,16 @@
 }
 
 .btn-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20rpx;
+  padding: 40rpx;
+  background: #fff;
   position: fixed;
-  bottom: 10rpx;
+  bottom: 0;
   left: 0;
   right: 0;
-  padding: 32rpx;
-  display: flex;
-  gap: 24rpx;
-  z-index: 3;
-  background: #fff;
-  justify-content: flex-end;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
 }
 
 .btn {
@@ -258,19 +258,18 @@
   border-radius: 88rpx;
   font-size: 32rpx;
   line-height: 80rpx;
-  text-align: right;
-  padding: 0;
-  margin: 0;
+  text-align: center;
   padding: 0 40rpx;
+  min-width: 160rpx;
 }
 
 .btn.delete {
   background: #fff;
-  color: #4E5969;
+  color: #666;
   border: 2rpx solid #EDEEF0;
 }
 
 .btn.buy-again {
-  background: rgba(0, 123, 255, 1);
+  background: #1A73E8;
   color: #fff;
 } 

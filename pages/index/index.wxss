@@ -145,7 +145,6 @@
   line-height: 40rpx;
   box-sizing: border-box;
   color: #333333;
-  /* background: #FFFFFF; */
   box-shadow: 0px 0px 8px 0px rgba(167,178,190,0.1);
   border-radius: 4px 4px 4px 4px;
   border: 1px solid #D1E3FD;

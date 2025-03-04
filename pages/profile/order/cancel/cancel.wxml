@@ -72,7 +72,7 @@
   </view>
 
   <view class="btn-group">
-    <button class="btn delete" bindtap="deleteOrder">删除订单</button>
-    <button class="btn buy-again" bindtap="buyAgain">再次购买</button>
+    <view class="btn delete" bindtap="deleteOrder">删除订单</view>
+    <view class="btn buy-again" bindtap="buyAgain">再次购买</view>
   </view>
 </view> 

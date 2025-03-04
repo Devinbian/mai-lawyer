@@ -72,8 +72,8 @@
       <text>刷新中...</text>
     </view>
 
-    <view class="download-list" wx:if="{{downloadList.length > 0}}">
-      <view class="download-item" wx:for="{{downloadList}}" wx:key="id" bindtap="handleItemClick" data-id="{{item.id}}">
+    <view class="download-list" wx:if="{{list.length > 0}}">
+      <view class="download-item" wx:for="{{list}}" wx:key="id" bindtap="handleItemClick" data-id="{{item.id}}">
         <view class="doc-icon-wrap">
           <image class="doc-icon" src="{{imgUrls[item.type]}}" mode="aspectFit"/>
         </view>
@@ -88,16 +88,16 @@
     </view>
 
     <!-- 空状态 -->
-    <view class="empty-state" wx:elif="{{!isLoading && downloadList.length === 0}}">
+    <view class="empty-state" wx:elif="{{!isInitialLoading && list.length === 0}}">
       <image class="empty-icon" src="{{imgUrls.empty}}" mode="aspectFit"/>
       <text class="empty-text">暂无下载记录</text>
     </view>
 
     <!-- 加载更多 -->
-    <view class="loading-more" wx:if="{{isLoading && downloadList.length > 0}}">
+    <view class="loading-more" wx:if="{{isLoading && list.length > 0}}">
       <text>加载中...</text>
     </view>
-    <view class="no-more" wx:if="{{!hasMore && downloadList.length > 0}}">
+    <view class="no-more" wx:if="{{!hasMore && list.length > 0}}">
       <text>没有更多了</text>
     </view>
   </scroll-view>

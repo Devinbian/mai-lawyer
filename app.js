@@ -22,7 +22,7 @@ App({
 
   setTabBarIcons() {
     // 预加载所有图标
-    const tabBarIcons = imageUtil.getCommonImages("tabBar");
+    const tabBarIcons = imageUtil.getCommonImages(["tabBar", "default"]);
 
     // 批量设置TabBar图标
     Promise.all([

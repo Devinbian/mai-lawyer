@@ -33,7 +33,7 @@ Page({
 
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtil.getCommonImages("profile"),
+      imgUrls: imageUtil.getCommonImages(["profile", "default"]),
     });
   },
 

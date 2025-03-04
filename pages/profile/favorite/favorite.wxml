@@ -20,10 +20,10 @@
       <text>刷新中...</text>
     </view>
 
-    <view class="favorite-list" wx:if="{{favoriteList.length > 0}}">
+    <view class="favorite-list" wx:if="{{list.length > 0}}">
       <view 
         class="favorite-item" 
-        wx:for="{{favoriteList}}" 
+        wx:for="{{list}}" 
         wx:key="id"
         bindtap="handleItemClick"
         data-id="{{item.id}}"
@@ -33,16 +33,16 @@
     </view>
 
     <!-- 空状态 -->
-    <view class="empty-state" wx:elif="{{!isLoading && favoriteList.length === 0}}">
+    <view class="empty-state" wx:elif="{{!isInitialLoading && list.length === 0}}">
       <image class="empty-icon" src="{{imgUrls.noorder}}" mode="aspectFit"/>
       <text class="empty-text">暂无收藏</text>
     </view>
 
     <!-- 加载更多 -->
-    <view class="loading-more" wx:if="{{isLoading}}">
+    <view class="loading-more" wx:if="{{isLoading && list.length > 0}}">
       <text>加载中...</text>
     </view>
-    <view class="no-more" wx:if="{{!hasMore && favoriteList.length > 0}}">
+    <view class="no-more" wx:if="{{!hasMore && list.length > 0}}">
       <text>没有更多了</text>
     </view>
   </scroll-view>

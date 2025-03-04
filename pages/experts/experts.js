@@ -1,22 +1,17 @@
 const imageUtils = require("../../utils/image.js");
+const refreshLoadingBehavior = require("../../behaviors/refresh-loading.js");
 
 // pages/experts/experts.js
 Page({
+  behaviors: [refreshLoadingBehavior],
+
   /**
    * 页面的初始数据
    */
   data: {
-    experts: [],
-    allExperts: [], // 存储所有专家数据
-    pageSize: 10,
-    currentPage: 1,
-    isLoading: false,
-    hasMore: true,
-    isRefreshing: false,
     imgUrls: null,
     bottomPadding: 0,
-    canRefresh: true,  // 控制是否可以触发下拉刷新
-    scrollTop: 0      // 记录滚动位置
+    scrollTop: 0, // 记录滚动位置
   },
 
   /**
@@ -30,60 +25,33 @@ Page({
     });
 
     this.setImagesByPixelRatio();
-    this.loadInitialData();
+    this.initList();
   },
 
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtils.getCommonImages("experts"),
+      imgUrls: {
+        ...imageUtils.getCommonImages(["experts", "expertsDetail", "profile"]),
+      },
     });
   },
 
-  // 加载初始数据
-  loadInitialData() {
-    const mockExperts = this.getMockExperts();
-
-    setTimeout(() => {
-      this.setData(
-        {
-          allExperts: mockExperts,
-          experts: mockExperts.slice(0, this.data.pageSize),
-          hasMore: mockExperts.length > this.data.pageSize,
-          currentPage: 1,
-          isLoading: false,
-          isRefreshing: false,
-        },
-        () => {
-          wx.hideToast();
-        },
-      );
-    }, 1000);
-  },
-
-  // 加载更多数据
-  loadMoreData() {
-    if (!this.data.hasMore || this.data.isLoading) return;
-
-    this.setData({ isLoading: true });
-
-    setTimeout(() => {
-      const { currentPage, pageSize, allExperts } = this.data;
-      const nextPage = currentPage + 1;
-      const start = (nextPage - 1) * pageSize;
+  // 实现 behavior 中定义的 loadData 方法
+  loadData(isLoadMore = false) {
+    return new Promise((resolve) => {
+      const { pageNum, pageSize } = this.data;
+      const mockExperts = this.getMockExperts();
+      const start = (pageNum - 1) * pageSize;
       const end = start + pageSize;
+      const list = mockExperts.slice(start, end);
+      const hasMore = end < mockExperts.length;
 
-      const newData = [...this.data.experts, ...allExperts.slice(start, end)];
-
-      // 提前计算是否还有更多数据
-      const hasMore = end < allExperts.length;
-
-      // 如果已经是最后一页，多显示一些空白
+      // 如果是最后一页，计算底部填充
       if (!hasMore) {
         wx.createSelectorQuery()
           .select(".experts-list")
           .boundingClientRect((rect) => {
             if (rect && rect.height < wx.getSystemInfoSync().windowHeight) {
-              // 如果内容高度小于屏幕高度，填充一些空白
               this.setData({
                 bottomPadding:
                   wx.getSystemInfoSync().windowHeight - rect.height,
@@ -93,84 +61,19 @@ Page({
           .exec();
       }
 
-      this.setData({
-        experts: newData,
-        currentPage: nextPage,
-        hasMore,
-        isLoading: false,
-      });
-    }, 1000);
+      // 模拟网络延迟
+      setTimeout(() => {
+        resolve({ list, hasMore });
+      }, 500);
+    });
   },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {},
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {},
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {},
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {},
 
   // 监听滚动事件
   onScroll(e) {
     const scrollTop = e.detail.scrollTop;
     this.setData({
       scrollTop,
-      canRefresh: scrollTop <= 0
     });
-  },
-
-  // 下拉刷新
-  onPullDownRefresh() {
-    if (!this.data.canRefresh) {
-      wx.stopPullDownRefresh();
-      return;
-    }
-
-    this.setData({
-      isRefreshing: true,
-      currentPage: 1,
-      bottomPadding: 0
-    });
-
-    // 模拟刷新延迟
-    setTimeout(() => {
-      this.loadInitialData();
-      this.setData({
-        isRefreshing: false
-      });
-      wx.stopPullDownRefresh();
-    }, 1000);
-  },
-
-  // 滚动到底部
-  onReachBottom() {
-    if (this.data.isLoading || !this.data.hasMore) return;
-    
-    this.setData({
-      isLoading: true
-    });
-
-    // 模拟加载更多
-    setTimeout(() => {
-      const newExperts = [...this.data.experts, ...this.getMockExperts()];
-      this.setData({
-        experts: newExperts,
-        isLoading: false,
-        hasMore: newExperts.length < 30
-      });
-    }, 1000);
   },
 
   /**
@@ -197,7 +100,7 @@ Page({
   // 电话咨询
   handlePhoneConsult(e) {
     const expertId = e.currentTarget.dataset.id;
-    const expert = this.data.experts.find((item) => item.id === expertId);
+    const expert = this.data.list.find((item) => item.id === expertId);
     if (expert) {
       wx.makePhoneCall({
         phoneNumber: "400-000-0000", // 这里替换为实际的咨询电话
@@ -214,7 +117,7 @@ Page({
   // 在线咨询
   handleOnlineConsult(e) {
     const expertId = e.currentTarget.dataset.id;
-    const expert = this.data.experts.find((item) => item.id === expertId);
+    const expert = this.data.list.find((item) => item.id === expertId);
     if (expert) {
       // 构建专家信息对象
       const expertInfo = {
@@ -247,136 +150,121 @@ Page({
         id: 1,
         name: "张律师",
         avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        isSenior: true,
-        isVerified: true,
-        fields: "婚姻家事、劳动纠纷、合同争议",
+        tags: ["资深专家", "刑事辩护"],
+        fields: "刑事辩护、经济犯罪、职务犯罪",
         years: 15,
-        consultCount: 2358,
-        isOnline: true,
-        tags: ["资深专家", "平台保证"],
+        consultCount: 2000,
       },
       {
         id: 2,
         name: "李律师",
         avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        isSenior: true,
-        isVerified: true,
-        fields: "合同纠纷、知识产权、公司法务",
+        tags: ["高级专家", "民事纠纷"],
+        fields: "婚姻家事、房产纠纷、合同纠纷",
         years: 12,
-        consultCount: 1865,
-        isOnline: false,
-        tags: ["精选专家"],
+        consultCount: 1800,
       },
       {
         id: 3,
         name: "王律师",
         avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        isSenior: true,
-        isVerified: true,
-        fields: "刑事辩护、民事诉讼、经济犯罪",
-        years: 18,
-        consultCount: 3102,
-        isOnline: false,
-        tags: ["高级专家", "平台保证"],
+        tags: ["精选专家", "商事诉讼"],
+        fields: "公司诉讼、股权纠纷、知识产权",
+        years: 10,
+        consultCount: 1500,
       },
       {
         id: 4,
         name: "刘律师",
         avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        isSenior: true,
-        isVerified: true,
-        fields: "房产纠纷、建筑工程、物业争议",
-        years: 10,
-        consultCount: 1527,
-        isOnline: false,
-        tags: ["高级专家", "平台保证"],
+        tags: ["资深专家", "行政法"],
+        fields: "行政诉讼、行政复议、政府法律顾问",
+        years: 18,
+        consultCount: 2500,
       },
       {
         id: 5,
         name: "陈律师",
         avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        isSenior: false,
-        isVerified: true,
-        fields: "交通事故、人身损害、医疗纠纷",
-        years: 8,
-        consultCount: 986,
-        isOnline: false,
-        tags: ["高级专家", "平台保证"],
+        tags: ["高级专家", "劳动法"],
+        fields: "劳动争议、工伤赔偿、劳动合同",
+        years: 13,
+        consultCount: 1900,
       },
       {
         id: 6,
-        name: "周律师",
+        name: "杨律师",
         avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        isSenior: true,
-        isVerified: true,
-        fields: "金融证券、投资理财、债权债务",
-        years: 16,
-        consultCount: 2145,
-        isOnline: false,
-        tags: ["高级专家", "平台保证"],
+        tags: ["精选专家", "知识产权"],
+        fields: "专利诉讼、商标注册、著作权保护",
+        years: 11,
+        consultCount: 1600,
       },
       {
         id: 7,
-        name: "吴律师",
+        name: "赵律师",
         avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        isSenior: false,
-        isVerified: true,
-        fields: "行政诉讼、行政复议、政府法务",
-        years: 9,
-        consultCount: 1236,
-        isOnline: false,
-        tags: ["高级专家", "平台保证"],
+        tags: ["资深专家", "金融法"],
+        fields: "金融诉讼、证券纠纷、保险理赔",
+        years: 16,
+        consultCount: 2200,
       },
       {
         id: 8,
-        name: "郑律师",
+        name: "周律师",
         avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        isSenior: true,
-        isVerified: true,
-        fields: "知识产权、专利商标、著作权",
+        tags: ["高级专家", "房地产"],
+        fields: "房地产诉讼、建设工程、物业管理",
         years: 14,
-        consultCount: 1892,
-        isOnline: false,
-        tags: ["高级专家", "平台保证"],
+        consultCount: 2000,
       },
       {
         id: 9,
-        name: "孙律师",
+        name: "吴律师",
         avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        isSenior: false,
-        isVerified: true,
-        fields: "劳动仲裁、工伤赔偿、社保纠纷",
-        years: 7,
-        consultCount: 865,
-        isOnline: false,
-        tags: ["高级专家", "平台保证"],
+        tags: ["精选专家", "医疗纠纷"],
+        fields: "医疗事故、医疗纠纷、医疗赔偿",
+        years: 12,
+        consultCount: 1700,
       },
       {
         id: 10,
-        name: "赵律师",
+        name: "郑律师",
         avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        isSenior: true,
-        isVerified: true,
-        fields: "婚姻家事、继承遗产、未成年保护",
-        years: 20,
-        consultCount: 3526,
-        isOnline: false,
-        tags: ["高级专家", "平台保证"],
+        tags: ["资深专家", "环境法"],
+        fields: "环境诉讼、环保合规、污染治理",
+        years: 15,
+        consultCount: 1800,
       },
     ];
 
     // 生成更多模拟数据
     const moreExperts = [];
-    for (let i = 0; i < 20; i++) {
-      const baseExpert = baseExperts[i % baseExperts.length];
-      moreExperts.push({
-        ...baseExpert,
-        id: baseExperts.length + i + 1,
-        name: `${baseExpert.name}${Math.floor(i / baseExperts.length) + 1}`,
-        consultCount:
-          baseExpert.consultCount + Math.floor(Math.random() * 1000),
-        isOnline: Math.random() > 0.7,
-      });
+    for (let i = 11; i <= 30; i++) {
+      const expert = {
+        id: i,
+        name: `${
+          ["张", "李", "王", "刘", "陈", "杨", "赵", "周", "吴", "郑"][i % 10]
+        }律师${i}`,
+        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
+        tags: [
+          ["资深专家", "刑事辩护"],
+          ["高级专家", "民事纠纷"],
+          ["精选专家", "商事诉讼"],
+          ["资深专家", "行政法"],
+          ["高级专家", "劳动法"],
+        ][i % 5],
+        fields: [
+          "刑事辩护、经济犯罪、职务犯罪",
+          "婚姻家事、房产纠纷、合同纠纷",
+          "公司诉讼、股权纠纷、知识产权",
+          "行政诉讼、行政复议、政府法律顾问",
+          "劳动争议、工伤赔偿、劳动合同",
+        ][i % 5],
+        years: 10 + (i % 10),
+        consultCount: 1500 + i * 100,
+      };
+      moreExperts.push(expert);
     }
 
     return [...baseExperts, ...moreExperts];

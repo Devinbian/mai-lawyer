@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Your rule content
@@ -9,10 +9,13 @@ alwaysApply: false
 - You can @ files here
 - You can use markdown but dont have to
 
-这是一个微信小程序项目
+# 项目背景
+这是一个微信小程序项目，所有的编码规范需要满足官方小程序的要求
 
-所有的编码规范需要满足官方小程序的要求
+# 编码标准
+- 图片资源不支持在wxss后缀的文件中通过url的方式来引用
+- 图片资源都使用image来加载，静态的image都使用utils/image.js这个图片脚本库来处理
+- 所有的列表数据的交互方式，上拉加载新数据，下拉刷新，不过加载新数据一定是要上拉到列表数据的最底部了，下拉是下拉到最顶部了
 
-图片资源不支持在样式文件中通过url的方式来引用
-
-上拉刷新，下拉加载新数据，请保持统一，不要随便修改
+# image或avatar
+- 图片的引用地址统一是https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images这个来获取图片资源

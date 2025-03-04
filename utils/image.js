@@ -11,10 +11,10 @@ function getImageByPixelRatio(basePath) {
 
 /**
  * 获取通用图片资源对象
- * @param {string} type - 图片类型，如 'profile', 'home' 等
+ * @param {string} types - 图片类型，如 'profile', 'home' 等，支持多个类型
  * @returns {Object} - 返回该类型下所有图片的路径对象
  */
-function getCommonImages(type) {
+function getCommonImages(types) {
   const baseImagePath = "/static/images";
 
   const imageConfigs = {
@@ -47,7 +47,6 @@ function getCommonImages(type) {
       plus: getImageByPixelRatio(`${baseImagePath}/experts/add`),
       orderphone: getImageByPixelRatio(`${baseImagePath}/profile/order-phone`),
       ordertext: getImageByPixelRatio(`${baseImagePath}/profile/order-text`),
-      noorder: getImageByPixelRatio(`${baseImagePath}/noorder`),
       refundbanner: getImageByPixelRatio(
         `${baseImagePath}/profile/refund-banner`,
       ),
@@ -67,7 +66,6 @@ function getCommonImages(type) {
       chatContentBg: getImageByPixelRatio(
         `${baseImagePath}/index/chat-content-bg`,
       ),
-      sendIcon: getImageByPixelRatio(`${baseImagePath}/index/send`),
     },
     experts: {
       titleName: getImageByPixelRatio(`${baseImagePath}/experts/title-name`),
@@ -75,7 +73,6 @@ function getCommonImages(type) {
       expertBg: getImageByPixelRatio(`${baseImagePath}/experts/expert-bg`),
       btnBg: getImageByPixelRatio(`${baseImagePath}/experts/msg-bg`),
       btnIcon: getImageByPixelRatio(`${baseImagePath}/experts/msg`),
-      noorder: getImageByPixelRatio(`${baseImagePath}/profile/nodata`),
     },
     expertsDetail: {
       expertBg: getImageByPixelRatio(`${baseImagePath}/experts/expert-bg`),
@@ -85,10 +82,8 @@ function getCommonImages(type) {
       case: getImageByPixelRatio(`${baseImagePath}/experts/case`),
       document: getImageByPixelRatio(`${baseImagePath}/experts/document`),
     },
-    // 可以在这里添加其他类型的图片配置
     documents: {
       titleName: getImageByPixelRatio(`${baseImagePath}/documents/title-name`),
-      titleBg: getImageByPixelRatio(`${baseImagePath}/documents/title-bg`),
       contract: getImageByPixelRatio(`${baseImagePath}/documents/contract`),
       lawsuit: getImageByPixelRatio(`${baseImagePath}/documents/lawsuit`),
       defense: getImageByPixelRatio(`${baseImagePath}/documents/defense`),
@@ -99,15 +94,12 @@ function getCommonImages(type) {
         `${baseImagePath}/documents/application`,
       ),
       general: getImageByPixelRatio(`${baseImagePath}/documents/general`),
-      noorder: getImageByPixelRatio(`${baseImagePath}/profile/nodata`),
     },
     documentList: {
       search: getImageByPixelRatio(`${baseImagePath}/documents/search`),
       time: getImageByPixelRatio(`${baseImagePath}/documents/time`),
-      noorder: getImageByPixelRatio(`${baseImagePath}/profile/nodata`),
     },
     documentGet: {
-      titleBg: getImageByPixelRatio(`${baseImagePath}/documents/title-bg`),
       arrow: getImageByPixelRatio(`${baseImagePath}/documents/arrow`),
       service: getImageByPixelRatio(`${baseImagePath}/documents/service`),
       word: getImageByPixelRatio(`${baseImagePath}/documents/word`),
@@ -124,10 +116,22 @@ function getCommonImages(type) {
     default: {
       logo: getImageByPixelRatio(`${baseImagePath}/login/logo`),
       offline: getImageByPixelRatio(`${baseImagePath}/offline`),
+      noorder: getImageByPixelRatio(`${baseImagePath}/noorder`),
+      sendIcon: getImageByPixelRatio(`${baseImagePath}/index/send`),
+      titleBg: getImageByPixelRatio(`${baseImagePath}/documents/title-bg`),
     },
   };
 
-  return imageConfigs[type] || {};
+  // 支持单个字符串或数组形式的参数
+  const typeArray = Array.isArray(types) ? types : [types];
+
+  // 合并多个类型的数据
+  return typeArray.reduce((result, type) => {
+    if (imageConfigs[type]) {
+      return { ...result, ...imageConfigs[type] };
+    }
+    return result;
+  }, {});
 }
 
 module.exports = {

@@ -71,7 +71,7 @@ Page({
   // 根据设备像素比选择图片
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtils.getCommonImages("index"),
+      imgUrls: imageUtils.getCommonImages(["index", "default"]),
     });
   },
 

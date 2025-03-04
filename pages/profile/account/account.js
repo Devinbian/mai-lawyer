@@ -1,10 +1,10 @@
-const imageUtils = require('../../../utils/image.js');
+const imageUtils = require("../../../utils/image.js");
 
 Page({
   data: {
     userInfo: null,
     navHeight: 0,
-    imgUrls: null
+    imgUrls: null,
   },
 
   onLoad() {
@@ -16,22 +16,22 @@ Page({
   // 根据设备像素比选择图片
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtils.getCommonImages('profile')
+      imgUrls: imageUtils.getCommonImages(["profile", "default"]),
     });
   },
 
   onNavHeight(e) {
     this.setData({
-      navHeight: e.detail.height
+      navHeight: e.detail.height,
     });
   },
 
   // 获取用户信息
   getUserInfo() {
     const app = getApp();
-    const userInfo = app.globalData.userInfo || wx.getStorageSync('userInfo');
+    const userInfo = app.globalData.userInfo || wx.getStorageSync("userInfo");
     this.setData({
-      userInfo: userInfo || {}
+      userInfo: userInfo || {},
     });
   },
 
@@ -39,137 +39,137 @@ Page({
   changeAvatar() {
     wx.chooseImage({
       count: 1,
-      sizeType: ['compressed'],
-      sourceType: ['album', 'camera'],
+      sizeType: ["compressed"],
+      sourceType: ["album", "camera"],
       success: (res) => {
         const tempFilePath = res.tempFilePaths[0];
         // TODO: 上传头像到服务器
         wx.showToast({
-          title: '头像更新成功',
-          icon: 'success'
+          title: "头像更新成功",
+          icon: "success",
         });
-      }
+      },
     });
   },
 
   // 修改姓名
   changeNickname() {
     wx.showModal({
-      title: '修改姓名',
+      title: "修改姓名",
       editable: true,
-      placeholderText: '请输入姓名',
+      placeholderText: "请输入姓名",
       success: (res) => {
         if (res.confirm && res.content) {
           // TODO: 更新姓名到服务器
           this.setData({
-            'userInfo.nickName': res.content
+            "userInfo.nickName": res.content,
           });
           wx.showToast({
-            title: '姓名修改成功',
-            icon: 'success'
+            title: "姓名修改成功",
+            icon: "success",
           });
         }
-      }
+      },
     });
   },
 
   // 修改性别
   changeGender() {
     wx.showActionSheet({
-      itemList: ['男', '女'],
+      itemList: ["男", "女"],
       success: (res) => {
         const gender = res.tapIndex + 1; // 1-男，2-女
         // TODO: 更新性别到服务器
         this.setData({
-          'userInfo.gender': gender
+          "userInfo.gender": gender,
         });
         wx.showToast({
-          title: '性别修改成功',
-          icon: 'success'
+          title: "性别修改成功",
+          icon: "success",
         });
-      }
+      },
     });
   },
 
   // 修改生日
   changeBirthday() {
     wx.showModal({
-      title: '修改生日',
+      title: "修改生日",
       editable: true,
-      placeholderText: 'YYYY-MM-DD',
+      placeholderText: "YYYY-MM-DD",
       success: (res) => {
         if (res.confirm && res.content) {
           // TODO: 验证日期格式
           // TODO: 更新生日到服务器
           this.setData({
-            'userInfo.birthday': res.content
+            "userInfo.birthday": res.content,
           });
           wx.showToast({
-            title: '生日修改成功',
-            icon: 'success'
+            title: "生日修改成功",
+            icon: "success",
           });
         }
-      }
+      },
     });
   },
 
   // 绑定手机号
   bindPhone() {
     wx.showModal({
-      title: '绑定手机号',
+      title: "绑定手机号",
       editable: true,
-      placeholderText: '请输入手机号',
+      placeholderText: "请输入手机号",
       success: (res) => {
         if (res.confirm && res.content) {
           // TODO: 验证手机号格式
           // TODO: 发送验证码
           // TODO: 验证并绑定手机号
           this.setData({
-            'userInfo.phoneNumber': res.content
+            "userInfo.phoneNumber": res.content,
           });
           wx.showToast({
-            title: '手机号绑定成功',
-            icon: 'success'
+            title: "手机号绑定成功",
+            icon: "success",
           });
         }
-      }
+      },
     });
   },
 
   // 绑定邮箱
   bindEmail() {
     wx.showModal({
-      title: '绑定邮箱',
+      title: "绑定邮箱",
       editable: true,
-      placeholderText: '请输入邮箱',
+      placeholderText: "请输入邮箱",
       success: (res) => {
         if (res.confirm && res.content) {
           // TODO: 验证邮箱格式
           // TODO: 发送验证邮件
           // TODO: 验证并绑定邮箱
           this.setData({
-            'userInfo.email': res.content
+            "userInfo.email": res.content,
           });
           wx.showToast({
-            title: '邮箱绑定成功',
-            icon: 'success'
+            title: "邮箱绑定成功",
+            icon: "success",
           });
         }
-      }
+      },
     });
   },
 
   // 退出登录
   handleLogout() {
     wx.showModal({
-      title: '提示',
-      content: '确定要退出登录吗？',
+      title: "提示",
+      content: "确定要退出登录吗？",
       success: (res) => {
         if (res.confirm) {
           // 清除登录信息
-          wx.removeStorageSync('userInfo');
-          wx.removeStorageSync('token');
-          
+          wx.removeStorageSync("userInfo");
+          wx.removeStorageSync("token");
+
           const app = getApp();
           app.globalData.userInfo = null;
           app.globalData.isLogin = false;
@@ -183,10 +183,10 @@ Page({
               if (profilePage) {
                 profilePage.onShow();
               }
-            }
+            },
           });
         }
-      }
+      },
     });
   },
 
@@ -199,11 +199,11 @@ Page({
     }
     // TODO: 更新性别到服务器
     this.setData({
-      'userInfo.gender': gender
+      "userInfo.gender": gender,
     });
     wx.showToast({
-      title: '性别修改成功',
-      icon: 'success'
+      title: "性别修改成功",
+      icon: "success",
     });
-  }
-}); 
+  },
+});

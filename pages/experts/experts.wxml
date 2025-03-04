@@ -9,12 +9,12 @@
     scroll-y
     class="experts-list"
     bindscroll="onScroll"
-    bindscrolltolower="onReachBottom"
+    bindscrolltolower="loadMore"
     refresher-enabled="{{true}}"
     refresher-triggered="{{isRefreshing}}"
     refresher-background="#F6F7F9"
     refresher-default-style="none"
-    bindrefresherrefresh="onPullDownRefresh"
+    bindrefresherrefresh="onRefresh"
     enhanced="true"
     show-scrollbar="{{false}}"
     style="height: calc(100vh - 180rpx);"
@@ -25,9 +25,9 @@
       <text>刷新中...</text>
     </view>
 
-    <block wx:if="{{experts.length > 0}}">
+    <block wx:if="{{list.length > 0}}">
       <view class="expert-item" 
-        wx:for="{{experts}}" 
+        wx:for="{{list}}" 
         wx:key="id" 
         bindtap="navigateToDetail" 
         data-expert="{{item}}"
@@ -64,16 +64,16 @@
     </block>
 
     <!-- 空状态 -->
-    <view class="empty-state" wx:elif="{{!isLoading && experts.length === 0}}">
+    <view class="empty-state" wx:elif="{{!isInitialLoading && list.length === 0}}">
       <image class="empty-icon" src="{{imgUrls.noorder}}" mode="aspectFit"/>
       <text class="empty-text">暂无专家</text>
     </view>
 
     <!-- 加载更多 -->
-    <view class="loading-more" wx:if="{{isLoading && experts.length > 0}}">
+    <view class="loading-more" wx:if="{{isLoading && list.length > 0}}">
       <text>加载中...</text>
     </view>
-    <view class="no-more" wx:if="{{!hasMore && experts.length > 0}}">
+    <view class="no-more" wx:if="{{!hasMore && list.length > 0}}">
       <text>没有更多了</text>
     </view>
 

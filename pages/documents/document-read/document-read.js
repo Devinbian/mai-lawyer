@@ -1,12 +1,12 @@
-const imageUtil = require('../../../utils/image.js');
+const imageUtil = require("../../../utils/image.js");
 
 Page({
   data: {
     isCollected: false,
-    documentId: '',
+    documentId: "",
     documentInfo: null,
     document: null,
-    imgUrls: null
+    imgUrls: null,
   },
 
   onLoad(options) {
@@ -14,7 +14,7 @@ Page({
       const document = JSON.parse(decodeURIComponent(options.document));
       this.setData({
         documentId: options.id,
-        document: document
+        document: document,
       });
       this.loadDocumentInfo(options.id);
     }
@@ -29,23 +29,23 @@ Page({
       id: id,
       title: this.data.document.title,
       content: [
-        '1.签订本权属证书或说明文件。房屋属于共有的，应提供共有产权人同意出租的证明。转租房屋的，应提供产权人或原出租人同意转租的证明。',
-        '2.出租人应当就合同重大事项承租人尽到提示义务。承租人应当审慎签订本合同，在签订本合同前，要仔细阅读合同条款，特别是审阅其中具有选择性、补充性、修改性的内容，注意防范在任的市场风险和交易风险。',
-        '3.合同租赁期限不得超过20年，超过20年的，超过部分无效。',
-        '4.合同重大事项承租人尽到提示义务。承租人应当审慎签订本合同，在签订本合同前，要仔细阅读合同条款，特别是审阅其中具有选择性、补充性、修改性的内容，注意防范在任的市场风险和交易风险。'
+        "1.签订本权属证书或说明文件。房屋属于共有的，应提供共有产权人同意出租的证明。转租房屋的，应提供产权人或原出租人同意转租的证明。",
+        "2.出租人应当就合同重大事项承租人尽到提示义务。承租人应当审慎签订本合同，在签订本合同前，要仔细阅读合同条款，特别是审阅其中具有选择性、补充性、修改性的内容，注意防范在任的市场风险和交易风险。",
+        "3.合同租赁期限不得超过20年，超过20年的，超过部分无效。",
+        "4.合同重大事项承租人尽到提示义务。承租人应当审慎签订本合同，在签订本合同前，要仔细阅读合同条款，特别是审阅其中具有选择性、补充性、修改性的内容，注意防范在任的市场风险和交易风险。",
       ],
       catalog: [
-        '说明',
-        '专业术语解释',
-        '第一章 合同当事人',
-        '第二章 房屋基本状况',
-        '第三章 房屋租赁期限、租金及支付',
-        '第四章 租赁双方其他权利义务'
-      ]
+        "说明",
+        "专业术语解释",
+        "第一章 合同当事人",
+        "第二章 房屋基本状况",
+        "第三章 房屋租赁期限、租金及支付",
+        "第四章 租赁双方其他权利义务",
+      ],
     };
 
     this.setData({
-      documentInfo
+      documentInfo,
     });
   },
 
@@ -53,10 +53,10 @@ Page({
   toggleCollect() {
     const that = this;
     const isCollected = !this.data.isCollected;
-    
+
     // 先更新本地状态
     this.setData({
-      isCollected
+      isCollected,
     });
 
     // 调用收藏接口
@@ -104,19 +104,21 @@ Page({
   downloadDocument() {
     const { documentId, document } = this.data;
     // 将文档信息转换为查询字符串
-    const documentInfo = encodeURIComponent(JSON.stringify({
-      ...document,
-      type: document.type || 'word' // 如果没有type字段，默认为word类型
-    }));
-    
+    const documentInfo = encodeURIComponent(
+      JSON.stringify({
+        ...document,
+        type: document.type || "word", // 如果没有type字段，默认为word类型
+      }),
+    );
+
     wx.navigateTo({
       url: `/pages/documents/document-get/document-get?id=${documentId}&document=${documentInfo}`,
       fail(err) {
         wx.showToast({
-          title: '页面跳转失败',
-          icon: 'none'
+          title: "页面跳转失败",
+          icon: "none",
         });
-      }
+      },
     });
   },
 
@@ -126,13 +128,13 @@ Page({
     // TODO: 跳转到对应章节
     wx.showToast({
       title: `跳转到: ${this.data.documentInfo.catalog[index]}`,
-      icon: 'none'
+      icon: "none",
     });
   },
 
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtil.getCommonImages('documentRead')
+      imgUrls: imageUtil.getCommonImages(["documentRead", "default"]),
     });
-  }
-}); 
+  },
+});

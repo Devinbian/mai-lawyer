@@ -20,12 +20,12 @@
       scroll-y
       class="document-list"
       bindscroll="onScroll"
-      bindscrolltolower="onReachBottom"
-      refresher-enabled="{{true}}"
+      bindscrolltolower="loadMore"
+      refresher-enabled="{{canRefresh}}"
       refresher-triggered="{{isRefreshing}}"
       refresher-background="#F6F7F9"
       refresher-default-style="none"
-      bindrefresherrefresh="onPullDownRefresh"
+      bindrefresherrefresh="onRefresh"
       enhanced="true"
       show-scrollbar="{{false}}"
       bounces="{{false}}"
@@ -38,7 +38,7 @@
       </view>
 
       <view class="document-item" 
-        wx:for="{{filteredDocuments}}" 
+        wx:for="{{list}}" 
         wx:key="id"
         bindtap="onDocumentTap"
         data-id="{{item.id}}"
@@ -58,16 +58,16 @@
       </view>
 
       <!-- 空状态 -->
-      <view class="empty-state" wx:if="{{filteredDocuments.length === 0 && !isLoading}}">
+      <view class="empty-state" wx:if="{{!isInitialLoading && list.length === 0}}">
         <image class="empty-icon" src="{{imgUrls.noorder}}" mode="aspectFit"/>
         <text class="empty-text">暂无相关数据</text>
       </view>
 
       <!-- 加载更多 -->
-      <view class="loading-more" wx:if="{{isLoading && filteredDocuments.length > 0}}">
+      <view class="loading-more" wx:if="{{isLoading && list.length > 0}}">
         <text>加载中...</text>
       </view>
-      <view class="no-more" wx:if="{{!hasMore && filteredDocuments.length > 0}}">
+      <view class="no-more" wx:if="{{!hasMore && list.length > 0}}">
         <text>没有更多了</text>
       </view>
     </scroll-view>
