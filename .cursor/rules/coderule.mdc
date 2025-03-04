@@ -1,6 +1,11 @@
 ---
 description: 
 globs: 
+alwaysApply: false
+---
+---
+description: 
+globs: 
 alwaysApply: true
 ---
 
@@ -19,3 +24,7 @@ alwaysApply: true
 
 # image或avatar
 - 图片的引用地址统一是https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images这个来获取图片资源
+
+# IM 
+- SDKAppID：1600075596
+- SecretKey：ba92e763ab7975718da625afa6f60465dee472f0e4524f2028f83e161e5e1f8b
