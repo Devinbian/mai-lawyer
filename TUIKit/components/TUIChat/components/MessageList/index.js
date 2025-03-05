@@ -1,6 +1,6 @@
-import dayjs from '../../../../utils/dayjs';
-import logger from '../../../../utils/logger';
-import constant from '../../../../utils/constant';
+import dayjs from "../../../../utils/dayjs";
+import logger from "../../../../utils/logger";
+import constant from "../../../../utils/constant";
 // eslint-disable-next-line no-undef
 const app = getApp();
 Component({
@@ -13,16 +13,19 @@ Component({
       value: {},
       observer(newVal) {
         if (!newVal.conversationID) return;
-        this.setData({
-          conversation: newVal,
-        }, () => {
-          this.getMessageList(this.data.conversation);
-        });
+        this.setData(
+          {
+            conversation: newVal,
+          },
+          () => {
+            this.getMessageList(this.data.conversation);
+          },
+        );
       },
     },
     unreadCount: {
       type: Number,
-      value: '',
+      value: "",
       observer(newVal) {
         this.setData({
           unreadCount: newVal,
@@ -31,7 +34,7 @@ Component({
     },
     chatContainerHeight: {
       type: Number,
-      value: '',
+      value: "",
       observer(newVal) {
         this.setData({
           chatContainerHeight: newVal,
@@ -45,29 +48,29 @@ Component({
    */
   data: {
     isLostsOfUnread: false,
-    unreadCount: '',
+    unreadCount: "",
     conversation: {}, // 当前会话
     messageList: [],
     // 自己的 ID 用于区分历史消息中，哪部分是自己发出的
-    scrollView: '',
+    scrollView: "",
     triggered: true,
-    nextReqMessageID: '', // 下一条消息标志
+    nextReqMessageID: "", // 下一条消息标志
     isCompleted: false, // 当前会话消息是否已经请求完毕
     messagepopToggle: false,
-    messageID: '',
-    checkID: '',
+    messageID: "",
+    checkID: "",
     selectedMessage: {},
-    deleteMessage: '',
-    RevokeID: '', // 撤回消息的ID用于处理对方消息展示界面
-    showName: '',
+    deleteMessage: "",
+    RevokeID: "", // 撤回消息的ID用于处理对方消息展示界面
+    showName: "",
     showUnreadMessageCount: false,
     showUpJump: false,
-    jumpAim: '',
-    messageIndex: '',
+    jumpAim: "",
+    messageIndex: "",
     isShow: false,
     Show: false,
-    UseData: '',
-    chargeLastmessage: '',
+    UseData: "",
+    chargeLastmessage: "",
     groupOperationType: 0,
     newMessageCount: [],
     messageTimeID: {},
@@ -76,7 +79,7 @@ Component({
     showPersonalProfile: false,
     resendMessage: {},
     showOnlyOnce: false,
-    lastMessageSequence: '',
+    lastMessageSequence: "",
     isRewrite: false,
     isMessageTime: {},
     newArr: {},
@@ -90,8 +93,7 @@ Component({
   },
 
   lifetimes: {
-    attached() {
-    },
+    attached() {},
     ready() {
       if (this.data.unreadCount > 12) {
         if (this.data.unreadCount > 99) {
@@ -105,56 +107,85 @@ Component({
           });
         }
       }
-      wx.$TUIKit.on(wx.TencentCloudChat.EVENT.MESSAGE_RECEIVED, this.$onMessageReceived, this);
-      wx.$TUIKit.on(wx.TencentCloudChat.EVENT.MESSAGE_READ_BY_PEER, this.$onMessageReadByPeer, this);
-      wx.$TUIKit.on(wx.TencentCloudChat.EVENT.MESSAGE_REVOKED, this.$onMessageRevoked, this);
+      wx.$TUIKit.on(
+        wx.TencentCloudChat.EVENT.MESSAGE_RECEIVED,
+        this.$onMessageReceived,
+        this,
+      );
+      wx.$TUIKit.on(
+        wx.TencentCloudChat.EVENT.MESSAGE_READ_BY_PEER,
+        this.$onMessageReadByPeer,
+        this,
+      );
+      wx.$TUIKit.on(
+        wx.TencentCloudChat.EVENT.MESSAGE_REVOKED,
+        this.$onMessageRevoked,
+        this,
+      );
     },
 
     detached() {
       // 一定要解除相关的事件绑定
-      wx.$TUIKit.off(wx.TencentCloudChat.EVENT.MESSAGE_RECEIVED, this.$onMessageReceived);
-      wx.$TUIKit.off(wx.TencentCloudChat.EVENT.MESSAGE_READ_BY_PEER, this.$onMessageReadByPeer);
-      wx.$TUIKit.off(wx.TencentCloudChat.EVENT.MESSAGE_REVOKED, this.$onMessageRevoked);
+      wx.$TUIKit.off(
+        wx.TencentCloudChat.EVENT.MESSAGE_RECEIVED,
+        this.$onMessageReceived,
+      );
+      wx.$TUIKit.off(
+        wx.TencentCloudChat.EVENT.MESSAGE_READ_BY_PEER,
+        this.$onMessageReadByPeer,
+      );
+      wx.$TUIKit.off(
+        wx.TencentCloudChat.EVENT.MESSAGE_REVOKED,
+        this.$onMessageRevoked,
+      );
     },
   },
 
   methods: {
     // 刷新消息列表
     refresh() {
-      this.setData({
-        refreshStatus: true,
-      }, () => {
-        if (this.data.isCompleted) {
+      this.setData(
+        {
+          refreshStatus: true,
+        },
+        () => {
+          if (this.data.isCompleted) {
+            this.setData({
+              refreshStatus: false,
+            });
+            return;
+          }
+          this.getMessageList(this.data.conversation);
           this.setData({
             refreshStatus: false,
-          })
-          return;
-        }
-        this.getMessageList(this.data.conversation);
-        this.setData({
-          refreshStatus: false,
-        })
-      })
+          });
+        },
+      );
     },
     // 获取消息列表
     getMessageList(conversation) {
       if (!this.data.isCompleted) {
-        wx.$TUIKit.getMessageList({
-          conversationID: conversation.conversationID,
-          nextReqMessageID: this.data.nextReqMessageID,
-          count: 15,
-        }).then((res) => {
-          this.showMoreHistoryMessageTime(res.data.messageList);
-          const { messageList } = res.data; // 消息列表。
-          this.setData({
-            nextReqMessageID: res.data.nextReqMessageID, // 用于续拉，分页续拉时需传入该字段。
-            isCompleted: res.data.isCompleted, // 表示是否已经拉完所有消息。
+        wx.$TUIKit
+          .getMessageList({
+            conversationID: conversation.conversationID,
+            nextReqMessageID: this.data.nextReqMessageID,
+            count: 15,
           })
-          if (messageList.length > 0 && this.data.messageList.length < this.data.unreadCount) {
-            this.getMessageList(conversation);
-          }
-          this.$handleMessageRender(messageList);
-        });
+          .then((res) => {
+            this.showMoreHistoryMessageTime(res.data.messageList);
+            const { messageList } = res.data; // 消息列表。
+            this.setData({
+              nextReqMessageID: res.data.nextReqMessageID, // 用于续拉，分页续拉时需传入该字段。
+              isCompleted: res.data.isCompleted, // 表示是否已经拉完所有消息。
+            });
+            if (
+              messageList.length > 0 &&
+              this.data.messageList.length < this.data.unreadCount
+            ) {
+              this.getMessageList(conversation);
+            }
+            this.$handleMessageRender(messageList);
+          });
       }
     },
     // 历史消息渲染
@@ -164,24 +195,32 @@ Component({
       }
       this.showHistoryMessageTime(historyMessageList);
       const messageList = [...historyMessageList, ...this.data.messageList];
-      const lastHistoryMessageID = historyMessageList[historyMessageList.length - 1].ID;
-      if (this.data.conversation.type === '@TIM#SYSTEM') {
+      const lastHistoryMessageID =
+        historyMessageList[historyMessageList.length - 1].ID;
+      if (this.data.conversation.type === "@TIM#SYSTEM") {
         return this.filterRepateSystemMessage(messageList);
       }
-      this.setData({
-        messageList,
-      }, () => {
-        this.setData({
-          // 消息ID前拼接字符串为了解决 scroll-into-view，无法跳转以数字开头的 ID。
-          jumpAim: `ID-${this.filterSystemMessageID(lastHistoryMessageID)}`,
-        });
-      });
+      this.setData(
+        {
+          messageList,
+        },
+        () => {
+          this.setData({
+            // 消息ID前拼接字符串为了解决 scroll-into-view，无法跳转以数字开头的 ID。
+            jumpAim: `ID-${this.filterSystemMessageID(lastHistoryMessageID)}`,
+          });
+        },
+      );
     },
     // 系统消息去重
     filterRepateSystemMessage(messageList) {
       const noRepateMessage = [];
-      for (let index = 0;  index < messageList.length; index++) {
-        if (!noRepateMessage.some(item => item && item.ID === messageList[index].ID)) {
+      for (let index = 0; index < messageList.length; index++) {
+        if (
+          !noRepateMessage.some(
+            (item) => item && item.ID === messageList[index].ID,
+          )
+        ) {
           noRepateMessage.push(messageList[index]);
         }
       }
@@ -194,19 +233,26 @@ Component({
       this.updateReadByPeer(event);
     },
     updateScrollToBottom() {
-      const ID = `ID-${this.filterSystemMessageID(this.data.messageList[this.data.messageList.length - 1]?.ID)}`;
-      this.setData({
-        jumpAim: '',
-      }, () => {
-        this.setData({
-          jumpAim: ID,
-        });
-      });
+      const ID = `ID-${this.filterSystemMessageID(
+        this.data.messageList[this.data.messageList.length - 1]?.ID,
+      )}`;
+      this.setData(
+        {
+          jumpAim: "",
+        },
+        () => {
+          this.setData({
+            jumpAim: ID,
+          });
+        },
+      );
     },
     // 更新已读更新
     updateReadByPeer(event) {
       event.data.forEach((item) => {
-        const index = this.data.messageList.findIndex(element => element.ID === item.ID);
+        const index = this.data.messageList.findIndex(
+          (element) => element.ID === item.ID,
+        );
         this.data.messageList[index] = item;
         this.setData({
           messageList: this.data.messageList,
@@ -217,9 +263,13 @@ Component({
     // 收到的消息
     $onMessageReceived(value) {
       const message = value.data[0];
-      wx.$TUIKit.setMessageRead({ conversationID: this.data.conversation.conversationID }).then(() => {
-        logger.log('| MessageList | setMessageRead | ok');
-      });
+      wx.$TUIKit
+        .setMessageRead({
+          conversationID: this.data.conversation.conversationID,
+        })
+        .then(() => {
+          logger.log("| MessageList | setMessageRead | ok");
+        });
       const { BUSINESS_ID_TEXT, MESSAGE_TYPE_TEXT } = constant;
       this.messageTimeForShow(message);
       this.setData({
@@ -228,11 +278,11 @@ Component({
       value.data.forEach((item) => {
         switch (item.type) {
           // 群提示消息
-          case 'TIMGroupTipElem':
+          case "TIMGroupTipElem":
             this.handleGroupTipMessage(item);
             break;
           // 群系统消息
-          case 'TIMGroupSystemNoticeElem':
+          case "TIMGroupSystemNoticeElem":
             this.handleGroupSystemNoticeMessage(item);
             break;
           default:
@@ -243,19 +293,23 @@ Component({
       // 将收到的消息存入messageList之前需要进行过滤，正在输入状态消息不用存入messageList.
       const list = [];
       value.data.forEach((item) => {
-        if (item.conversationID === this.data.conversation.conversationID && item.type === MESSAGE_TYPE_TEXT.TIM_CUSTOM_ELEM) {
+        if (
+          item.conversationID === this.data.conversation.conversationID &&
+          item.type === MESSAGE_TYPE_TEXT.TIM_CUSTOM_ELEM
+        ) {
           try {
             const typingMessage = JSON.parse(item.payload.data);
             if (typingMessage.businessID !== BUSINESS_ID_TEXT.USER_TYPING) {
               list.push(item);
             } else {
-              this.triggerEvent('typing', {
+              this.triggerEvent("typing", {
                 typingMessage,
               });
             }
-          } catch (error) {
-          }
-        } else if (item.conversationID === this.data.conversation.conversationID) {
+          } catch (error) {}
+        } else if (
+          item.conversationID === this.data.conversation.conversationID
+        ) {
           list.push(item);
         }
       });
@@ -280,28 +334,36 @@ Component({
           });
         }
       }
-      if (this.data.conversation.type === 'GROUP') {
-        const groupOperationType = this.data.messageList.slice(-1)[0].payload?.operationType || 0;
-        this.triggerEvent('changeMemberCount', {
+      if (this.data.conversation.type === "GROUP") {
+        const groupOperationType =
+          this.data.messageList.slice(-1)[0].payload?.operationType || 0;
+        this.triggerEvent("changeMemberCount", {
           groupOperationType,
         });
       }
     },
     // 自己的消息上屏
     updateMessageList(message) {
-      if (message.conversationID !== this.data.conversation.conversationID) return;
-      const index = this.data.messageList.findIndex((item) => item.ID === message.ID)
+      if (message.conversationID !== this.data.conversation.conversationID)
+        return;
+      const index = this.data.messageList.findIndex(
+        (item) => item.ID === message.ID,
+      );
       if (index > -1) {
         this.data.messageList[index] = message;
         this.setData({
           messageList: this.data.messageList,
-        })
+        });
         return;
       }
 
-      wx.$TUIKit.setMessageRead({ conversationID: this.data.conversation.conversationID }).then(() => {
-        logger.log('| MessageList | setMessageRead | ok');
-      });
+      wx.$TUIKit
+        .setMessageRead({
+          conversationID: this.data.conversation.conversationID,
+        })
+        .then(() => {
+          logger.log("| MessageList | setMessageRead | ok");
+        });
       const { BUSINESS_ID_TEXT, MESSAGE_TYPE_TEXT } = constant;
       this.messageTimeForShow(message);
       if (message.type === MESSAGE_TYPE_TEXT.TIM_CUSTOM_ELEM) {
@@ -316,15 +378,20 @@ Component({
       } else {
         this.data.messageList.push(message);
       }
-      this.setData({
-        lastMessageSequence: this.data.messageList.slice(-1)[0].sequence,
-        messageList: this.data.messageList,
-        jumpAim: `ID-${this.filterSystemMessageID(this.data.messageList[this.data.messageList.length - 1]?.ID)}`,
-      }, () => {
-        this.setData({
+      this.setData(
+        {
+          lastMessageSequence: this.data.messageList.slice(-1)[0].sequence,
           messageList: this.data.messageList,
-        });
-      });
+          jumpAim: `ID-${this.filterSystemMessageID(
+            this.data.messageList[this.data.messageList.length - 1]?.ID,
+          )}`,
+        },
+        () => {
+          this.setData({
+            messageList: this.data.messageList,
+          });
+        },
+      );
     },
 
     handleGroupTipMessage(msg) {
@@ -334,7 +401,7 @@ Component({
         this.setData({
           newGroupProfile,
         });
-        this.triggerEvent('handleNewGroupProfile', this.data.newGroupProfile);
+        this.triggerEvent("handleNewGroupProfile", this.data.newGroupProfile);
       }
     },
 
@@ -343,7 +410,7 @@ Component({
       if (msg.payload.operationType === 4) {
         // 跳转到聊天列表页面
         wx.navigateTo({
-          url: '../../../../../../TUI-CustomerService/pages/index',
+          url: "../../../../../../TUI-CustomerService/pages/index",
         });
         this.showToast(`您已被${msg.payload.operatorID}踢出群组！`);
       }
@@ -354,20 +421,20 @@ Component({
       if (!messageID) {
         return;
       }
-      const index = messageID.indexOf('@TIM#');
-      const groupIndex = messageID.indexOf('@TGS#');
+      const index = messageID.indexOf("@TIM#");
+      const groupIndex = messageID.indexOf("@TGS#");
       if (index === 0) {
-        messageID =  messageID.replace('@TIM#', '');
+        messageID = messageID.replace("@TIM#", "");
       }
       if (groupIndex === 0) {
-        messageID =  messageID.replace('@TGS#', '');
+        messageID = messageID.replace("@TGS#", "");
       }
       return messageID;
     },
     // 获取消息ID
     handleLongPress(e) {
       for (let index = 0; index < this.data.messageList.length; index++) {
-        if (this.data.messageList[index].status === 'success') {
+        if (this.data.messageList[index].status === "success") {
           const { index } = e.currentTarget.dataset;
           this.setData({
             messageID: e.currentTarget.id,
@@ -380,7 +447,9 @@ Component({
     // 更新 messagelist
     updateMessageByID(deleteMessageID) {
       const { messageList } = this.data;
-      const deleteMessageArr = messageList.filter(item => item.ID === deleteMessageID);
+      const deleteMessageArr = messageList.filter(
+        (item) => item.ID === deleteMessageID,
+      );
       this.setData({
         messageList,
       });
@@ -388,20 +457,21 @@ Component({
     },
     // 删除消息
     deleteMessage() {
-      wx.$TUIKit.deleteMessage([this.data.selectedMessage])
+      wx.$TUIKit
+        .deleteMessage([this.data.selectedMessage])
         .then((imResponse) => {
           this.updateMessageByID(imResponse.data.messageList[0].ID);
           wx.showToast({
-            title: '删除成功!',
+            title: "删除成功!",
             duration: 800,
-            icon: 'none',
+            icon: "none",
           });
         })
         .catch(() => {
           wx.showToast({
-            title: '删除失败!',
+            title: "删除失败!",
             duration: 800,
-            icon: 'error',
+            icon: "error",
           });
         });
     },
@@ -413,15 +483,15 @@ Component({
           const filePath = res.tempFilePath;
           wx.openDocument({
             filePath,
-            success() {
-            },
+            success() {},
           });
         },
       });
     },
     // 撤回消息
     revokeMessage() {
-      wx.$TUIKit.revokeMessage(this.data.selectedMessage)
+      wx.$TUIKit
+        .revokeMessage(this.data.selectedMessage)
         .then((imResponse) => {
           this.setData({
             resendMessage: imResponse.data.message,
@@ -431,20 +501,20 @@ Component({
         })
         .catch((imError) => {
           wx.showToast({
-            title: '超过2分钟消息不支持撤回',
+            title: "超过2分钟消息不支持撤回",
             duration: 800,
-            icon: 'none',
+            icon: "none",
           }),
-          this.setData({
-            Show: false,
-          });
+            this.setData({
+              Show: false,
+            });
           // 消息撤回失败
-          console.warn('revokeMessage error:', imError);
+          console.warn("revokeMessage error:", imError);
         });
     },
     // 撤回消息重新发送
     resendMessage(e) {
-      this.triggerEvent('resendMessage', {
+      this.triggerEvent("resendMessage", {
         message: e.detail.message,
       });
     },
@@ -465,7 +535,9 @@ Component({
         success() {
           wx.getClipboardData({
             success(res) {
-              logger.log(`| TUI-chat | message-list | copyMessage: ${res.data} `);
+              logger.log(
+                `| TUI-chat | message-list | copyMessage: ${res.data} `,
+              );
             },
           });
         },
@@ -477,7 +549,9 @@ Component({
     // 消息跳转到最新
     handleJumpNewMessage() {
       this.setData({
-        jumpAim: `ID-${this.filterSystemMessageID(this.data.messageList[this.data.messageList.length - 1]?.ID)}`,
+        jumpAim: `ID-${this.filterSystemMessageID(
+          this.data.messageList[this.data.messageList.length - 1]?.ID,
+        )}`,
         showUnreadMessageCount: false,
         newMessageCount: [],
         isScrollToBottom: true,
@@ -488,13 +562,21 @@ Component({
       if (this.data.unreadCount > 15) {
         this.getMessageList(this.data.conversation);
         this.setData({
-          jumpAim: `ID-${this.filterSystemMessageID(this.data.messageList[this.data.messageList.length - this.data.unreadCount]?.ID)}`,
+          jumpAim: `ID-${this.filterSystemMessageID(
+            this.data.messageList[
+              this.data.messageList.length - this.data.unreadCount
+            ]?.ID,
+          )}`,
           showUpJump: false,
         });
       } else {
         this.getMessageList(this.data.conversation);
         this.setData({
-          jumpAim: `ID-${this.filterSystemMessageID(this.data.messageList[this.data.messageList.length - this.data.unreadCount]?.ID)}`,
+          jumpAim: `ID-${this.filterSystemMessageID(
+            this.data.messageList[
+              this.data.messageList.length - this.data.unreadCount
+            ]?.ID,
+          )}`,
           showUpJump: false,
         });
       }
@@ -502,7 +584,9 @@ Component({
     // 滑动到最底部置跳转事件为false
     scrollHandler() {
       this.setData({
-        jumpAim: `ID-${this.filterSystemMessageID(this.data.messageList[this.data.messageList.length - 1]?.ID)}`,
+        jumpAim: `ID-${this.filterSystemMessageID(
+          this.data.messageList[this.data.messageList.length - 1]?.ID,
+        )}`,
         showUnreadMessageCount: false,
         newMessageCount: [],
         isScrollToBottom: true,
@@ -518,10 +602,10 @@ Component({
       const nowTime = Math.floor(messageTime.time / 10) * 10 * 1000;
       if (this.data.messageList.length > 0) {
         const lastTime = this.data.messageList.slice(-1)[0].time * 1000;
-        if (nowTime  - lastTime > interval) {
+        if (nowTime - lastTime > interval) {
           Object.assign(messageTime, {
             isShowHistoryTime: true,
-            historyTime: dayjs(nowTime).format('YYYY-MM-DD HH:mm:ss')
+            historyTime: dayjs(nowTime).format("YYYY-MM-DD HH:mm:ss"),
           });
         }
       }
@@ -533,12 +617,15 @@ Component({
         return;
       }
       for (let index = 1; index < messageList.length; index++) {
-        const currentMessageTime = Math.floor(messageList[index].time / 10) * 10 * 1000;
+        const currentMessageTime =
+          Math.floor(messageList[index].time / 10) * 10 * 1000;
         const preMessageTime = messageList[index - 1].time * 1000;
         if (currentMessageTime - preMessageTime > cut) {
           Object.assign(messageList[index], {
             isShowHistoryTime: true,
-            historyTime: dayjs(currentMessageTime).format('YYYY-MM-DD HH:mm:ss'),
+            historyTime: dayjs(currentMessageTime).format(
+              "YYYY-MM-DD HH:mm:ss",
+            ),
           });
         }
       }
@@ -550,7 +637,9 @@ Component({
         Object.assign(messageList[0], {
           isShowMoreHistoryTime: true,
         });
-        this.data.newArr[messageList[0].ID] = dayjs(showHistoryTime).format('YYYY-MM-DD HH:mm:ss');
+        this.data.newArr[messageList[0].ID] = dayjs(showHistoryTime).format(
+          "YYYY-MM-DD HH:mm:ss",
+        );
         this.setData({
           newArr: this.data.newArr,
         });
@@ -567,13 +656,16 @@ Component({
       const ID = event.target.dataset.value;
       const { TOAST_TITLE_TEXT } = constant;
       wx.showModal({
-        content: '确认重发该消息？',
+        content: "确认重发该消息？",
         success: (res) => {
           if (!res.confirm) {
             return;
           }
-          const failMessage = this.data.messageList.find(item => (item.ID === ID));
-          wx.$TUIKit.resendMessage(failMessage) // 传入需要重发的消息实例
+          const failMessage = this.data.messageList.find(
+            (item) => item.ID === ID,
+          );
+          wx.$TUIKit
+            .resendMessage(failMessage) // 传入需要重发的消息实例
             .then((res) => {
               this.updateMessageList(res.data.message);
               this.showToast(TOAST_TITLE_TEXT.RESEND_SUCCESS);
@@ -597,7 +689,8 @@ Component({
         case MESSAGE_ERROR_CODE.UPLOAD_FAIL:
           this.showToast(TOAST_TITLE_TEXT.UPLOAD_FAIL);
           break;
-        case MESSAGE_ERROR_CODE.REQUESTOR_TIME || MESSAGE_ERROR_CODE.DISCONNECT_NETWORK:
+        case MESSAGE_ERROR_CODE.REQUESTOR_TIME ||
+          MESSAGE_ERROR_CODE.DISCONNECT_NETWORK:
           this.showToast(TOAST_TITLE_TEXT.CONNECT_ERROR);
           break;
         case MESSAGE_ERROR_CODE.DIRTY_MEDIA:
@@ -624,7 +717,7 @@ Component({
         wx.showToast({
           title: toastTitle,
           duration: 800,
-          icon: 'none',
+          icon: "none",
         });
       } else {
         this.setData({
@@ -633,16 +726,23 @@ Component({
         wx.showToast({
           title: toastTitle,
           duration: 800,
-          icon: 'none',
+          icon: "none",
         });
       }
     },
     // 点击购买链接跳转
     handleJumpLink(e) {
-      if (app.globalData && app.globalData.reportType !== constant.OPERATING_ENVIRONMENT) return;
-      const { BUSINESS_ID_TEXT }  = constant;
+      if (
+        app.globalData &&
+        app.globalData.reportType !== constant.OPERATING_ENVIRONMENT
+      )
+        return;
+      const { BUSINESS_ID_TEXT } = constant;
       const dataLink = JSON.parse(e.currentTarget.dataset.value.payload.data);
-      if (dataLink.businessID === BUSINESS_ID_TEXT.ORDER || dataLink.businessID === BUSINESS_ID_TEXT.LINK) {
+      if (
+        dataLink.businessID === BUSINESS_ID_TEXT.ORDER ||
+        dataLink.businessID === BUSINESS_ID_TEXT.LINK
+      ) {
         const url = `/pages/TUI-User-Center/webview/webview?url=${dataLink.link}&wechatMobile`;
         wx.navigateTo({
           url: encodeURI(url),
@@ -652,7 +752,9 @@ Component({
     onScroll(event) {
       let isScrollToBottom = false;
       // 滚动条在底部
-      const currentScorollPos = Math.round(event.detail.scrollTop + this.data.chatContainerHeight);
+      const currentScorollPos = Math.round(
+        event.detail.scrollTop + this.data.chatContainerHeight,
+      );
       if (event.detail.scrollHeight - currentScorollPos <= 0) {
         isScrollToBottom = true;
       }
@@ -661,5 +763,4 @@ Component({
       });
     },
   },
-
 });

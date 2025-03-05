@@ -128,9 +128,9 @@ Page({
     };
 
     wx.navigateTo({
-      url:
-        "/pages/experts/chat/chat?expert=" +
-        encodeURIComponent(JSON.stringify(expert)),
+      url: "",
+      // "/pages/experts/chat/chat?expert=" +
+      // encodeURIComponent(JSON.stringify(expert)),
       fail(err) {
         wx.showToast({
           title: "打开聊天失败",

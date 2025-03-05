@@ -11,7 +11,7 @@ App({
     isLogin: false,
     token: "",
     config: {
-      userID: "laywer2", // User ID
+      userID: "laywer3", // User ID
       SECRETKEY:
         "ba92e763ab7975718da625afa6f60465dee472f0e4524f2028f83e161e5e1f8b", // Your secretKey
       SDKAPPID: 1600075596, // Your SDKAppID
@@ -20,32 +20,7 @@ App({
   },
 
   onLaunch() {
-    wx.$TUIKit = TencentCloudChat.create({
-      SDKAppID: this.globalData.config.SDKAPPID,
-      
-    });
-    const userSig = genTestUserSig(this.globalData.config).userSig;
-
-    console.log("==============onLaunch=================", userSig);
-
-    wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
-    wx.TencentCloudChat = TencentCloudChat;
-    wx.$chat_userID = this.globalData.config.userID;
-    wx.$chat_userSig = userSig;
-    wx.$TUIKit.registerPlugin({ "tim-upload-plugin": TIMUploadPlugin });
-    wx.$TUIKit.registerPlugin({
-      "tim-profanity-filter-plugin": TIMProfanityFilterPlugin,
-    });
-    wx.$TUIKit.login({
-      userID: this.globalData.config.userID,
-      userSig,
-    });
-
-    // 监听系统级事件
-    wx.$TUIKit.on(wx.TencentCloudChat.EVENT.SDK_READY, () => {
-      console.log("TUIKit SDK_READY");
-      // SDK 已经初始化完成，可以进行后续操作
-    });
+    this.initSDKInstance();
 
     // 延迟设置TabBar图标
     wx.nextTick(() => {
@@ -56,6 +31,28 @@ App({
     setTimeout(() => {
       this.checkLoginStatus();
     }, 0);
+  },
+
+  initSDKInstance() {
+    if (!wx.$TUIKit) {
+      console.log("全局初始化 SDK 实例...");
+      wx.$TUIKit = TencentCloudChat.create({
+        SDKAppID: this.globalData.config.SDKAPPID,
+      });
+
+      // 注册插件
+      wx.$TUIKit.registerPlugin({ "tim-upload-plugin": TIMUploadPlugin });
+      wx.$TUIKit.registerPlugin({
+        "tim-profanity-filter-plugin": TIMProfanityFilterPlugin,
+      });
+
+      // 设置日志级别
+      wx.$TUIKit.setLogLevel(1);
+
+      // 设置全局变量
+      wx.TencentCloudChat = TencentCloudChat;
+      wx.$chat_SDKAppID = this.globalData.config.SDKAPPID;
+    }
   },
 
   onUnload() {

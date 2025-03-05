@@ -1,6 +1,12 @@
 <view class="container">
   <bg-titlecenter-nav title="在线咨询" showBack="{{true}}"></bg-titlecenter-nav>
   <view class="chat-container">
-    <TUIKit id="TUIKit" config="{{config}}" conversationID="{{conversationID}}"></TUIKit>
+    <block wx:if="{{isSDKReady}}">
+      <TUIKit id="TUIKit" config="{{config}}" conversationID="{{conversationID}}"></TUIKit>
+    </block>
+    <view wx:else class="loading">
+      <view>正在连接聊天服务...</view>
+      <view class="loading-tip">首次加载可能需要较长时间</view>
+    </view>
   </view>
 </view>

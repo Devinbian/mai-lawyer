@@ -23,7 +23,7 @@
 .t-message-avatar {
   margin-left: 20rpx;
   margin-right: 12rpx;
-  border-radius: 10rpx;
+  border-radius: 50%;
   width: 80rpx;
   height: 80rpx;
 }
@@ -68,28 +68,28 @@
 }
 .label-pop{
   position: absolute;
-  top: -15px;
-  left: 70px;
-  background: white;
-  width: 200rpx;
+  width: 250rpx;
+  z-index: 100;
 }
 .label-pop-mask {
   padding: 2px 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #000000;
+  border-radius: 8rpx;
+  position: relative;
 }
 .label-recieve-body{
     position: absolute;
-    top: -25px;
-    left: 65px;
-    background: black;
+    top: -40px;
+    left: 80rpx;
     padding-right: 3px;
     padding-left: 3px;
-    background-color: black;
     z-index: 100;
     box-shadow: 0 2px 16px 0 rgba(0,0,0,0.08);
     border-radius: 8rpx;
+    background-color: #000000;
 }
 .label-recieve-body:after{
     content: "";
@@ -97,9 +97,9 @@
     border-width: 20px;
     position: absolute;
     bottom: -27px;
-    left:  8px;
+    left: 20px;
     border-style: solid dashed dashed;
-    border-color: black transparent transparent;
+    border-color: #000000 transparent transparent;
     font-size: 0;
     line-height: 0;
     margin-left: 9px;
@@ -111,22 +111,17 @@
     border-right-style: dashed;
     border-bottom-style: dashed;
     border-left-style: dashed;
-    border-top-color: black;
-    border-right-color: transparent;
-    border-bottom-color: transparent;
-    border-left-color: transparent;
 }
 .label-self-body{
     position: absolute;
-    top:  -25px;
-    right: 50px;
-    background: black;
+    top: -40px;
+    right: 80rpx;
     padding-right: 3px;
     padding-left: 3px;
-    background-color: black;
     z-index: 100;
     box-shadow: 0 2px 16px 0 rgba(0,0,0,0.08);
     border-radius: 8rpx;
+    background-color: #000000;
 }
 .label-self-body:after{
     content: "";
@@ -134,9 +129,9 @@
     border-width: 20px;
     position: absolute;
     bottom: -27px;
-    left: 55px;
+    right: 20px;
     border-style: solid dashed dashed;
-    border-color: black transparent transparent;
+    border-color: #000000 transparent transparent;
     font-size: 0;
     line-height: 0;
     margin-left: 9px;
@@ -148,26 +143,22 @@
     border-right-style: dashed;
     border-bottom-style: dashed;
     border-left-style: dashed;
-    border-top-color: black;
-    border-right-color: transparent;
-    border-bottom-color: transparent;
-    border-left-color: transparent;
 }
 .deletemessage{
   font-size: 14px;
-  color: white;
+  color: #ffffff;
 }
 .download-message {
   font-size: 14px;
-  color: white;
+  color: #ffffff;
 }
 .revokemessage{
   font-size: 14px;
-  color: white; 
+  color: #ffffff; 
 }
 .copymessage{
   font-size: 14px;
-  color: white; 
+  color: #ffffff; 
 }
 
 .new-message-item{

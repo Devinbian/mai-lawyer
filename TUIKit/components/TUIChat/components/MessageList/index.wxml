@@ -23,13 +23,13 @@
     <PluginMessage wx:if="{{pluginTool.isPluginsMessage(item)}}" message="{{item}}" id="{{concat.concat(conversation.type,'ID-',item.ID)}}"></PluginMessage>
     <view class="t-message-item" wx:elif="{{!item.isDeleted && !item.isRevoked }}" bindtap="handleEditToggleAvatar" >
       <view wx:if="{{Show}}" catchtap="handleEditToggleAvatar">
-        <view class="label-pop"  wx:if="{{messageID === concat.connect('ID-',item.ID)}}" class="{{item.flow === 'out' ? 'label-self-body' : 'label-recieve-body'}}" >
-            <view class="label-pop-mask" >
-                <view class="copymessage" wx:if="{{item.type === 'TIMTextElem'|| item.type === 'TIMFaceElem'}}" catchtap="copyMessage" > <text>复制｜</text></view>
-                <view class="deletemessage" catchtap="deleteMessage" > <text> 删除</text></view>
-                <view  class="revokemessage" wx:if="{{item.flow === 'out'}}" bindtap="revokeMessage"><text> ｜撤回</text></view>
-                <view wx:if="{{item.type === 'TIMFileElem'}}" class="download-message" catchtap="downloadMessage" > <text> ｜下载</text></view>
-            </view>
+        <view class="label-pop" wx:if="{{messageID === concat.connect('ID-',item.ID)}}" class="{{item.flow === 'out' ? 'label-self-body' : 'label-recieve-body'}}">
+          <view class="label-pop-mask">
+            <view class="copymessage" wx:if="{{item.type === 'TIMTextElem'|| item.type === 'TIMFaceElem'}}" catchtap="copyMessage"><text>复制｜</text></view>
+            <view class="deletemessage" catchtap="deleteMessage"><text>删除</text></view>
+            <view class="revokemessage" wx:if="{{item.flow === 'out'}}" bindtap="revokeMessage"><text>｜撤回</text></view>
+            <view wx:if="{{item.type === 'TIMFileElem'}}" class="download-message" catchtap="downloadMessage"><text>｜下载</text></view>
+          </view>
         </view>
       </view>
       <TipMessage  wx:if="{{item.type === 'TIMGroupTipElem'}}" message="{{item}}"/>

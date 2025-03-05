@@ -8,7 +8,6 @@
     "pages/documents/document-read/document-read",
     "pages/documents/document-get/document-get",
     "pages/experts/expert-detail/expert-detail",
-    "pages/experts/chat/chat",
     "pages/login/login",
     "pages/privacy/privacy",
     "pages/agreement/agreement",

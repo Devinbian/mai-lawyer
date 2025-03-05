@@ -86,8 +86,8 @@ Page({
   // 点击咨询记录
   handleItemClick(e) {
     const { id } = e.currentTarget.dataset;
-    wx.navigateTo({
-      url: `/pages/experts/chat/chat?id=${id}`,
-    });
+    // wx.navigateTo({
+    //   url: `/pages/experts/chat/chat?id=${id}`,
+    // });
   },
 });
