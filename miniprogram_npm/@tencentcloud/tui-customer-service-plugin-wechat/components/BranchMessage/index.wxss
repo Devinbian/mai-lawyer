@@ -1,0 +1,28 @@
+/* TUIKit/components/TUIChat/components/MessageElements/BranchMessage/index.wxss */
+.branchCard {
+  max-width: 60vw;
+  min-width: 30vw;
+  padding: 12rpx 24rpx;
+  background: #F8F8F8;
+  border: 0px solid #D9D9D9;
+  border-radius: 2px 10px 10px 10px;
+}
+.branchTitle{
+  padding-bottom: 8px;
+  word-break: break-all;
+}
+.branchItem{
+  color: #368DFF;
+  word-wrap: break-word;
+  word-break: break-all;
+  display: block;
+  border-style: dotted;
+  border-color: #d8d8d8;
+  font-weight: 400;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-width:  1px 0 0px 0;
+}
+.branchReplyed{
+  color: #a0cfff;
+}

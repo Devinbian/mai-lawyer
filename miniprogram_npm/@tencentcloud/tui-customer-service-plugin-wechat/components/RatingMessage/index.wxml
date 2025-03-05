@@ -1,0 +1,7 @@
+<!--TUIKit/components/TUIChat/components/MessageElements/RatingMessage/index.wxml-->
+<RatingStar bind:sendRatingMessage="sendRatingMessage" wx:if="{{ratingType === 'star'}}"
+    ratingTemplate="{{ratingTemplate}}">
+</RatingStar>
+<RatingNumber bind:sendRatingMessage="sendRatingMessage" wx:if="{{ratingType === 'number'}}"
+    ratingTemplate="{{ratingTemplate}}">
+</RatingNumber>

@@ -1,0 +1,7 @@
+{
+    "component": true,
+    "usingComponents": {
+        "RatingStar": "./RatingStar/index",
+        "RatingNumber": "./RatingNumber/index"
+    }
+}

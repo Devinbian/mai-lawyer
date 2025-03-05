@@ -1,0 +1,14 @@
+<view>
+  <view wx:if="{{customerServicePluginTool.isMessageInvisible(message)}}"></view>
+  <RatingMessage wx:elif="{{customerServicePluginTool.isMessageRating(message)}}"
+    message="{{message}}" isMine="{{item.flow === 'out'}}" bind:sendRatingMessage="sendRatingMessage">
+  </RatingMessage>
+  <CustomerServiceMessage
+    wx:if="{{customerServicePluginTool.isCustomerServiceMessage(message)}}"
+    message="{{message}}"
+    isMine="{{itmessageem.flow === 'out'}}"
+    bind:sendTextMessage="sendTextMessage"
+    bind:clickProductCard="clickProductCard">
+  </CustomerServiceMessage>
+</view>
+<wxs src='./pluginTool.wxs' module='customerServicePluginTool' />

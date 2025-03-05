@@ -1,0 +1,26 @@
+<!--TUIKit/components/TUIChat/components/MessageElements/RatingMessage/RatingStar/index.wxml-->
+<view class="ratingNumberWrap">
+    <text class="ratingHead">{{ratingTemplate.head}}</text>
+    <view class="starCard">
+        <view class="cardTitle">
+            请对本次服务进行评价
+        </view>
+        <view class="starListWrap">
+            <view style="{{'margin:5px'}}" wx:for="{{numberList}}" bindtap="setValue" data-index="{{index}}">
+                <image class="ratingStar" wx:if="{{index <= value}}" src="../../../assets/ratingStar.png"></image>
+                <image class="ratingStar" wx:if="{{index > value}}" src="../../../assets/ratingStarLine.png"></image>
+            </view>
+        </view>
+        <view class="cardBottom">
+            <view style="margin-top: 10px;">{{
+                value === -1
+                ? "如果满意请给好评哦～"
+                : desc[value]
+                }}</view>
+            <button class="ratingSubmitButton" bindtap="submitRatingStar" disabled="{{hasReply||hasExpire}}">提交</button>
+        </view>
+    </view>
+    <view class="ratingTail" wx:if="{{hasReply}}">
+        {{ ratingTemplate.tail }}
+    </view>
+</view>

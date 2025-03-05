@@ -1,0 +1,6 @@
+<view class="container">
+  <bg-titlecenter-nav title="在线咨询" showBack="{{true}}"></bg-titlecenter-nav>
+  <view class="chat-container">
+    <TUIKit id="TUIKit" config="{{config}}" conversationID="{{conversationID}}"></TUIKit>
+  </view>
+</view>

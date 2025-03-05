@@ -131,8 +131,9 @@ Page({
 
       wx.navigateTo({
         url:
-          "/pages/experts/chat/chat?expert=" +
-          encodeURIComponent(JSON.stringify(expertInfo)),
+          // "/pages/experts/chat/chat?expert=" +
+          // encodeURIComponent(JSON.stringify(expertInfo)),
+          '../../tim-chat/pages/index?conversationID=C2Claywer2',
         fail(err) {
           wx.showToast({
             title: "打开聊天失败",

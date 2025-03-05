@@ -1,0 +1,86 @@
+.ratingNumberWrap{
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.ratingHead{
+  font-size: 14px;
+  font-weight: 400;
+  color: #999999;
+}
+.ratingTail {
+  font-size: 14px;
+  font-weight: 400;
+  color: #999999;
+  margin-top: 20px;
+}
+.cardTitle {
+  color: #999999;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 18px 0px 18px 0px;
+  border-bottom: 1px solid #999999;
+}
+.starListWrap{
+  padding: 20px 20px 0px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 60vw;
+}
+.active {
+  width: 34px;
+  height: 34px;
+  display: inline-block;
+  background: linear-gradient(
+    136.96deg,
+    rgba(10, 124, 255, 0.3) -39.64%,
+    #0a7cff 131.39%
+  );
+  border-radius: 5px;
+  color: white;
+  font-weight: 400;
+  font-size: 16px;
+  border: 0px solid #0a7cff;
+  text-align: center;
+  line-height: 34px;
+}
+.deActive{
+  height: 30px;
+  width: 30px;
+  display: inline-block;
+  border: 2px solid #8c9eb1;
+  border-radius: 5px;
+  color: #8c9eb1;
+  font-weight: 400;
+  font-size: 16px;
+  text-align: center;
+  line-height: 30px;
+}
+.ratingSubmitButton{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  height: 50px;
+  background-color: #0365f9;
+  font-size: 18px;
+  font-weight: 400;
+  color: #FFF;
+  border-radius: 20px;
+  width: 120px !important;
+}
+button[disabled]{
+  background-color: #a3c6fa !important;
+  color: #FFF !important;
+}
+.starCard{
+  background-color: #f2f7ff;
+  border-radius: 20px;
+  border: 0;
+  margin-top: 10px;
+}
+.cardBottom{
+  padding-bottom: 20px;
+}

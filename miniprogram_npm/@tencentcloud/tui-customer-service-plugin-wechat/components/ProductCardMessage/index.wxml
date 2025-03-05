@@ -1,0 +1,11 @@
+<view class="messageProductCard" bindtap="jumpProductCard">
+  <image class="productImg" src="{{payload.content.pic}}" />
+  <view class="productCardInformation">
+    <view class="productCardTitle">
+      {{ payload.content.header }}
+    </view>
+    <view class="productCardDescription">
+      {{ payload.content.desc }}
+    </view>
+  </view>
+</view>

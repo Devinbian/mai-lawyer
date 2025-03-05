@@ -1,0 +1,9 @@
+<!--TUIKit/components/TUIChat/components/MessageElements/BranchMessage/index.wxml-->
+<view class="branchCard">
+  <view wx:if="{{payload.content.header}}" class="branchTitle">{{payload.content.header}}</view>
+  <view style="border-width: {{payload.content.header ? '1px 0 0px 0' : '0px 0 1px 0'}} "
+    wx:for="{{payload.content.items}}" wx:key="item" bindtap="branchItemClick" data-item="{{item}}"
+    class="branchItem {{hasReply?'branchReplyed':''}}">
+    {{ item.content }}
+  </view>
+</view>

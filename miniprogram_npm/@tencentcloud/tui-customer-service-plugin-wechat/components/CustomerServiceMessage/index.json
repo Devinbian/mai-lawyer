@@ -1,0 +1,8 @@
+{
+    "component": true,
+    "usingComponents": {
+        "MessageBranch": "../BranchMessage/index",
+        "MessageFormSave": "../FormSaveMessage/index",
+        "MessageProductCard": "../ProductCardMessage/index"
+    }
+}

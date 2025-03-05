@@ -1,0 +1,8 @@
+<view>
+  <MessageBranch bind:sendTextMessage="sendTextMessage" wx:if="{{payload.src === '15'}}" payload="{{payload}}">
+  </MessageBranch>
+  <MessageFormSave bind:sendTextMessage="sendTextMessage" wx:elif="{{payload.src === '21'}}" payload="{{payload}}">
+  </MessageFormSave>
+  <MessageProductCard bind:clickProductCard="clickProductCard" wx:elif="{{payload.src === '22'}}" payload="{{payload}}">
+  </MessageProductCard>
+</view>

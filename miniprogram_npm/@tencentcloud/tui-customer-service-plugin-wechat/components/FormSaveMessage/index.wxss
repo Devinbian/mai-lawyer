@@ -1,0 +1,44 @@
+/* TUIKit/components/TUIChat/components/MessageElements/FormSaveMessage/index.wxss */
+.FormSaveCard {
+  max-width: 60vw;
+  padding: 12rpx 24rpx;
+  background: #F8F8F8;
+  border: 0px solid #D9D9D9;
+  border-radius: 2px 10px 10px 10px;
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+.contentItem{
+  padding: 5px 10px 5px 10px;
+  color:#006eff;
+  font-size: 32rpx;
+  background-color: #E1ECFF;
+  width: fit-content;
+  max-width: 60vw;
+  word-break: break-all;
+  margin-bottom: 5px;
+  border-radius: 5px 5px 5px 5px;
+}
+.inputWrap{
+  display: flex;
+  flex-wrap: nowrap;
+}
+.FormSaveInput{
+  display: inline-block;
+  border: 0px solid #D9D9D9;
+  height: 58rpx;
+  background-color: white;
+}
+.FormSaveButton{
+  height: 58rpx;
+  width: 46rpx;
+  display: inline-block;
+  border-radius: 0px 5px 5px 0px;
+  background-color: #006EFF;
+}
+.contentReplyed{
+  color: #a0cfff;
+}
+.FormSaveButtonSubmit{
+  background-color: #a0cfff;
+}

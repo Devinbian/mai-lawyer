@@ -1,0 +1,11 @@
+{
+  "component": true,
+  "usingComponents": {
+    "ConversationItem": "./components/ConversationItem/index",
+    "CreateConversation": "./components/CreateConversation/index",
+    "CreateGroup": "./components/CreateGroup/index",
+    "JoinGroup": "./components/JoinGroup/index",
+    "Contact": "../TUIContact/index"
+  },
+  "navigationStyle": "custom"
+}

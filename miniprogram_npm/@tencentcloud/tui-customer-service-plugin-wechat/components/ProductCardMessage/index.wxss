@@ -1,0 +1,39 @@
+.messageProductCard {
+  min-width: 424rpx;
+  max-width: 488rpx;
+  background: #ffffff;
+  border: 1px solid #dddddd;
+  display: flex;
+  padding: 20rpx;
+  border-radius: 5px;
+}
+.productImg {
+  width: 186rpx;
+  height: 186rpx;
+}
+
+.productCardDescription {
+  font-size: 16px;
+  color: #ff6c2e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.productCardInformation {
+  max-width: 265rpx;
+  margin-left: 12rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.productCardTitle {
+  font-size: 12px;
+  max-width: 165px;
+  display: -webkit-box;
+  overflow: hidden;
+  word-break: break-all;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}

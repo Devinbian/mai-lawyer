@@ -1,0 +1,18 @@
+<!--TUIKit/components/TUIChat/components/MessageElements/FormSaveMessage/index.wxml-->
+<view wx:if="{{payload.content.type == 1}}">
+  <view class="FormSaveCard">{{payload.content.header}}</view>
+  <view wx:for="{{payload.content.items}}" bindtap="contentItemClick" data-item="{{item}}"
+    class="contentItem {{hasReply?'contentReplyed':''}}">
+    {{ item.content }}
+  </view>
+</view>
+
+<view wx:if="{{payload.content.type != 1}}" class="FormSaveCard">
+  <view style="margin-bottom: 8px;word-break: break-all;">{{payload.content.header}}</view>
+  <view class='inputWrap'>
+    <input class="FormSaveInput" value="{{inputText}}" bindinput="bindKeyInput" />
+    <button class="FormSaveButton {{hasReply?'FormSaveButtonSubmit':''}}" loading="" size="mini" bindtap="submitInput">
+      <image style="height: 30px;width: 25px" src="../../assets/right.svg" />
+    </button>
+  </view>
+</view>

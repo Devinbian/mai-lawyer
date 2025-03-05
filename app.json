@@ -23,6 +23,20 @@
     "pages/profile/order/refund-success/refund-success",
     "pages/profile/order/cancel/cancel"
   ],
+  "subPackages": [
+    {
+      "root": "tim-conversation",
+      "name": "tim-conversation",
+      "pages": ["pages/index"],
+      "independent": false
+    },
+    {
+      "root": "tim-chat",
+      "name": "tim-chat",
+      "pages": ["pages/index"],
+      "independent": false
+    }
+  ],
   "window": {
     "navigationStyle": "custom",
     "backgroundTextStyle": "light",
@@ -63,5 +77,6 @@
   "lazyCodeLoading": "requiredComponents",
   "style": "v2",
   "usingComponents": {},
-  "resizable": true
+  "resizable": true,
+  "renderer": "webview"
 }

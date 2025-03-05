@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "CustomerServiceMessage": "./components/CustomerServiceMessage/index",
+    "RatingMessage": "./components/RatingMessage/index"
+  }
+}

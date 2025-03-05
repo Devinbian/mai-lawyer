@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "TUIKit": "../../TUIKit/index",
+    "bg-titlecenter-nav": "../../components/bg-titlecenter-nav/bg-titlecenter-nav"
+  },
+  "navigationStyle": "custom"
+}
