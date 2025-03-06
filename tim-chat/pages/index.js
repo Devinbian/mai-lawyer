@@ -16,6 +16,7 @@ Page({
       userSig: "",
       targetUserID: "",
     },
+    title: "在线咨询", // 默认标题
     isSDKReady: false, // SDK是否就绪
     isLoggedIn: false, // 是否已登录
     conversationID: "", // 会话ID
@@ -25,7 +26,6 @@ Page({
       initializing: true, // 是否正在初始化
       userInfo: {}, // 用户信息
     },
-    percent: 0,
   },
 
   /**
@@ -33,6 +33,25 @@ Page({
    */
   async onLoad(options) {
     console.log("页面加载开始，参数:", options);
+
+    // 根据options设置标题
+    if (options.title) {
+      // 解码接收到的标题参数
+      const decodedTitle = decodeURIComponent(options.title);
+      this.setData({ title: decodedTitle });
+      console.log("解码后的标题:", decodedTitle);
+    } else if (options.source) {
+      // 根据source设置标题
+      let title = "在线咨询"; // 默认标题
+      if (options.source === "profile-live-chat") {
+        title = "人工客服";
+      } else if (options.source === "experts-live-chat") {
+        title = "在线咨询";
+      }
+      this.setData({ title: title });
+    }
+
+    console.log("页面标题设置为:", this.data.title);
 
     // 初始化配置信息
     this.setData({

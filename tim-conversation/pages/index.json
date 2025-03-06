@@ -1,6 +1,9 @@
 {
   "usingComponents": {
-    "TUIKit": "../../TUIKit/index"
+    "TUIKit": "../../TUIKit/index",
+    "bg-titlecenter-nav": "../../components/bg-titlecenter-nav/bg-titlecenter-nav"
   },
-  "navigationStyle": "custom"
-  }
+  "navigationStyle": "custom",
+  "disableScroll": true,
+  "enablePullDownRefresh": false
+}

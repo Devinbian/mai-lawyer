@@ -1,5 +1,5 @@
 <view class="container">
-  <bg-titlecenter-nav title="在线咨询"></bg-titlecenter-nav>
+  <bg-titlecenter-nav title="{{title}}"></bg-titlecenter-nav>
   
   <!-- 调试信息显示区域 - 悬浮在顶部 -->
   <!-- <view class="debug-info-float">

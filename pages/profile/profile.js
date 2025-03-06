@@ -81,7 +81,7 @@ Page({
       case "history":
         wx.navigateTo({
           // url: "/pages/profile/history/history",
-          url:"../../tim-conversation/pages/index",
+          url: "../../tim-conversation/pages/index",
         });
         break;
     }
@@ -92,39 +92,15 @@ Page({
     const type = e.currentTarget.dataset.type;
     switch (type) {
       case "service":
-        if (wx.openCustomerServiceChat) {
-          wx.openCustomerServiceChat({
-            extInfo: {
-              url: "https://work.weixin.qq.com/kf/kfxxxxxxxxxxxxxxxx",
-            },
-            corpId: "wwxxxxxxxxxxxxxxxxxx",
-            success(res) {
-              console.log("打开客服会话成功");
-            },
-            fail(err) {
-              console.error("打开客服会话失败", err);
-              wx.makePhoneCall({
-                phoneNumber: "021-50280097",
-                fail(err) {
-                  wx.showToast({
-                    title: "无法联系客服",
-                    icon: "none",
-                  });
-                },
-              });
-            },
-          });
-        } else {
-          wx.makePhoneCall({
-            phoneNumber: "021-50280097",
-            fail(err) {
-              wx.showToast({
-                title: "无法联系客服",
-                icon: "none",
-              });
-            },
-          });
-        }
+        wx.navigateTo({
+          url: "../../tim-chat/pages/index?conversationID=C2Cservice&source=profile-live-chat",
+          fail(err) {
+            wx.showToast({
+              title: "打开聊天失败",
+              icon: "none",
+            });
+          },
+        });
         break;
       case "help":
         wx.navigateTo({

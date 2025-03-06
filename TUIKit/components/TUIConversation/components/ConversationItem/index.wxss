@@ -35,7 +35,7 @@
   position: relative;
   width: 96rpx;
   height: 96rpx;
-  border-radius: 14rpx;
+  border-radius: 50%;
   /*padding-left: 40rpx;*/
   /*padding-right: 24rpx;*/
   /*padding-bottom: 28rpx;*/

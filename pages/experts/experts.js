@@ -18,6 +18,17 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
+    // 根据source设置标题
+    let title = "在线咨询"; // 默认标题
+    if (options.source === "profile-live-chat") {
+      title = "人工客服";
+    } else if (options.source === "experts-live-chat") {
+      title = "在线咨询";
+    }
+    this.setData({
+      title: title,
+    });
+
     wx.showToast({
       title: "加载中...",
       icon: "loading",
@@ -129,11 +140,13 @@ Page({
         fields: expert.fields,
       };
 
+      // 使用当前页面设置的标题
+      const title = this.data.title || "在线咨询";
+
       wx.navigateTo({
-        url:
-          // "/pages/experts/chat/chat?expert=" +
-          // encodeURIComponent(JSON.stringify(expertInfo)),
-          '../../tim-chat/pages/index?conversationID=C2Claywer2',
+        url: `../../tim-chat/pages/index?conversationID=C2Claywer2&source=experts-live-chat&title=${encodeURIComponent(
+          title,
+        )}`,
         fail(err) {
           wx.showToast({
             title: "打开聊天失败",

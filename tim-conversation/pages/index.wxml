@@ -1,3 +1,6 @@
-<view>
-    <TUIKit config="{{config}}" id="TUIKit"></TUIKit>
+<view class="container">
+    <bg-titlecenter-nav title="咨询历史"></bg-titlecenter-nav>
+    <view class="conversation-container">
+        <TUIKit config="{{config}}" id="TUIKit"></TUIKit>
+    </view>
 </view>
