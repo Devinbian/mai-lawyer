@@ -5,55 +5,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 120rpx;
-}
-
-.logo {
-  width: 160rpx;
-  height: 160rpx;
-  margin-bottom: 40rpx;
-}
-
-.title {
-  font-size: 40rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 16rpx;
-}
-
-.subtitle {
-  font-size: 28rpx;
-  color: #666;
-}
-
-.login-section {
-  padding: 0 40rpx;
-}
-
-.wechat-login-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #07C160;
-  color: #fff;
-  height: 88rpx;
-  border-radius: 44rpx;
-  font-size: 32rpx;
-  border: none;
-}
-
-.wechat-login-btn::after {
-  border: none;
-}
-
-.wechat-icon {
-  width: 48rpx;
-  height: 48rpx;
-  margin-right: 12rpx;
+  overflow: hidden;
 }
 
 .bg-image {
@@ -144,49 +96,3 @@
   color: #0084ff;
   display: inline;
 }
-
-.login-container {
-  padding: 60rpx 40rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.login-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 80rpx;
-}
-
-.avatar {
-  width: 180rpx;
-  height: 180rpx;
-  margin-bottom: 40rpx;
-}
-
-.title-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.title-img {
-  width: 400rpx;
-  height: 100rpx;
-  margin-bottom: 20rpx;
-}
-
-.agreement {
-  margin-bottom: 60rpx;
-}
-
-.agreement-text {
-  font-size: 26rpx;
-  color: #666;
-}
-
-.phone-btn {
-  color: #666;
-  background: #f5f5f5;
-} 

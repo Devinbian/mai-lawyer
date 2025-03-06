@@ -6,6 +6,11 @@ alwaysApply: false
 ---
 description: 
 globs: 
+alwaysApply: false
+---
+---
+description: 
+globs: 
 alwaysApply: true
 ---
 
@@ -28,3 +33,48 @@ alwaysApply: true
 # IM 
 - SDKAppID：1600075596
 - SecretKey：ba92e763ab7975718da625afa6f60465dee472f0e4524f2028f83e161e5e1f8b
+
+# Xlight 小程序
+- appId: "wxb7f2a8c8c8ea8c73",
+- appSecret: "592dc14581988e4dadca20a5d0ab887c",
+
+# 域名
+https://cloud.tencent.com/document/product/269/75285#.E5.B8.B8.E8.A7.81.E9.97.AE.E9.A2.98
+# Socket域名
+wss://${SDKAppID}w4c.my-imcloud.com
+
+wss://1600075596w4c.my-imcloud.com;
+wss://wss.im.qcloud.com;
+wss://wssv6.im.qcloud.com;
+wss://wss.tim.qq.com;
+
+# request 合法域名
+https://web.sdk.qcloud.com;
+https://boce-cdn.my-imcloud.com;
+https://api.im.qcloud.com;
+https://events.im.qcloud.com;
+https://webim.tim.qq.com;
+https://wss.im.qcloud.com;
+https://wssv6.im.qcloud.com;
+https://wss.tim.qq.com;
+
+# uploadFile 合法域名
+https://${SDKAppID}-cn.rich.my-imcloud.com
+
+https://1600075596-cn.rich.my-imcloud.com;
+https://cn.rich.my-imcloud.com;
+https://cn.imrich.qcloud.com;
+https://cos.ap-shanghai.myqcloud.com;
+https://cos.ap-shanghai.tencentcos.cn;
+https://cos.ap-guangzhou.myqcloud.com;
+
+# downloadFile 合法域名
+https://${SDKAppID}-cn.rich.my-imcloud.com
+
+https://1600075596-cn.rich.my-imcloud.com;
+https://cn.rich.my-imcloud.com;
+https://cn.imrich.qcloud.com;
+https://cos.ap-shanghai.myqcloud.com;
+https://cos.ap-shanghai.tencentcos.cn;
+https://cos.ap-guangzhou.myqcloud.com;
+

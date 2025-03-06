@@ -22,6 +22,8 @@ App({
   onLaunch() {
     this.initSDKInstance();
 
+    this.checkLoginStatus();
+
     // 延迟设置TabBar图标
     wx.nextTick(() => {
       this.setTabBarIcons();
@@ -91,18 +93,21 @@ App({
   },
 
   checkLoginStatus() {
-    try {
-      const token = wx.getStorageSync("token");
-      if (token) {
-        this.globalData.isLogin = true;
-        this.globalData.token = token;
-        // 异步获取用户信息
-        wx.nextTick(() => {
-          this.getUserInfo();
-        });
-      }
-    } catch (err) {
-      console.error("检查登录状态失败:", err);
+    const openid = wx.getStorageSync("openid");
+    if (openid) {
+      wx.checkSession({
+        success: () => {
+          // 登录态有效
+          this.globalData.isLogin = true;
+        },
+        fail: () => {
+          // 登录态过期，清除存储
+          wx.removeStorageSync("openid");
+          this.globalData.isLogin = false;
+        },
+      });
+    } else {
+      this.globalData.isLogin = false;
     }
   },
 

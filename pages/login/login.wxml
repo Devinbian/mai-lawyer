@@ -6,10 +6,10 @@
       <view class="agreement-notice">
         <view class="checkbox {{isAgree ? 'checked' : ''}}" bindtap="toggleAgree"></view>
         我已阅读并同意
-        <text class="link" bindtap="gotoAgreement">《用户协议》</text>和
-        <text class="link" bindtap="gotoPrivacy">《隐私政策》</text>
+        <text class="link" data-type="agreement" bindtap="gotoProtocol">《用户协议》</text>和
+        <text class="link" data-type="privacy" bindtap="gotoProtocol">《隐私政策》</text>
       </view>
-      <button class="weui-btn" type="primary" bindtap="handleWechatLogin">
+      <button class="weui-btn" type="primary" open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">
         微信一键授权登录
       </button>
     </view>

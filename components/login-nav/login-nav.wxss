@@ -28,7 +28,6 @@
   position: relative;
   display: flex;
   align-items: center;
-  padding: 0 32rpx;
   justify-content: center;
 }
 
@@ -39,6 +38,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 60%;
+  text-align: center;
 }
 
 .main-title {
@@ -47,4 +48,6 @@
   font-weight: 600;
   font-family: PingFangSC-Semibold, PingFang SC;
   white-space: nowrap;
+  width: 100%;
+  text-align: center;
 }

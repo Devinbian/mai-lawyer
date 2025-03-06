@@ -11,32 +11,53 @@ Page({
    */
   data: {
     config: {
-      userID: "laywer1", // 当前登录用户（咨询方）
-      SDKAPPID: 1600075596,
-      SECRETKEY:
-        "ba92e763ab7975718da625afa6f60465dee472f0e4524f2028f83e161e5e1f8b",
-      EXPIRETIME: 604800,
+      SDKAppID: 0, // 将在onLoad中设置真实值
+      userID: "",
+      userSig: "",
+      targetUserID: "",
     },
-    targetUserID: "laywer2", // 目标用户（专家）
-    conversationID: "", // 会话ID将在创建会话时设置
+    isSDKReady: false, // SDK是否就绪
+    isLoggedIn: false, // 是否已登录
+    conversationID: "", // 会话ID
+    customStateObj: {
+      conversationType: "C2C",
+      isReady: false, // TUIKit组件是否准备好
+      initializing: true, // 是否正在初始化
+      userInfo: {}, // 用户信息
+    },
     percent: 0,
-    isSDKReady: false,
-    isLoggedIn: false, // 新增登录状态标记
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options) {
-    console.log("页面加载，options:", options);
+  async onLoad(options) {
+    console.log("页面加载开始，参数:", options);
 
-    // 如果传入了目标用户ID，则更新
-    if (options.targetUserID) {
-      this.setData({ targetUserID: options.targetUserID });
-    }
+    // 初始化配置信息
+    this.setData({
+      config: {
+        SDKAppID: 1600075596,
+        userID: "laywer1", // 当前登录用户（咨询方）
+        userSig:
+          "eJwtzFELgjAYheH-suuQbfnpEroqLELByCi8G23FRynDxKnRf2*pl*d54XxInpy8VtckItyjZDFuVLpq8I4jv2Rvdc3m9FZPaQwqErGAUhoCrIKp6M5grZ0DAHdp0gbLv4U*41wI5s8v*HDPg03NIUuO2dBIVcSdALOEaz7s7bba3Haq521R4pnHl3RNvj*3zjK6",
+        targetUserID: "laywer2", // 目标用户（专家）
+      },
+    });
 
-    // 初始化SDK和登录
-    this.initSDKAndLogin();
+    console.log("配置信息初始化完成:", this.data.config);
+
+    // 初始化自定义状态对象
+    this.setData({
+      "customStateObj.userInfo": {
+        userID: this.data.config.userID,
+        nick: "咨询顾问",
+        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
+      },
+    });
+
+    // 初始化SDK并登录
+    await this.initSDKAndLogin();
   },
 
   onShow() {
@@ -47,506 +68,248 @@ Page({
     }
   },
 
+  /**
+   * 初始化SDK并登录
+   */
   async initSDKAndLogin() {
     try {
-      wx.showLoading({ title: "正在初始化..." });
-      wx.reportEvent("debug_point", { step: "initSDKAndLogin" });
-      // 确保SDK实例存在
       if (!wx.$TUIKit) {
-        console.log("创建SDK实例...");
-        wx.reportEvent("debug_point", { step: "start_create_sdk" });
+        console.log("创建SDK实例");
 
-        // 先检查网络状态
-        const networkType = await new Promise((resolve) => {
-          wx.getNetworkType({
-            success: (res) => {
-              console.log("当前网络状态:", res.networkType);
-              wx.reportEvent("debug_point", {
-                step: "check_network_status",
-                networkType: res.networkType,
-              });
-              resolve(res.networkType);
-            },
-            fail: (error) => {
-              wx.reportEvent("debug_point", {
-                step: "check_network_status_fail",
-                error: error,
-              });
-              resolve("unknown");
-            },
-          });
-        });
-
-        // 检查网络连接
-        const isConnected = await new Promise((resolve) => {
-          wx.getNetworkType({
-            success: (res) => {
-              const connected = res.networkType !== "none";
-              wx.reportEvent("debug_point", {
-                step: "check_network_connection",
-                isConnected: connected,
-                networkType: res.networkType,
-              });
-              resolve(connected);
-            },
-            fail: (error) => {
-              wx.reportEvent("debug_point", {
-                step: "check_network_connection_fail",
-                error: error,
-              });
-              resolve(false);
-            },
-          });
-        });
-
-        if (!isConnected) {
-          wx.reportEvent("debug_point", {
-            step: "network_not_connected",
-            networkType: networkType,
-          });
-          throw new Error("网络连接不可用");
-        }
-
-        wx.$TUIKit = TencentCloudChat.create({
-          SDKAppID: this.data.config.SDKAPPID,
-          networkConfig: {
-            timeout: 60000,
-            retryTimes: 5,
-            retryInterval: 2000,
-            onNetworkStatusChange: (status) => {
-              console.log("网络状态变化:", status);
-              wx.reportEvent("debug_point", {
-                step: "sdk_network_status_change",
-                status: status,
-              });
-              if (status === "connected") {
-                this.initSDKAndLogin();
-              }
-            },
+        // SDK未初始化，创建SDK实例
+        const options = {
+          SDKAppID: this.data.config.SDKAppID,
+          logLevel: 0, // 日志级别，0为一般，1为详细
+          timeout: 120, // 请求超时时间，单位：秒
+          oversea: false, // 是否为境外服务，一般为false
+          functionConfig: {
+            enableProfanityFilter: false, // 禁用敏感词检测功能
+            enableMessageReadReceipt: true, // 启用消息已读回执
+            enableCloudCustomData: true, // 启用自定义云数据
           },
-        });
+        };
 
-        wx.reportEvent("debug_point", { step: "sdk_instance_created" });
-
-        // 注册网络状态监听
-        wx.onNetworkStatusChange((res) => {
-          console.log("微信网络状态变化:", res);
-          wx.reportEvent("debug_point", {
-            step: "wx_network_status_change",
-            isConnected: res.isConnected,
-            networkType: res.networkType,
-          });
-          if (res.isConnected) {
-            this.initSDKAndLogin();
-          }
-        });
+        // 创建TUIKit实例
+        wx.$TUIKit = TencentCloudChat.create(options);
+      } else {
+        console.log("SDK实例已存在，跳过创建步骤");
       }
 
-      // 设置日志级别
-      wx.$TUIKit.setLogLevel(1);
-      wx.reportEvent("debug_point", { step: "sdk_log_level_set" });
-
-      // 先注销可能存在的旧事件
-      this.unregisterSDKEvents();
-      wx.reportEvent("debug_point", { step: "sdk_events_unregistered" });
-
-      // 注册事件
+      // 无论SDK是否已初始化，都需要注册事件监听器
       this.registerSDKEvents();
-      wx.reportEvent("debug_point", { step: "sdk_events_registered" });
 
       // 检查登录状态
-      try {
-        const currentUserID = await wx.$TUIKit.getLoginUser();
-        wx.reportEvent("debug_point", {
-          step: "check_login_status",
-          currentUserID: currentUserID,
-          targetUserID: this.data.config.userID,
-        });
+      const loginUserID = await wx.$TUIKit.getLoginUser();
+      const isLoggedIn = !!loginUserID;
+      console.log("当前登录状态:", isLoggedIn, "登录用户:", loginUserID);
 
-        if (currentUserID === this.data.config.userID) {
-          console.log("已经登录目标用户");
-          this.setData({
-            isLoggedIn: true,
-            isSDKReady: true,
-          });
-          wx.hideLoading();
-          return;
+      // 如果已登录，直接设置状态
+      if (isLoggedIn) {
+        console.log("用户已登录，设置状态");
+        this.setData({ isLoggedIn: true });
+
+        // 如果SDK也已就绪，尝试创建会话
+        if (this.data.isSDKReady) {
+          console.log("SDK已就绪，尝试创建会话");
+          this.createConversation();
         }
-      } catch (error) {
-        console.log("获取登录状态失败:", error);
-        wx.reportEvent("debug_point", {
-          step: "check_login_status_fail",
-          error: error.message || error.msg,
-          code: error.code,
-        });
+        return;
       }
 
-      // 生成UserSig并登录
-      const userSig = genTestUserSig(this.data.config).userSig;
-      console.log("准备登录用户:", this.data.config.userID);
-      wx.reportEvent("debug_point", {
-        step: "prepare_login",
+      // 未登录，执行登录流程
+      console.log("未登录，准备执行登录流程");
+      // 使用userSig登录
+      await wx.$TUIKit.login({
         userID: this.data.config.userID,
+        userSig: this.data.config.userSig,
       });
 
-      // 添加登录重试机制
-      let retryCount = 0;
-      const maxRetries = 5;
-      let loginResult;
+      console.log("登录成功");
+      this.setData({ isLoggedIn: true });
 
-      while (retryCount < maxRetries) {
-        try {
-          // 每次重试前检查网络状态
-          const isConnected = await new Promise((resolve) => {
-            wx.getNetworkType({
-              success: (res) => {
-                const connected = res.networkType !== "none";
-                wx.reportEvent("debug_point", {
-                  step: "retry_check_network",
-                  retryCount: retryCount,
-                  isConnected: connected,
-                  networkType: res.networkType,
-                });
-                resolve(connected);
-              },
-              fail: (error) => {
-                wx.reportEvent("debug_point", {
-                  step: "retry_check_network_fail",
-                  retryCount: retryCount,
-                  error: error,
-                });
-                resolve(false);
-              },
-            });
-          });
-
-          if (!isConnected) {
-            throw new Error("网络连接不可用");
-          }
-
-          // 添加登录请求前的日志
-          wx.reportEvent("debug_point", {
-            step: "before_login_request",
-            retryCount: retryCount,
-            userID: this.data.config.userID,
-            SDKAppID: this.data.config.SDKAPPID,
-            timestamp: new Date().getTime(),
-          });
-
-          loginResult = await wx.$TUIKit.login({
-            userID: this.data.config.userID,
-            userSig: userSig,
-          });
-
-          // 添加登录请求后的日志
-          wx.reportEvent("debug_point", {
-            step: "after_login_request",
-            retryCount: retryCount,
-            userID: this.data.config.userID,
-            timestamp: new Date().getTime(),
-          });
-
-          wx.reportEvent("debug_point", {
-            step: "login_success",
-            retryCount: retryCount,
-          });
-          break;
-        } catch (error) {
-          retryCount++;
-          console.log(`登录失败，第${retryCount}次重试，错误:`, error);
-          wx.reportEvent("debug_point", {
-            step: "login_retry",
-            retryCount: retryCount,
-            error: error.message || error.msg,
-            code: error.code,
-            userID: this.data.config.userID,
-            SDKAppID: this.data.config.SDKAPPID,
-            timestamp: new Date().getTime(),
-            // 添加更多错误详情
-            errorDetail: {
-              name: error.name,
-              stack: error.stack,
-              type: error.type,
-              message: error.message,
-              msg: error.msg,
-              code: error.code,
-              data: error.data,
-            },
-          });
-
-          if (error.code === 2801 || error.message === "网络连接不可用") {
-            if (retryCount < maxRetries) {
-              const delay = Math.min(1000 * Math.pow(2, retryCount), 10000);
-              console.log(`等待${delay}ms后重试...`);
-              wx.reportEvent("debug_point", {
-                step: "login_retry_wait",
-                retryCount: retryCount,
-                delay: delay,
-              });
-              await new Promise((resolve) => setTimeout(resolve, delay));
-              continue;
-            }
-          }
-          throw error;
-        }
+      // 登录成功后，SDK可能已经就绪，检查状态
+      if (this.data.isSDKReady) {
+        console.log("登录后SDK已就绪，尝试创建会话");
+        this.createConversation();
+      } else {
+        console.log("登录后等待SDK就绪事件...");
       }
-
-      console.log("登录成功:", loginResult);
-      this.setData({
-        isLoggedIn: true,
-        isSDKReady: true, // 添加SDK就绪状态
-      });
-      wx.reportEvent("debug_point", { step: "initSDKAndLogin_success" });
-      wx.hideLoading();
     } catch (error) {
-      console.error("初始化失败:", error);
-      wx.hideLoading();
-      wx.reportEvent("initSDKAndLogin", { step: error });
-      const errorMsg = error.message || error.msg || "初始化失败";
-      console.error("详细错误信息:", {
-        message: errorMsg,
-        code: error.code,
-        stack: error.stack,
-      });
+      console.error("SDK初始化或登录失败:", error);
+      let errorMsg = "登录失败";
 
-      // 根据错误类型处理
       switch (error.code) {
-        case 2000:
-          console.log("SDK内部错误，尝试重新初始化");
-          setTimeout(() => {
-            this.initSDKAndLogin();
-          }, 3000);
-          break;
-        case 2801:
-          console.log("网络请求超时，尝试重新连接");
-          wx.reportEvent("debug_point", { step: "initSDKAndLogin_timeout" });
-          wx.showToast({
-            title: "网络连接超时，正在重试...",
-            icon: "none",
-            duration: 2000,
-          });
-          setTimeout(() => {
-            this.initSDKAndLogin();
-          }, 3000);
-          break;
-        case 60020:
-          console.log("不支持的功能:", error.message);
-          wx.showToast({
-            title: "当前环境不支持此功能",
-            icon: "none",
-            duration: 2000,
-          });
+        case 6:
+          errorMsg = "频繁登录，请稍后再试";
           break;
         case 70001:
-          console.log("签名过期，需要重新登录");
-          wx.showToast({
-            title: "登录已过期，请重新登录",
-            icon: "none",
-            duration: 2000,
-          });
-          setTimeout(() => {
-            this.initSDKAndLogin();
-          }, 2000);
+          errorMsg = "无效的UserSig";
           break;
         case 70003:
-          console.log("用户身份校验失败");
-          wx.showToast({
-            title: "身份验证失败，请检查配置",
-            icon: "none",
-            duration: 2000,
-          });
+          errorMsg = "UserSig已过期";
           break;
-        case 70004:
-          console.log("网络连接失败");
-          wx.showToast({
-            title: "网络连接失败，请检查网络",
-            icon: "none",
-            duration: 2000,
-          });
-          setTimeout(() => {
-            this.initSDKAndLogin();
-          }, 3000);
+        case 70009:
+          errorMsg = "票据校验失败";
           break;
-        default:
-          wx.showToast({
-            title: errorMsg,
-            icon: "none",
-            duration: 2000,
-          });
+        case 70013:
+          errorMsg = "账号不存在";
+          break;
+        case 70014:
+          errorMsg = "账号被禁用";
+          break;
+        case 2801:
+          errorMsg = "网络超时，请检查网络";
+          break;
+        case 3000:
+          errorMsg = "会话创建失败，请重试";
+          break;
+        case 2000:
+          errorMsg = "会话不存在";
+          break;
       }
 
-      wx.reportEvent("debug_point", {
-        step: "initSDKAndLogin_error",
-        code: error.code,
-        error: errorMsg,
+      wx.showToast({
+        title: errorMsg,
+        icon: "none",
+        duration: 3000,
       });
     }
   },
 
-  async checkSDKStatus() {
-    try {
-      const currentUserID = await wx.$TUIKit.getLoginUser();
-      if (currentUserID) {
-        console.log("已登录用户:", currentUserID);
-        this.setData({
-          isLoggedIn: true,
-          isSDKReady: true,
-        });
-        if (currentUserID === this.data.config.userID) {
-          this.createConversation();
-        }
-      }
-    } catch (error) {
-      console.log("检查SDK状态失败:", error);
-    }
-  },
-
+  /**
+   * 注册SDK事件
+   */
   registerSDKEvents() {
-    try {
-      // 定义事件和处理函数的映射
-      const eventHandlers = {
-        [TencentCloudChat.EVENT.SDK_READY]: this.handleSDKReady.bind(this),
-        [TencentCloudChat.EVENT.SDK_NOT_READY]:
-          this.handleSDKNotReady.bind(this),
-        [TencentCloudChat.EVENT.KICKED_OUT]: this.handleKickedOut.bind(this),
-        [TencentCloudChat.EVENT.ERROR]: this.handleError.bind(this),
-      };
-
-      // 保存事件处理函数的引用，用于后续注销
-      this._eventHandlers = eventHandlers;
-
-      // 注册所有事件
-      Object.entries(eventHandlers).forEach(([event, handler]) => {
-        console.log("注册事件:", event);
-        // 先注销可能存在的旧事件处理函数
-        wx.$TUIKit.off(event, handler);
-        // 再注册新的事件处理函数
-        wx.$TUIKit.on(event, handler);
-      });
-
-      console.log("SDK 事件注册完成");
-    } catch (error) {
-      console.error("注册事件失败:", error);
+    if (!wx.$TUIKit) {
+      console.error("注册事件失败 - SDK实例不存在");
+      return;
     }
-  },
 
-  unregisterSDKEvents() {
-    try {
-      // 注销之前保存的所有事件处理函数
-      if (this._eventHandlers) {
-        Object.entries(this._eventHandlers).forEach(([event, handler]) => {
-          console.log("注销事件:", event);
-          wx.$TUIKit.off(event, handler);
-        });
-      }
-    } catch (error) {
-      console.error("注销事件失败:", error);
-    }
-  },
+    console.log("开始注册SDK事件");
 
-  handleSDKReady() {
-    console.log("SDK Ready");
-    this.setData(
-      {
-        isSDKReady: true,
-      },
-      () => {
-        if (this.data.isLoggedIn) {
-          this.createConversation();
-        }
-      },
-    );
-  },
-
-  handleSDKNotReady(event) {
-    console.log("SDK Not Ready:", event);
-    this.setData({
-      isSDKReady: false,
-      isLoggedIn: false,
-    });
-  },
-
-  handleKickedOut(event) {
-    console.log("被踢下线:", event);
-    this.setData({
-      isSDKReady: false,
-      isLoggedIn: false,
-    });
-    wx.showToast({
-      title: "您的账号在其他设备登录",
-      icon: "none",
-    });
-    setTimeout(() => {
-      wx.navigateBack();
-    }, 2000);
-  },
-
-  handleError(event) {
-    console.error("SDK Error:", event);
-
-    // 根据错误类型处理
-    switch (event.code) {
-      case 2000:
-        console.log("SDK内部错误，尝试重新初始化");
-        this.initSDKAndLogin();
-        break;
-      case 60020:
-        console.log("不支持的功能:", event.message);
-        // 不显示错误提示，因为这是正常的
-        break;
-      case 70001:
-        console.log("签名过期，需要重新登录");
-        wx.showToast({
-          title: "登录已过期，请重新登录",
-          icon: "none",
-        });
-        this.initSDKAndLogin();
-        break;
-      case 70003:
-        console.log("用户身份校验失败");
-        wx.showToast({
-          title: "身份验证失败",
-          icon: "none",
-        });
-        break;
-      case 70004:
-        console.log("网络连接失败");
-        wx.showToast({
-          title: "网络连接失败",
-          icon: "none",
-        });
-        break;
-      default:
-        // 其他错误显示通用提示
-        wx.showToast({
-          title: "SDK错误，请重试",
-          icon: "none",
-        });
-    }
-  },
-
-  getLoginErrorMessage(code) {
-    const errorMessages = {
-      70001: "签名过期",
-      70003: "用户身份校验失败",
-      70004: "网络无法连接",
-      70005: "登录被限制",
-      default: "登录失败，请重试",
+    // 定义事件处理函数
+    const onSDKReady = (event) => {
+      console.log("收到SDK_READY事件:", event);
+      console.log("事件触发前isSDKReady状态:", this.data.isSDKReady);
+      this.handleSDKReady(event);
     };
-    return errorMessages[code] || errorMessages.default;
+
+    const onSDKNotReady = (event) => {
+      console.log("收到SDK_NOT_READY事件:", event);
+      console.log("事件触发前isSDKReady状态:", this.data.isSDKReady);
+      this.handleSDKNotReady(event);
+    };
+
+    const onKickedOut = (event) => {
+      console.log("收到KICKED_OUT事件:", event);
+      this.handleKickedOut(event);
+    };
+
+    const onError = (event) => {
+      console.log("收到ERROR事件:", event);
+      this.handleError(event);
+    };
+
+    // 保存事件处理函数引用
+    this.eventHandlers = {
+      onSDKReady,
+      onSDKNotReady,
+      onKickedOut,
+      onError,
+    };
+
+    // 尝试先清除可能存在的事件监听器
+    try {
+      wx.$TUIKit.off(
+        TencentCloudChat.EVENT.SDK_READY,
+        this.eventHandlers.onSDKReady,
+      );
+      wx.$TUIKit.off(
+        TencentCloudChat.EVENT.SDK_NOT_READY,
+        this.eventHandlers.onSDKNotReady,
+      );
+      wx.$TUIKit.off(
+        TencentCloudChat.EVENT.KICKED_OUT,
+        this.eventHandlers.onKickedOut,
+      );
+      wx.$TUIKit.off(TencentCloudChat.EVENT.ERROR, this.eventHandlers.onError);
+      console.log("已清除现有事件监听器");
+    } catch (error) {
+      console.warn("清除事件监听器失败:", error);
+    }
+
+    // 重新注册事件监听器
+    wx.$TUIKit.on(
+      TencentCloudChat.EVENT.SDK_READY,
+      this.eventHandlers.onSDKReady,
+    );
+    wx.$TUIKit.on(
+      TencentCloudChat.EVENT.SDK_NOT_READY,
+      this.eventHandlers.onSDKNotReady,
+    );
+    wx.$TUIKit.on(
+      TencentCloudChat.EVENT.KICKED_OUT,
+      this.eventHandlers.onKickedOut,
+    );
+    wx.$TUIKit.on(TencentCloudChat.EVENT.ERROR, this.eventHandlers.onError);
+
+    console.log("SDK事件注册完成");
+
+    // 检查SDK是否已经就绪，如果已就绪但未触发事件，手动调用
+    if (wx.$TUIKit.isReady()) {
+      console.log("SDK已经就绪，但可能未触发SDK_READY事件，手动触发处理");
+      this.handleSDKReady();
+    }
+  },
+
+  /**
+   * 处理SDK就绪事件
+   */
+  handleSDKReady(event) {
+    console.log("SDK就绪事件处理开始");
+
+    this.setData({ isSDKReady: true }, () => {
+      console.log("SDK就绪状态已更新，开始检查会话条件");
+
+      // 如果已登录，尝试创建会话
+      if (this.data.isLoggedIn) {
+        console.log("SDK就绪且已登录，尝试创建会话");
+        this.createConversation();
+      } else {
+        console.log("SDK就绪但未登录，等待登录完成");
+      }
+    });
+  },
+
+  /**
+   * 处理SDK未就绪事件
+   */
+  handleSDKNotReady(event) {
+    console.log("SDK未就绪事件");
+    this.setData({ isSDKReady: false });
+
+    // 显示未就绪提示
+    wx.showToast({
+      title: "IM服务暂时不可用",
+      icon: "none",
+      duration: 2000,
+    });
   },
 
   async createConversation() {
-    if (!this.data.isLoggedIn) {
-      console.log("尚未登录，等待登录完成");
+    if (!this.data.isLoggedIn || !this.data.isSDKReady) {
+      console.log("创建会话失败 - 条件不满足:", {
+        isLoggedIn: this.data.isLoggedIn,
+        isSDKReady: this.data.isSDKReady,
+      });
       return;
     }
 
     try {
-      console.log("开始创建与用户", this.data.targetUserID, "的会话");
-      // 创建 C2C 会话
-      const conversationID = `C2C${this.data.targetUserID}`;
+      console.log("开始创建与用户", this.data.config.targetUserID, "的会话");
+      const conversationID = `C2C${this.data.config.targetUserID}`;
 
+      console.log("尝试获取会话资料:", conversationID);
       // 获取会话实例
       const {
         data: { conversation },
@@ -554,54 +317,72 @@ Page({
       console.log("获取到会话：", conversation);
 
       // 更新会话ID
-      this.setData(
-        {
-          conversationID: conversationID,
-        },
-        () => {
-          console.log("会话创建完成，ID:", this.data.conversationID);
-          // 初始化 TUIKit 组件
-          this.initTUIKit();
-        },
-      );
+      await this.setData({
+        conversationID: conversationID,
+      });
+
+      console.log("会话ID更新完成 - 当前状态:", {
+        isLoggedIn: this.data.isLoggedIn,
+        isSDKReady: this.data.isSDKReady,
+        conversationID: this.data.conversationID,
+      });
+
+      // 更新用户资料
+      await wx.$TUIKit.updateMyProfile({
+        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
+      });
+
+      // 初始化 TUIKit 组件
+      this.initTUIKit();
+
+      return true;
     } catch (error) {
       console.error("创建会话失败：", error);
       if (error.code === 2000) {
         // 会话不存在，创建新会话
-        await this.createNewConversation();
+        return await this.createNewConversation();
       } else {
-        wx.showToast({
-          title: "创建会话失败",
-          icon: "none",
-        });
+        throw error;
       }
     }
   },
 
   async createNewConversation() {
     try {
-      const {
-        data: { conversation },
-      } = await wx.$TUIKit.createConversation({
-        userID: this.data.targetUserID,
-        type: wx.TencentCloudChat.TYPES.CONV_C2C,
+      console.log("开始创建新会话...");
+      const conversationID = `C2C${this.data.config.targetUserID}`;
+
+      // 发送一条消息以创建会话
+      const message = wx.$TUIKit.createTextMessage({
+        to: this.data.config.targetUserID,
+        conversationType: "C2C",
+        payload: {
+          text: "您好，我想咨询一些问题",
+        },
       });
 
-      this.setData(
-        {
-          conversationID: conversation.conversationID,
-        },
-        () => {
-          console.log("新会话创建完成，ID:", this.data.conversationID);
-          this.initTUIKit();
-        },
-      );
-    } catch (error) {
-      console.error("创建新会话失败：", error);
-      wx.showToast({
-        title: "创建新会话失败",
-        icon: "none",
+      const result = await wx.$TUIKit.sendMessage(message);
+      console.log("发送消息结果:", result);
+
+      // 更新会话ID
+      await this.setData({
+        conversationID: conversationID,
       });
+
+      console.log("新会话创建完成:", conversationID);
+
+      // 初始化 TUIKit 组件
+      this.initTUIKit();
+
+      return true;
+    } catch (error) {
+      console.error("创建新会话失败:", error);
+      wx.showToast({
+        title: "创建会话失败，请重试",
+        icon: "none",
+        duration: 2000,
+      });
+      return false;
     }
   },
 
@@ -621,57 +402,55 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload() {
-    if (wx.$TUIKit) {
-      // 注销事件
-      this.unregisterSDKEvents();
-      // 登出
-      wx.$TUIKit
-        .logout()
-        .then(() => {
-          console.log("登出成功");
-        })
-        .catch((error) => {
-          console.error("登出失败:", error);
-        });
+    console.log("页面卸载");
+
+    // 移除事件监听器
+    if (wx.$TUIKit && this.eventHandlers) {
+      try {
+        console.log("移除事件监听器");
+        wx.$TUIKit.off(
+          TencentCloudChat.EVENT.SDK_READY,
+          this.eventHandlers.onSDKReady,
+        );
+        wx.$TUIKit.off(
+          TencentCloudChat.EVENT.SDK_NOT_READY,
+          this.eventHandlers.onSDKNotReady,
+        );
+        wx.$TUIKit.off(
+          TencentCloudChat.EVENT.KICKED_OUT,
+          this.eventHandlers.onKickedOut,
+        );
+        wx.$TUIKit.off(
+          TencentCloudChat.EVENT.ERROR,
+          this.eventHandlers.onError,
+        );
+        console.log("事件监听器移除完成");
+      } catch (error) {
+        console.warn("移除事件监听器失败:", error);
+      }
     }
   },
 
   initTUIKit() {
-    if (!this.data.isSDKReady) {
-      console.log("SDK 未就绪，等待 ready 事件");
-      return;
-    }
-
-    console.log("开始初始化 TUIKit 组件");
     const TUIKit = this.selectComponent("#TUIKit");
     if (TUIKit) {
-      try {
-        // 设置初始进度为0
-        TUIKit.setData(
-          {
-            percent: 0,
-            conversationID: this.data.conversationID,
-            userID: this.data.config.userID,
-            targetUserID: this.data.targetUserID,
-          },
-          () => {
-            TUIKit.init();
-            console.log("TUIKit 组件初始化成功");
-          },
-        );
-      } catch (error) {
-        console.error("TUIKit 初始化失败：", error);
-        wx.showToast({
-          title: "聊天组件初始化失败",
-          icon: "none",
-        });
-      }
+      console.log("TUIKit组件已找到，开始初始化");
+      TUIKit.init();
+      console.log("TUIKit初始化完成");
     } else {
-      console.error("找不到 TUIKit 组件");
-      wx.showToast({
-        title: "找不到聊天组件",
-        icon: "none",
-      });
+      console.error("找不到TUIKit组件");
+
+      // 延迟尝试再次初始化
+      setTimeout(() => {
+        const TUIKit = this.selectComponent("#TUIKit");
+        if (TUIKit) {
+          console.log("延迟后找到TUIKit组件，开始初始化");
+          TUIKit.init();
+          console.log("TUIKit延迟初始化完成");
+        } else {
+          console.error("延迟后仍找不到TUIKit组件");
+        }
+      }, 500);
     }
   },
 
@@ -689,4 +468,81 @@ Page({
    * 用户点击右上角分享
    */
   onShareAppMessage() {},
+
+  /**
+   * 处理被踢下线事件
+   */
+  handleKickedOut(event) {
+    console.log("被踢下线事件:", event);
+    this.setData({
+      isSDKReady: false,
+      isLoggedIn: false,
+    });
+
+    // 显示被踢提示
+    wx.showToast({
+      title: "您的账号在其他设备登录",
+      icon: "none",
+      duration: 3000,
+    });
+
+    // 延迟返回上一页
+    setTimeout(() => {
+      wx.navigateBack();
+    }, 3000);
+  },
+
+  /**
+   * 处理错误事件
+   */
+  handleError(event) {
+    console.log("错误事件:", event);
+
+    // 忽略不支持功能的错误
+    if (event.code === 60020) {
+      console.log("不支持的功能，忽略错误:", event.message);
+      return;
+    }
+
+    // 处理其他错误
+    let errorMsg = "发生错误";
+    let needRelogin = false;
+
+    switch (event.code) {
+      case 70001:
+        errorMsg = "登录已过期，将重新登录";
+        needRelogin = true;
+        break;
+      case 70002:
+        errorMsg = "账号在其他地方登录";
+        break;
+      case 70003:
+        errorMsg = "用户签名已过期，将重新登录";
+        needRelogin = true;
+        break;
+      case 70005:
+        errorMsg = "网络连接断开";
+        break;
+      default:
+        if (event.code > 2000 && event.code < 3000) {
+          errorMsg = "网络错误，请检查网络连接";
+        }
+    }
+
+    // 显示错误提示
+    if (errorMsg) {
+      wx.showToast({
+        title: errorMsg,
+        icon: "none",
+        duration: 2000,
+      });
+    }
+
+    // 如果需要重新登录
+    if (needRelogin) {
+      setTimeout(() => {
+        this.initSDKAndLogin();
+      }, 1500);
+    }
+  },
 });

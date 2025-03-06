@@ -1,12 +1,31 @@
 <view class="container">
-  <bg-titlecenter-nav title="在线咨询" showBack="{{true}}"></bg-titlecenter-nav>
+  <bg-titlecenter-nav title="在线咨询"></bg-titlecenter-nav>
+  
+  <!-- 调试信息显示区域 - 悬浮在顶部 -->
+  <!-- <view class="debug-info-float">
+    <view class="debug-title">当前状态：</view>
+    <view class="debug-item">SDK就绪: {{isSDKReady ? '是' : '否'}}</view>
+    <view class="debug-item">已登录: {{isLoggedIn ? '是' : '否'}}</view>
+    <view class="debug-item">会话ID: {{conversationID || '未创建'}}</view>
+  </view> -->
+  
   <view class="chat-container">
-    <block wx:if="{{isSDKReady}}">
-      <TUIKit id="TUIKit" config="{{config}}" conversationID="{{conversationID}}"></TUIKit>
+    <!-- 加载提示 -->
+    <block wx:if="{{!isSDKReady || !isLoggedIn || !conversationID}}">
+      <view class="loading">
+        <view>正在连接聊天服务...</view>
+        <view class="loading-tip">{{!isSDKReady ? 'SDK初始化中...' : !isLoggedIn ? '正在登录...' : '创建会话中...'}}</view>
+      </view>
     </block>
-    <view wx:else class="loading">
-      <view>正在连接聊天服务...</view>
-      <view class="loading-tip">首次加载可能需要较长时间</view>
-    </view>
+
+    <!-- TUIKit组件 - 只有当所有条件满足时才渲染 -->
+    <block wx:if="{{isSDKReady && isLoggedIn && conversationID}}">
+      <TUIKit 
+        id="TUIKit"
+        userID="{{config.userID}}"
+        conversationID="{{conversationID}}"
+        customStateObj="{{customStateObj}}"
+      ></TUIKit>
+    </block>
   </view>
 </view>
