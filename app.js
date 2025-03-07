@@ -33,6 +33,8 @@ App({
     setTimeout(() => {
       this.checkLoginStatus();
     }, 0);
+
+    this.enableShare();
   },
 
   initSDKInstance() {
@@ -130,6 +132,40 @@ App({
         },
         fail: reject,
       });
+    });
+  },
+
+  enableShare() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ["shareAppMessage", "shareTimeline"],
+    });
+
+    // 自定义分享内容
+    this.onShareAppMessage = this.onShareAppMessage.bind(this);
+    this.onShareTimeline = this.onShareTimeline.bind(this);
+  },
+
+  onShareAppMessage() {
+    return {
+      title: "邀请好友加入",
+      imageUrl: this.data.userInfo.avatarUrl,
+      path: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
+    };
+  },
+
+  onShareTimeline() {
+    return {
+      title: "我在小程序发现了这个好东西",
+      imageUrl: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
+    };
+  },
+
+  // 分享成功事件
+  bindShareSendSuccess(e) {
+    wx.showToast({
+      title: "分享成功！",
+      icon: "success",
     });
   },
 });

@@ -1,4 +1,5 @@
 const imageUtils = require("../../utils/image.js");
+const util = require("../../utils/util.js");
 
 Page({
   data: {
@@ -19,12 +20,12 @@ Page({
     messageList: [], // 消息列表
     imgUrls: null,
     navBarHeight: 44,
+    isAiResponding: false,
   },
 
   onLoad: function () {
     // 根据设备像素比选择合适的图片
     this.setImagesByPixelRatio();
-
     const app = getApp();
     // 添加欢迎消息
     this.addMessage({
@@ -45,6 +46,8 @@ Page({
       statusBarHeight: windowInfo.statusBarHeight,
       navBarHeight: windowInfo.navigationBarHeight || 44,
     });
+
+    this.buffer = ""; // 初始化buffer为实例属性
   },
 
   onReady: function () {
@@ -75,36 +78,35 @@ Page({
   },
 
   // 发送消息
-  sendMessage() {
-    if (!this.data.inputValue.trim()) return;
-
-    const userMessage = {
-      id: Date.now().toString(), // 简化ID格式
-      type: "user",
-      content: this.data.inputValue,
-      time: this.formatTime(new Date()),
-    };
+  async sendMessage() {
+    const userInput = this.data.inputValue.trim();
+    if (!userInput) return;
 
     this.setData({
-      messageList: [...this.data.messageList, userMessage],
       inputValue: "",
-      scrollToView: `msg${userMessage.id}`,
+      isAiResponding: true,
     });
 
-    // 模拟AI回复
-    setTimeout(() => {
-      const aiMessage = {
-        id: Date.now().toString(),
-        type: "ai",
-        content: this.getAIResponse(userMessage.content),
-        time: this.formatTime(new Date()),
-      };
+    try {
+      await this.getAIStreamResponse(userInput);
+    } catch (error) {
+      console.error("获取AI响应失败:", error);
 
-      this.setData({
-        messageList: [...this.data.messageList, aiMessage],
-        scrollToView: `msg${aiMessage.id}`,
+      // 更新最后一条AI消息为错误提示
+      const messages = this.data.messages;
+      for (let i = messages.length - 1; i >= 0; i--) {
+        if (messages[i].type === "ai") {
+          messages[i].content = "抱歉，我暂时无法回答您的问题，请稍后再试。";
+          this.setData({ messages });
+          break;
+        }
+      }
+
+      wx.showToast({
+        title: "网络请求失败",
+        icon: "none",
       });
-    }, 500);
+    }
   },
 
   // 添加消息到列表
@@ -131,15 +133,172 @@ Page({
   },
 
   // 模拟AI回复
-  getAIResponse(userInput) {
-    const responses = [
-      "我明白您的问题，让我为您解答。",
-      "这是一个很好的问题，我的建议是...",
-      "根据相关法律法规，我建议您...",
-      "您说得对，关于这一点，我补充几点建议...",
-      "这个问题比较复杂，需要考虑以下几个方面...",
-    ];
-    return responses[Math.floor(Math.random() * responses.length)];
+  getAIStreamResponse(userInput) {
+    return new Promise((resolve, reject) => {
+      this.buffer = ""; // 重置缓冲区
+      let fullResponse = "";
+
+      wx.showLoading({ title: "思考中...", mask: true });
+
+      // // 创建用户消息
+      this.addMessage({
+        type: "user",
+        content: userInput,
+        time: this.formatTime(new Date()),
+      });
+
+      // 添加空的AI消息
+      this.addMessage({
+        type: "ai",
+        content: "",
+        time: this.formatTime(new Date()),
+      });
+
+      const requestTask = wx.request({
+        url: "http://218.78.129.237:8081/api/aichat/stream",
+        method: "POST",
+        enableChunked: true,
+        header: {
+          "Content-Type": "application/json",
+        },
+        data: {
+          prompt: userInput,
+        },
+        success: (res) => {
+          console.log("请求完成");
+          resolve(fullResponse);
+        },
+        fail: (err) => {
+          console.error("请求失败:", err);
+          reject(err);
+        },
+        complete: () => {
+          wx.hideLoading();
+          this.setData({ isAiResponding: false });
+        },
+      });
+
+      // 处理流式数据
+      requestTask.onChunkReceived((res) => {
+        try {
+          // 获取并解码数据块
+          let chunk = "";
+          console.log("res.data类型:", typeof res.data);
+
+          if (typeof res.data === "string") {
+            chunk = res.data;
+          } else if (res.data instanceof ArrayBuffer) {
+            // 使用我们定义的辅助函数
+            chunk = util.arrayBufferToString(res.data);
+
+            // 如果数据是UTF-8编码的，可能需要额外处理
+            try {
+              // 尝试解码为JSON，如果成功则说明是正确的UTF-8字符串
+              JSON.parse(chunk);
+            } catch (e) {
+              // 如果解析失败，可能是编码问题，尝试其他解码方法
+              console.warn("JSON解析失败，尝试其他解码方法");
+            }
+          }
+
+          console.log("解析后数据块:", chunk);
+
+          // 处理数据块
+          this.processDataChunk(chunk);
+        } catch (error) {
+          console.error("处理数据块失败:", error);
+        }
+      });
+    });
+  },
+
+  // 处理数据块
+  processDataChunk(chunk) {
+    console.log("处理数据块:", chunk);
+    this.buffer += chunk;
+
+    let extractedContent = this.extractJsonObjects();
+    console.log("提取的内容:", extractedContent);
+
+    if (extractedContent) {
+      console.log("准备更新AI消息");
+      const messageList = this.data.messageList; // 使用正确的变量名
+      console.log("当前消息列表:", messageList);
+
+      let updated = false;
+      for (let i = messageList.length - 1; i >= 0; i--) {
+        if (messageList[i].type === "ai") {
+          console.log("找到AI消息，索引:", i);
+          messageList[i].content += extractedContent;
+          updated = true;
+          break;
+        }
+      }
+
+      if (updated) {
+        console.log("更新消息列表");
+        this.setData({ messageList }); // 更新正确的变量
+      } else {
+        console.warn("未找到AI消息，无法更新");
+      }
+
+      this.scrollToBottom();
+    } else {
+      console.log("没有提取到内容");
+    }
+  },
+
+  // 从缓冲区提取完整的JSON对象
+  extractJsonObjects() {
+    let extractedText = "";
+
+    // 分割可能的多个JSON对象（以分号或换行符分隔）
+    const parts = this.buffer.split(/;|\n/).filter((part) => part.trim());
+
+    let processedParts = [];
+
+    for (let part of parts) {
+      part = part.trim();
+      if (!part) continue;
+
+      console.log("处理部分:", part);
+
+      // 确保它是一个以 data: 开头的JSON对象
+      if (part.startsWith("data:{") && part.endsWith("}")) {
+        try {
+          // 去掉前缀 "data:" 再解析
+          const jsonStr = part.substring(5); // "data:".length = 5
+          console.log("去掉前缀后:", jsonStr);
+
+          const jsonObj = JSON.parse(jsonStr);
+          console.log("解析的JSON:", jsonObj);
+
+          // 只处理包含response字段的对象
+          if (jsonObj.response !== undefined) {
+            extractedText += jsonObj.response;
+            processedParts.push(part);
+            console.log("提取的响应:", jsonObj.response);
+          }
+
+          // 检查是否流结束
+          if (jsonObj.done === true) {
+            console.log("流结束，原因:", jsonObj.done_reason);
+            processedParts.push(part);
+          }
+        } catch (e) {
+          console.error("JSON解析失败:", e, part);
+        }
+      }
+    }
+
+    // 从缓冲区中移除已处理的部分
+    for (const part of processedParts) {
+      this.buffer = this.buffer.replace(part + ";", "").replace(part, "");
+    }
+
+    this.buffer = this.buffer.trim();
+    console.log("提取的文本:", extractedText);
+    return extractedText;
   },
 
   // 输入框内容变化

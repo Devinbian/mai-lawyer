@@ -78,3 +78,15 @@ https://cos.ap-shanghai.myqcloud.com;
 https://cos.ap-shanghai.tencentcos.cn;
 https://cos.ap-guangzhou.myqcloud.com;
 
+
+# 微信支付
+https://pay.weixin.qq.com/index.php/apply/applyment_home/guide_normal
+https://pay.weixin.qq.com/doc/v3/merchant/4012791895
+
+## 获取package: "prepay_id=wx201410272009395522657a690389285100"
+https://pay.weixin.qq.com/doc/v3/partner/4012759974
+
+## 获取支付签名paySign
+https://pay.weixin.qq.com/doc/v3/partner/4012365869
+
+
