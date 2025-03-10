@@ -19,7 +19,7 @@
           class="chat-content"
           scroll-y="true"
           enhanced="true"
-          show-scrollbar="false"
+          show-scrollbar="true"
           scroll-anchoring="true"
           scroll-into-view="{{scrollToView}}"
           scroll-with-animation="{{true}}"
@@ -37,8 +37,21 @@
           <view class="message-list">
             <block wx:for="{{messageList}}" wx:key="id">
               <view id="msg{{item.id}}" class="message-item {{item.type === 'user' ? 'user-message' : 'ai-message'}}">
-                <text class="message-time">{{item.time}}</text>
-                <view class="message-content">{{item.content}}</view>
+                <view class="message-header">
+                  <text class="message-nickname">{{item.nickname}}</text>
+                </view>
+                <view class="message-content">
+                  <block wx:if="{{item.type === 'ai' && item.isThinking}}">
+                    <view class="thinking-indicator">
+                      <view class="dot"></view>
+                      <view class="dot"></view>
+                      <view class="dot"></view>
+                    </view>
+                  </block>
+                  <block wx:else>
+                    {{item.content}}
+                  </block>
+                </view>
               </view>
             </block>
           </view>

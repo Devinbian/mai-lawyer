@@ -21,24 +21,31 @@ Page({
     imgUrls: null,
     navBarHeight: 44,
     isAiResponding: false,
+    currentTypingMessage: '', // 当前正在打字的消息
+    isTyping: false, // 是否正在打字
+    typingSpeed: 50, // 打字速度（毫秒）
+    userNickname: '', // 用户昵称
   },
 
   onLoad: function () {
     // 根据设备像素比选择合适的图片
     this.setImagesByPixelRatio();
     const app = getApp();
-    // 添加欢迎消息
-    this.addMessage({
-      type: "ai",
-      content: "您好，我是小麦，您的全天候智能法律顾问。请问有什么可以帮您？",
-    });
-
-    // 获取用户信息（如果已登录）
+    
+    // 获取用户信息
     if (app.globalData.isLogin) {
       this.setData({
         userInfo: app.globalData.userInfo,
+        userNickname: app.globalData.userInfo.nickName || '用户'
+      });
+    } else {
+      this.setData({
+        userNickname: '用户'
       });
     }
+
+    // 获取缓存的聊天记录
+    this.loadChatHistory();
 
     // 获取窗口信息
     const windowInfo = wx.getWindowInfo();
@@ -77,6 +84,32 @@ Page({
     return true;
   },
 
+  // 加载聊天记录
+  loadChatHistory() {
+    const chatHistory = wx.getStorageSync('chatHistory') || [];
+    if (chatHistory.length === 0) {
+      // // 如果没有聊天记录，添加欢迎消息
+      // this.addMessage({
+      //   type: "ai",
+      //   content: "您好，我是小麦，您的全天候智能法律顾问。请问有什么可以帮您？",
+      //   nickname: "小麦",
+      //   isStreaming: false // 标记为非流式消息
+      // });
+    } else {
+      this.setData({
+        messageList: chatHistory
+      }, () => {
+        // 加载历史记录后滚动到最后一条消息
+        this.scrollToBottom();
+      });
+    }
+  },
+
+  // 保存聊天记录
+  saveChatHistory() {
+    wx.setStorageSync('chatHistory', this.data.messageList);
+  },
+
   // 发送消息
   async sendMessage() {
     const userInput = this.data.inputValue.trim();
@@ -88,16 +121,33 @@ Page({
     });
 
     try {
+      // 创建用户消息
+      this.addMessage({
+        type: "user",
+        content: userInput,
+        time: this.formatTime(new Date()),
+      });
+
+      // 添加空的AI消息，并立即显示思考指示器
+      this.addMessage({
+        type: "ai",
+        content: "",
+        time: this.formatTime(new Date()),
+        isStreaming: true,
+        isThinking: true // 确保思考指示器显示
+      });
+
       await this.getAIStreamResponse(userInput);
     } catch (error) {
       console.error("获取AI响应失败:", error);
 
       // 更新最后一条AI消息为错误提示
-      const messages = this.data.messages;
-      for (let i = messages.length - 1; i >= 0; i--) {
-        if (messages[i].type === "ai") {
-          messages[i].content = "抱歉，我暂时无法回答您的问题，请稍后再试。";
-          this.setData({ messages });
+      const messageList = this.data.messageList;
+      for (let i = messageList.length - 1; i >= 0; i--) {
+        if (messageList[i].type === "ai") {
+          messageList[i].content = "抱歉，我暂时无法回答您的问题，请稍后再试。";
+          this.setData({ messageList });
+          this.saveChatHistory();
           break;
         }
       }
@@ -115,12 +165,31 @@ Page({
     const newMessage = {
       ...message,
       id: messageId,
+      isThinking: message.type === 'ai' && !message.content && message.isStreaming, // 只在流式响应时显示思考状态
+      nickname: message.type === 'ai' ? '小麦' : this.data.userNickname,
+      time: message.time || this.formatTime(new Date())
     };
 
+    // 创建新的消息列表
+    const messageList = [...this.data.messageList, newMessage];
+    
+    // 更新状态并滚动
     this.setData({
-      messageList: [...this.data.messageList, newMessage],
-      scrollToView: `msg${messageId}`,
+      messageList
+    }, () => {
+      // 使用nextTick确保DOM更新后再滚动
+      wx.nextTick(() => {
+        // 增加延迟时间，确保内容完全渲染
+        setTimeout(() => {
+          this.setData({
+            scrollToView: `msg${messageId}`
+          });
+        }, 300);
+      });
     });
+
+    // 保存到缓存
+    this.saveChatHistory();
   },
 
   // 格式化时间
@@ -137,22 +206,7 @@ Page({
     return new Promise((resolve, reject) => {
       this.buffer = ""; // 重置缓冲区
       let fullResponse = "";
-
-      wx.showLoading({ title: "思考中...", mask: true });
-
-      // // 创建用户消息
-      this.addMessage({
-        type: "user",
-        content: userInput,
-        time: this.formatTime(new Date()),
-      });
-
-      // 添加空的AI消息
-      this.addMessage({
-        type: "ai",
-        content: "",
-        time: this.formatTime(new Date()),
-      });
+      let isComplete = false;
 
       const requestTask = wx.request({
         url: "http://218.78.129.237:8081/api/aichat/stream",
@@ -166,6 +220,9 @@ Page({
         },
         success: (res) => {
           console.log("请求完成");
+          if (!isComplete) {
+            console.warn("请求完成但流未结束");
+          }
           resolve(fullResponse);
         },
         fail: (err) => {
@@ -173,7 +230,6 @@ Page({
           reject(err);
         },
         complete: () => {
-          wx.hideLoading();
           this.setData({ isAiResponding: false });
         },
       });
@@ -184,27 +240,24 @@ Page({
           // 获取并解码数据块
           let chunk = "";
           console.log("res.data类型:", typeof res.data);
-
+          
           if (typeof res.data === "string") {
             chunk = res.data;
           } else if (res.data instanceof ArrayBuffer) {
-            // 使用我们定义的辅助函数
+            // 直接使用 arrayBufferToString 转换
             chunk = util.arrayBufferToString(res.data);
-
-            // 如果数据是UTF-8编码的，可能需要额外处理
-            try {
-              // 尝试解码为JSON，如果成功则说明是正确的UTF-8字符串
-              JSON.parse(chunk);
-            } catch (e) {
-              // 如果解析失败，可能是编码问题，尝试其他解码方法
-              console.warn("JSON解析失败，尝试其他解码方法");
-            }
           }
 
           console.log("解析后数据块:", chunk);
 
           // 处理数据块
-          this.processDataChunk(chunk);
+          const { content, done } = this.processDataChunk(chunk);
+          if (content) {
+            fullResponse += content;
+          }
+          if (done) {
+            isComplete = true;
+          }
         } catch (error) {
           console.error("处理数据块失败:", error);
         }
@@ -214,91 +267,118 @@ Page({
 
   // 处理数据块
   processDataChunk(chunk) {
-    console.log("处理数据块:", chunk);
+    // 确保 chunk 是字符串
+    if (typeof chunk !== 'string') {
+      console.warn("收到非字符串数据块，跳过处理");
+      return { content: '', done: false };
+    }
+
+    // 添加数据到缓冲区
     this.buffer += chunk;
 
-    let extractedContent = this.extractJsonObjects();
-    console.log("提取的内容:", extractedContent);
-
-    if (extractedContent) {
-      console.log("准备更新AI消息");
-      const messageList = this.data.messageList; // 使用正确的变量名
-      console.log("当前消息列表:", messageList);
-
-      let updated = false;
+    // 提取并处理完整的JSON对象
+    const { content, done } = this.extractJsonObjects();
+    if (content) {
+      const messageList = this.data.messageList;
+      // 找到最后一条AI消息
       for (let i = messageList.length - 1; i >= 0; i--) {
-        if (messageList[i].type === "ai") {
-          console.log("找到AI消息，索引:", i);
-          messageList[i].content += extractedContent;
-          updated = true;
+        if (messageList[i].type === "ai" && messageList[i].isStreaming) {
+          // 创建新的消息列表，避免直接修改原数组
+          const updatedMessageList = [...messageList];
+          const currentMessage = { ...updatedMessageList[i] };
+          
+          // 更新消息内容和状态
+          currentMessage.content = currentMessage.content + content;
+          currentMessage.isThinking = false; // 一旦有内容就关闭思考指示器
+          
+          updatedMessageList[i] = currentMessage;
+          
+          // 更新状态并滚动
+          this.setData({ 
+            messageList: updatedMessageList
+          }, () => {
+            // 使用nextTick确保DOM更新后再滚动
+            wx.nextTick(() => {
+              // 增加延迟时间，确保内容完全渲染
+              setTimeout(() => {
+                this.setData({
+                  scrollToView: `msg${currentMessage.id}`
+                });
+              }, 300);
+            });
+          });
           break;
         }
       }
-
-      if (updated) {
-        console.log("更新消息列表");
-        this.setData({ messageList }); // 更新正确的变量
-      } else {
-        console.warn("未找到AI消息，无法更新");
-      }
-
-      this.scrollToBottom();
-    } else {
-      console.log("没有提取到内容");
     }
+
+    return { content, done };
   },
 
   // 从缓冲区提取完整的JSON对象
   extractJsonObjects() {
     let extractedText = "";
+    let isDone = false;
 
-    // 分割可能的多个JSON对象（以分号或换行符分隔）
-    const parts = this.buffer.split(/;|\n/).filter((part) => part.trim());
+    // 按行分割数据，并过滤掉空行
+    const lines = this.buffer.split('\n').filter(line => line.trim());
+    
+    for (const line of lines) {
+      let jsonStr = line;
+      
+      // 处理带有 data: 前缀的行
+      if (line.startsWith('data:')) {
+        jsonStr = line.substring(5).trim();
+      }
+      
+      // 跳过空字符串
+      if (!jsonStr) continue;
+      
+      try {
+        // 尝试解析 JSON
+        const jsonObj = JSON.parse(jsonStr);
+        
+        // 处理响应内容
+        if (jsonObj.response !== undefined) {
+          extractedText += jsonObj.response;
+        }
+        
+        // 检查是否结束
+        if (jsonObj.done === true) {
+          isDone = true;
+        }
+      } catch (e) {
+        // 如果解析失败，可能是数据不完整，跳过这一行
+        console.warn("跳过无效的 JSON 数据:", line);
+        continue;
+      }
+    }
 
-    let processedParts = [];
+    // 清理已处理的数据
+    this.buffer = this.buffer.split('\n')
+      .filter(line => !line.trim()) // 只保留空行
+      .join('\n')
+      .trim();
 
-    for (let part of parts) {
-      part = part.trim();
-      if (!part) continue;
-
-      console.log("处理部分:", part);
-
-      // 确保它是一个以 data: 开头的JSON对象
-      if (part.startsWith("data:{") && part.endsWith("}")) {
-        try {
-          // 去掉前缀 "data:" 再解析
-          const jsonStr = part.substring(5); // "data:".length = 5
-          console.log("去掉前缀后:", jsonStr);
-
-          const jsonObj = JSON.parse(jsonStr);
-          console.log("解析的JSON:", jsonObj);
-
-          // 只处理包含response字段的对象
-          if (jsonObj.response !== undefined) {
-            extractedText += jsonObj.response;
-            processedParts.push(part);
-            console.log("提取的响应:", jsonObj.response);
-          }
-
-          // 检查是否流结束
-          if (jsonObj.done === true) {
-            console.log("流结束，原因:", jsonObj.done_reason);
-            processedParts.push(part);
-          }
-        } catch (e) {
-          console.error("JSON解析失败:", e, part);
+    // 如果流结束，更新最后一条AI消息的状态
+    if (isDone) {
+      const messageList = this.data.messageList;
+      // 创建新的消息列表，避免直接修改原数组
+      const updatedMessageList = [...messageList];
+      for (let i = updatedMessageList.length - 1; i >= 0; i--) {
+        if (updatedMessageList[i].type === "ai") {
+          updatedMessageList[i] = {
+            ...updatedMessageList[i],
+            isThinking: false,
+            isStreaming: false
+          };
+          this.setData({ messageList: updatedMessageList });
+          break;
         }
       }
     }
 
-    // 从缓冲区中移除已处理的部分
-    for (const part of processedParts) {
-      this.buffer = this.buffer.replace(part + ";", "").replace(part, "");
-    }
-
-    this.buffer = this.buffer.trim();
-    console.log("提取的文本:", extractedText);
-    return extractedText;
+    return { content: extractedText, done: isDone };
   },
 
   // 输入框内容变化
@@ -392,29 +472,31 @@ Page({
         setTimeout(() => {
           const messages = this.data.messageList;
           if (messages.length > 0) {
-            const lastMessageId = messages[messages.length - 1].id;
+            const lastMessage = messages[messages.length - 1];
             this.setData({
-              scrollToView: lastMessageId,
+              scrollToView: `msg${lastMessage.id}`,
             });
           }
-        }, 100);
+        }, 300);
       },
     );
   },
 
   // 滚动到底部的方法
   scrollToBottom() {
-    const query = wx.createSelectorQuery();
-    query
-      .select("#scrollView")
-      .node()
-      .exec((res) => {
-        const scrollView = res[0].node;
-        scrollView.scrollTo({
-          top: 99999, // 一个足够大的数字，确保滚动到底部
-          behavior: "auto",
-        });
+    const messageList = this.data.messageList;
+    if (messageList.length > 0) {
+      const lastMessageId = messageList[messageList.length - 1].id;
+      // 使用nextTick确保DOM更新后再滚动
+      wx.nextTick(() => {
+        // 增加延迟时间，确保内容完全渲染
+        setTimeout(() => {
+          this.setData({
+            scrollToView: `msg${lastMessageId}`
+          });
+        }, 300);
       });
+    }
   },
 
   // scroll-view 滚动到底部时触发
@@ -426,5 +508,13 @@ Page({
   onScroll(e) {
     // 可以记录滚动位置
     const scrollTop = e.detail.scrollTop;
+  },
+
+  // 获取当前时间
+  getCurrentTime() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
   },
 });

@@ -79,7 +79,7 @@
   flex: 1;
   z-index: 2;
   overflow-y: scroll;
-  padding-bottom: 180rpx; /* 增加底部padding */
+  padding-bottom: 140rpx; /* 增加底部padding */
   -webkit-overflow-scrolling: touch;
   padding-top: 38rpx;
 }
@@ -183,7 +183,7 @@
 .message-list {
   padding: 32rpx;
   margin-top: 40rpx;
-  padding-bottom: 150rpx; /* 增加底部padding */
+  /* padding-bottom: 150rpx; 增加底部padding */
 }
 
 .message-item {
@@ -198,6 +198,15 @@
 
 .ai-message {
   align-items: flex-start;
+}
+
+.message-header {
+  margin-bottom: 8rpx;
+}
+
+.message-nickname {
+  font-size: 24rpx;
+  color: #999;
 }
 
 .message-content {
@@ -225,4 +234,39 @@
   font-size: 24rpx;
   color: #999;
   margin: 10rpx 0;
+}
+
+.thinking-indicator {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8rpx;
+  vertical-align: middle;
+}
+
+.thinking-indicator .dot {
+  width: 8rpx;
+  height: 8rpx;
+  background-color: #999;
+  border-radius: 50%;
+  margin: 0 2rpx;
+  animation: thinking 1.4s infinite;
+}
+
+.thinking-indicator .dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.thinking-indicator .dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes thinking {
+  0%, 100% {
+    transform: scale(0.3);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
