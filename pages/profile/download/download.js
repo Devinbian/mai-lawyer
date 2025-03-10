@@ -1,5 +1,6 @@
 const imageUtil = require("../../../utils/image.js");
 const refreshLoadingBehavior = require("../../../behaviors/refresh-loading.js");
+const util = require("../../../utils/util.js");
 
 Page({
   behaviors: [refreshLoadingBehavior],
@@ -7,7 +8,7 @@ Page({
   data: {
     imgUrls: null,
     downloadStatus: "completed", // completed: 已下载, downloading: 下载中
-    currentTab: "all",
+    currentTab: "all", // all: 全部, contract: 合同协议, complaint: 起诉状, defense: 答辩状, legal_opinion: 法律意见, application: 申请文书, general: 通用文书
   },
 
   onLoad() {
@@ -29,7 +30,7 @@ Page({
   // 切换主分类（已下载/下载中）
   switchMainTab(e) {
     // 重置下载记录,临时使用
-    this.resetDownloadHistory();
+    // this.resetDownloadHistory();
 
     const status = e.currentTarget.dataset.status;
     if (status === this.data.downloadStatus) return;
@@ -96,63 +97,113 @@ Page({
   loadData(isLoadMore = false) {
     return new Promise((resolve) => {
       const startTime = Date.now();
+      const fileList = [];
 
-      // 获取微信文件系统中保存的文件
+      // 如果是"下载中"状态，获取下载中的文件列表
+      if (this.data.downloadStatus === "downloading") {
+        const downloadingFiles = wx.getStorageSync("downloadingFiles") || {};
+        
+        Object.entries(downloadingFiles).forEach(([key, file], index) => {
+          // 获取文书类型
+          let docType = file.docType || "general"; // 如果没有指定类型，默认为通用文书
+
+          // 获取文件类型（用于显示图标）
+          const fileExt = file.fileName.split(".").pop().toLowerCase();
+          let fileType = "other";
+          if (["doc", "docx"].includes(fileExt)) {
+            fileType = "word";
+          } else if (["pdf"].includes(fileExt)) {
+            fileType = "pdf";
+          } else if (["xls", "xlsx"].includes(fileExt)) {
+            fileType = "excel";
+          } else if (["ppt", "pptx"].includes(fileExt)) {
+            fileType = "ppt";
+          }
+
+          // 根据二级分类过滤（使用文书类型过滤）
+          if (this.data.currentTab !== "all" && docType !== this.data.currentTab) {
+            return;
+          }
+
+          console.log("file.startTime", file.startTime);
+
+          fileList.push({
+            id: index + 1,
+            title: file.fileName,
+            date: util.formatTime(new Date(file.startTime)),
+            timestamp: file.startTime,  // 添加时间戳用于排序
+            type: fileType,        // 文件类型（用于显示图标）
+            docType: docType,      // 文书类型（用于分类）
+            price: 0,
+            status: "downloading",
+            progress: file.progress || 0,
+            size: "计算中...",
+          });
+        });
+
+        // 按时间戳排序
+        fileList.sort((a, b) => b.timestamp - a.timestamp);
+
+        const pageSize = 10;
+        let currentPageNum = isLoadMore ? this.data.pageNum || 1 : 1;
+
+        if (isLoadMore) {
+          currentPageNum += 1;
+        }
+
+        const start = 0;
+        const end = currentPageNum * pageSize;
+        const pageData = fileList.slice(start, end);
+
+        this.setData({ pageNum: currentPageNum });
+
+        const totalCount = fileList.length;
+        const remaining = totalCount - end;
+        const hasMoreData = remaining > 5;
+
+        setTimeout(() => {
+          resolve({
+            list: pageData,
+            hasMore: hasMoreData,
+          });
+        }, Math.max(0, 1000 - (Date.now() - startTime)));
+        return;
+      }
+
+      // 已下载文件列表的处理
       wx.getSavedFileList({
         success: (res) => {
-          // // 删除用户文件
-          // const fsm = wx.getFileSystemManager();
-          // fsm.removeSavedFile({
-          //   filePath: userFilePath,
-          //   success() {
-          //     console.log("文件删除成功");
-          //   },
-          //   fail(err) {
-          //     console.error("文件删除失败", err);
-          //   },
-          // });
           console.log("当前文件系统中实际文件数量:", res.fileList.length);
-          // 获取映射关系
           const savedFilesMap = wx.getStorageSync("savedFilesMap") || {};
           console.log("映射表中的记录数:", Object.keys(savedFilesMap).length);
 
-          // 筛选只存在于文件系统中的文件
           const validFiles = res.fileList.filter(
-            (file) => savedFilesMap[file.filePath] !== undefined,
+            (file) => savedFilesMap[file.filePath] !== undefined
           );
 
           console.log("有效文件数量:", validFiles.length);
 
-          // 清理不存在的文件记录
           const newSavedFilesMap = {};
           validFiles.forEach((file) => {
             newSavedFilesMap[file.filePath] = savedFilesMap[file.filePath];
           });
 
-          // 更新存储的映射
           wx.setStorageSync("savedFilesMap", newSavedFilesMap);
-          console.log(
-            "更新后的映射记录数:",
-            Object.keys(newSavedFilesMap).length,
-          );
-
-          const fileList = [];
-          // const savedFilesMap = wx.getStorageSync("savedFilesMap") || {};
-          console.log("savedFilesMap", savedFilesMap);
+          console.log("更新后的映射记录数:", Object.keys(newSavedFilesMap).length);
 
           res.fileList.forEach((file, index) => {
-            // 从文件路径解析文件名
             const filePath = file.filePath;
             const fileInfo = savedFilesMap[filePath];
 
             if (fileInfo) {
-              // 使用原始文件名
               const displayName = fileInfo.originalName;
-              // 从文件名解析文件类型
+              
+              // 获取文书类型
+              const docType = fileInfo.docType || "general";
+
+              // 获取文件类型（用于显示图标）
               const fileExt = displayName.split(".").pop().toLowerCase();
               let fileType = "other";
-
-              // 确定文件类型
               if (["doc", "docx"].includes(fileExt)) {
                 fileType = "word";
               } else if (["pdf"].includes(fileExt)) {
@@ -163,34 +214,31 @@ Page({
                 fileType = "ppt";
               }
 
-              const fileDate = new Date(file.createTime)
-                .toLocaleString("zh-CN", {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-                .replace(/\//g, "-");
+              // 根据二级分类过滤（使用文书类型过滤）
+              if (this.data.currentTab !== "all" && docType !== this.data.currentTab) {
+                return;
+              }
 
-              // 返回与原mock数据相同结构的对象，使用固定索引避免依赖list长度
+              console.log("file.saveTime", file.saveTime);
+
               fileList.push({
-                id: index + 1, // 直接使用索引+1作为ID，避免依赖this.data.list
-                title: displayName, // 使用处理后的文件名作为标题
-                date: fileDate,
-                type: fileType,
+                id: index + 1,
+                title: displayName,
+                date: util.formatTime(new Date(fileInfo.saveTime)),
+                timestamp: fileInfo.saveTime,  // 添加时间戳用于排序
+                type: fileType,        // 文件类型（用于显示图标）
+                docType: docType,      // 文书类型（用于分类）
                 price: 0,
-                status: "downloaded",
+                status: "completed",
                 filePath: filePath,
                 size: (file.size / 1024).toFixed(2) + "KB",
               });
             }
           });
 
-          // 按时间排序
-          fileList.sort((a, b) => new Date(b.date) - new Date(a.date));
+          // 按时间戳排序
+          fileList.sort((a, b) => b.timestamp - a.timestamp);
 
-          // 重置分页处理
           const pageSize = 10;
           let currentPageNum = isLoadMore ? this.data.pageNum || 1 : 1;
 
@@ -202,45 +250,27 @@ Page({
           const end = currentPageNum * pageSize;
           const pageData = fileList.slice(start, end);
 
-          // 保存当前页码
           this.setData({ pageNum: currentPageNum });
-
-          console.log(`返回${pageData.length}条数据，总共${fileList.length}条`);
 
           const totalCount = fileList.length;
           const remaining = totalCount - end;
-          const hasMoreData = remaining > 5; // 只有剩余数据超过5条时才继续加载
-
-          console.log(
-            `数据情况: 总数据=${totalCount}, 当前页结束位置=${end}, 剩余=${remaining}, 是否有更多=${hasMoreData}`,
-          );
-
-          // 确保至少显示刷新提示 1 秒钟
-          const elapsedTime = Date.now() - startTime;
-          const remainingTime = Math.max(0, 1000 - elapsedTime);
+          const hasMoreData = remaining > 5;
 
           setTimeout(() => {
             resolve({
               list: pageData,
-              hasMore: hasMoreData, // 提前停止加载更多的标志
+              hasMore: hasMoreData,
             });
-          }, remainingTime);
+          }, Math.max(0, 1000 - (Date.now() - startTime)));
         },
         fail: (err) => {
           console.error("获取保存文件列表失败", err);
-          // 获取失败时返回空列表
-          const startTime = Date.now();
-
-          // 同样确保延迟
-          const elapsedTime = Date.now() - startTime;
-          const remainingTime = Math.max(0, 1000 - elapsedTime);
-
           setTimeout(() => {
             resolve({
               list: [],
               hasMore: false,
             });
-          }, remainingTime);
+          }, Math.max(0, 1000 - (Date.now() - startTime)));
         },
       });
     });

@@ -1,4 +1,5 @@
 const imageUtil = require("../../../utils/image.js");
+const util = require("../../../utils/util.js");
 
 Page({
   data: {
@@ -7,6 +8,7 @@ Page({
     totalPrice: 0,
     servicePrice: 30, // 专家服务价格
     imgUrls: null,
+    downloadProgress: 0, // 添加下载进度状态
   },
 
   onLoad(options) {
@@ -107,30 +109,36 @@ Page({
         duration: 200,
       });
 
+      // 获取或初始化下载中的文件列表
+      let downloadingFiles = wx.getStorageSync('downloadingFiles') || {};
+      
       const downloadTask = wx.downloadFile({
-        url: "https://ccwwapi.datatellit.com/file/pic/VegeSense_API_V3.8.docx", //仅为示例，并非真实的资源
-        success(res) {
+        url: "https://ccwwapi.datatellit.com/file/pic/VegeSense_API_V3.8.docx",
+        success: (res) => {
           const tempFilePath = res.tempFilePath;
-          const originalUrl =
-            "https://ccwwapi.datatellit.com/file/pic/VegeSense_API_V3.8.docx";
+          const originalUrl = "https://ccwwapi.datatellit.com/file/pic/VegeSense_API_V3.8.docx";
           const originalFileName = originalUrl.split("/").pop();
           console.log("originalFileName", originalFileName);
-          // 添加前缀标识这是用户文档文件
           const prefixedFileName = "DOCS_" + originalFileName;
           console.log("prefixedFileName", prefixedFileName);
+
+          // 从下载中列表移除
+          delete downloadingFiles[this.data.document.title];  // 使用正确的key
+          wx.setStorageSync('downloadingFiles', downloadingFiles);
 
           // 保存文件
           wx.saveFile({
             tempFilePath: tempFilePath,
-            success(res) {
+            success: (res) => {
               console.log("saveFile success", res.savedFilePath);
-              console.log("res", res.savedFilePath);
-
-              // 保存文件路径和原始文件名的映射关系
+              
+              // 保存到已下载文件列表
               const savedFiles = wx.getStorageSync("savedFilesMap") || {};
               savedFiles[res.savedFilePath] = {
                 originalName: originalFileName,
                 saveTime: new Date().getTime(),
+                status: 'completed',
+                docType: this.data.document.docType || 'general' // 保存文书类型
               };
               wx.setStorageSync("savedFilesMap", savedFiles);
 
@@ -141,22 +149,60 @@ Page({
                 icon: "success",
               });
             },
-            fail(res) {
+            fail: (res) => {
               console.error("saveFile fail", res);
-            },
+              // 保存失败也要从下载中列表移除
+              delete downloadingFiles[this.data.document.title];  // 使用正确的key
+              wx.setStorageSync('downloadingFiles', downloadingFiles);
+            }
           });
         },
+        fail: (res) => {
+          console.error("download fail", res);
+          // 下载失败从下载中列表移除
+          delete downloadingFiles[this.data.document.title];  // 使用正确的key
+          wx.setStorageSync('downloadingFiles', downloadingFiles);
+        }
       });
 
+      // 添加到下载中列表
+      downloadingFiles[this.data.document.title] = {
+        fileName: this.data.document.title,
+        progress: 0,
+        startTime: new Date().getTime(),  // 使用时间戳
+        saveTime: new Date().getTime(),   // 使用时间戳
+        status: 'downloading',
+        docType: this.data.document.docType || 'general', // 添加文书类型
+        fileType: this.data.document.type || 'word', // 添加文件类型
+      };
+      wx.setStorageSync('downloadingFiles', downloadingFiles);
+
       downloadTask.onProgressUpdate((res) => {
-        // 更新loading的标题，而不是创建新对话框
         if (res.progress < 100) {
+          // 更新下载进度
+          this.setData({
+            downloadProgress: res.progress
+          });
+          
+          // 更新下载中文件的进度
+          downloadingFiles = wx.getStorageSync('downloadingFiles') || {};  // 重新获取最新的状态
+          if (downloadingFiles[this.data.document.title]) {
+            downloadingFiles[this.data.document.title].progress = res.progress;
+            wx.setStorageSync('downloadingFiles', downloadingFiles);
+          }
+
           wx.showLoading({
             title: `下载进度：${res.progress}%`,
             mask: true,
           });
+          console.log("下载进度", res.progress);
         } else {
           wx.hideLoading();
+          // 下载完成时，确保从下载中列表移除
+          downloadingFiles = wx.getStorageSync('downloadingFiles') || {};
+          delete downloadingFiles[this.data.document.title];
+          wx.setStorageSync('downloadingFiles', downloadingFiles);
+          
           wx.showToast({
             title: "下载完成",
             icon: "success",

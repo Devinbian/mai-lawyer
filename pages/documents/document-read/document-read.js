@@ -11,12 +11,22 @@ Page({
 
   onLoad(options) {
     if (options.id && options.document) {
-      const document = JSON.parse(decodeURIComponent(options.document));
-      this.setData({
-        documentId: options.id,
-        document: document,
-      });
-      this.loadDocumentInfo(options.id);
+      try {
+        const document = JSON.parse(decodeURIComponent(options.document));
+        this.setData({
+          documentId: options.id,
+          document,
+          isCollected: this.checkIsCollected(options.id)
+        });
+        // 加载文档内容
+        this.loadDocumentInfo(options.id);
+      } catch (error) {
+        console.error("解析文档数据失败:", error);
+        wx.showToast({
+          title: "加载文档失败",
+          icon: "none",
+        });
+      }
     }
     this.setImagesByPixelRatio();
   },
@@ -49,55 +59,44 @@ Page({
     });
   },
 
-  // 收藏文档
+  // 检查是否已收藏
+  checkIsCollected(docId) {
+    const collectedDocs = wx.getStorageSync('collectedDocuments') || [];
+    return collectedDocs.some(doc => doc.id === docId);
+  },
+
+  // 切换收藏状态
   toggleCollect() {
-    const that = this;
-    const isCollected = !this.data.isCollected;
+    const { document, isCollected } = this.data;
+    if (!document) return;
 
-    // 先更新本地状态
-    this.setData({
-      isCollected,
-    });
+    let collectedDocs = wx.getStorageSync('collectedDocuments') || [];
+    
+    if (isCollected) {
+      // 取消收藏
+      collectedDocs = collectedDocs.filter(doc => doc.id !== document.id);
+      wx.showToast({
+        title: '已取消收藏',
+        icon: 'success'
+      });
+    } else {
+      // 添加收藏
+      collectedDocs.push({
+        id: document.id,
+        title: document.title,
+        docType: document.docType || 'general',
+        type: document.type || 'word',
+        collectTime: new Date().getTime()
+      });
+      wx.showToast({
+        title: '收藏成功',
+        icon: 'success'
+      });
+    }
 
-    // 调用收藏接口
-    // wx.request({
-    //   url: `${app.globalData.baseUrl}/api/documents/collect`,
-    //   method: 'POST',
-    //   header: {
-    //     'Authorization': `Bearer ${wx.getStorageSync('token')}`
-    //   },
-    //   data: {
-    //     documentId: this.data.document.id,
-    //     isCollected: isCollected
-    //   },
-    //   success: function(res) {
-    //     if (res.data.code === 0) {
-    //       wx.showToast({
-    //         title: isCollected ? '收藏成功' : '已取消收藏',
-    //         icon: 'success'
-    //       });
-    //     } else {
-    //       // 如果接口调用失败，回滚状态
-    //       that.setData({
-    //         isCollected: !isCollected
-    //       });
-    //       wx.showToast({
-    //         title: res.data.message || '操作失败',
-    //         icon: 'none'
-    //       });
-    //     }
-    //   },
-    //   fail: function() {
-    //     // 如果请求失败，回滚状态
-    //     that.setData({
-    //       isCollected: !isCollected
-    //     });
-    //     wx.showToast({
-    //       title: '网络错误',
-    //       icon: 'none'
-    //     });
-    //   }
-    // });
+    // 保存收藏状态
+    wx.setStorageSync('collectedDocuments', collectedDocs);
+    this.setData({ isCollected: !isCollected });
   },
 
   // 获取文档
