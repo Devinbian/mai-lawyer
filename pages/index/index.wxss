@@ -270,3 +270,60 @@
     opacity: 1;
   }
 }
+
+/* 消息操作菜单 */
+.message-menu {
+  position: absolute;
+  top: -40rpx;
+  background: #4C4C4C;
+  border-radius: 8rpx;
+  display: none;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 16rpx;
+  z-index: 999;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.2);
+}
+
+.message-menu.show {
+  display: flex;
+}
+
+.message-menu::after {
+  content: '';
+  position: absolute;
+  bottom: -16rpx;
+  border-width: 8rpx;
+  border-style: solid;
+  border-color: #4C4C4C transparent transparent transparent;
+}
+
+.user-message .message-menu::after {
+  right: 30rpx;
+}
+
+.ai-message .message-menu::after {
+  left: 30rpx;
+}
+
+.menu-item {
+  color: #FFFFFF;
+  font-size: 28rpx;
+  padding: 16rpx 24rpx;
+  position: relative;
+}
+
+.menu-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rpx;
+  height: 32rpx;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.message-item {
+  position: relative;
+}

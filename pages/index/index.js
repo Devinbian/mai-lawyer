@@ -21,26 +21,26 @@ Page({
     imgUrls: null,
     navBarHeight: 44,
     isAiResponding: false,
-    currentTypingMessage: '', // 当前正在打字的消息
+    currentTypingMessage: "", // 当前正在打字的消息
     isTyping: false, // 是否正在打字
     typingSpeed: 50, // 打字速度（毫秒）
-    userNickname: '', // 用户昵称
+    userNickname: "", // 用户昵称
   },
 
   onLoad: function () {
     // 根据设备像素比选择合适的图片
     this.setImagesByPixelRatio();
     const app = getApp();
-    
+
     // 获取用户信息
     if (app.globalData.isLogin) {
       this.setData({
         userInfo: app.globalData.userInfo,
-        userNickname: app.globalData.userInfo.nickName || '用户'
+        userNickname: app.globalData.userInfo.nickName || "用户",
       });
     } else {
       this.setData({
-        userNickname: '用户'
+        userNickname: "用户",
       });
     }
 
@@ -86,28 +86,91 @@ Page({
 
   // 加载聊天记录
   loadChatHistory() {
-    const chatHistory = wx.getStorageSync('chatHistory') || [];
-    if (chatHistory.length === 0) {
-      // // 如果没有聊天记录，添加欢迎消息
-      // this.addMessage({
-      //   type: "ai",
-      //   content: "您好，我是小麦，您的全天候智能法律顾问。请问有什么可以帮您？",
-      //   nickname: "小麦",
-      //   isStreaming: false // 标记为非流式消息
-      // });
-    } else {
-      this.setData({
-        messageList: chatHistory
-      }, () => {
+    const chatHistory = wx.getStorageSync("chatHistory") || [];
+    this.setData(
+      {
+        messageList: chatHistory,
+      },
+      () => {
         // 加载历史记录后滚动到最后一条消息
         this.scrollToBottom();
-      });
-    }
+      },
+    );
   },
 
   // 保存聊天记录
   saveChatHistory() {
-    wx.setStorageSync('chatHistory', this.data.messageList);
+    wx.setStorageSync("chatHistory", this.data.messageList);
+  },
+
+  // 长按消息处理函数
+  handleLongPress(e) {
+    const { index } = e.currentTarget.dataset;
+    // 更新消息列表，显示当前消息的菜单
+    const messageList = this.data.messageList.map((msg, i) => ({
+      ...msg,
+      showMenu: i === index,
+    }));
+    this.setData({ messageList });
+
+    // 点击空白处关闭菜单
+    this.closeMenuTimeout = setTimeout(() => {
+      this.closeAllMenus();
+    }, 3000); // 3秒后自动关闭
+  },
+
+  // 关闭所有菜单
+  closeAllMenus() {
+    const messageList = this.data.messageList.map((msg) => ({
+      ...msg,
+      showMenu: false,
+    }));
+    this.setData({ messageList });
+  },
+
+  // 复制单条消息
+  handleCopy(e) {
+    const { content } = e.currentTarget.dataset;
+    wx.setClipboardData({
+      data: content,
+      success: () => {
+        wx.showToast({
+          title: "复制成功",
+          icon: "success",
+          duration: 1500,
+        });
+        this.closeAllMenus();
+      },
+    });
+  },
+
+  // 删除消息
+  handleDelete(e) {
+    const { index } = e.currentTarget.dataset;
+    wx.showModal({
+      title: "提示",
+      content: "确定要删除这条消息吗？",
+      success: (res) => {
+        if (res.confirm) {
+          const messageList = [...this.data.messageList];
+          messageList.splice(index, 1);
+          this.setData({ messageList }, () => {
+            this.saveChatHistory();
+            wx.showToast({
+              title: "删除成功",
+              icon: "success",
+              duration: 1500,
+            });
+          });
+        }
+        this.closeAllMenus();
+      },
+    });
+  },
+
+  // 页面触摸开始时关闭菜单
+  onPageTouch() {
+    this.closeAllMenus();
   },
 
   // 发送消息
@@ -128,34 +191,57 @@ Page({
         time: this.formatTime(new Date()),
       });
 
-      // 添加空的AI消息，并立即显示思考指示器
-      this.addMessage({
+      // 先添加一个空的AI消息，不显示思考状态
+      const aiMessageId = Date.now().toString();
+      const aiMessage = {
         type: "ai",
         content: "",
         time: this.formatTime(new Date()),
         isStreaming: true,
-        isThinking: true // 确保思考指示器显示
-      });
+        isThinking: false,
+        id: aiMessageId,
+        nickname: "小麦", // 添加 AI 的昵称
+      };
 
-      await this.getAIStreamResponse(userInput);
-    } catch (error) {
-      console.error("获取AI响应失败:", error);
+      const messageList = [...this.data.messageList, aiMessage];
+      this.setData({ messageList });
 
-      // 更新最后一条AI消息为错误提示
-      const messageList = this.data.messageList;
-      for (let i = messageList.length - 1; i >= 0; i--) {
-        if (messageList[i].type === "ai") {
-          messageList[i].content = "抱歉，我暂时无法回答您的问题，请稍后再试。";
-          this.setData({ messageList });
-          this.saveChatHistory();
-          break;
+      try {
+        const response = await this.getAIStreamResponse(userInput);
+        if (!response) {
+          // 如果响应开始但没有内容，显示思考状态
+          const updatedMessageList = this.data.messageList.map((msg) => {
+            if (msg.id === aiMessageId) {
+              return { ...msg, isThinking: true };
+            }
+            return msg;
+          });
+          this.setData({ messageList: updatedMessageList });
         }
-      }
+      } catch (error) {
+        console.error("获取AI响应失败:", error);
+        // 更新最后一条AI消息为错误提示
+        const messageList = this.data.messageList;
+        for (let i = messageList.length - 1; i >= 0; i--) {
+          if (messageList[i].type === "ai") {
+            messageList[i].content =
+              "抱歉，我暂时无法回答您的问题，请稍后再试。";
+            messageList[i].isThinking = false;
+            this.setData({ messageList });
+            this.saveChatHistory();
+            break;
+          }
+        }
 
-      wx.showToast({
-        title: "网络请求失败",
-        icon: "none",
-      });
+        wx.showToast({
+          title: "网络请求失败",
+          icon: "none",
+        });
+      }
+    } catch (error) {
+      console.error("发送消息失败:", error);
+    } finally {
+      this.setData({ isAiResponding: false });
     }
   },
 
@@ -165,28 +251,31 @@ Page({
     const newMessage = {
       ...message,
       id: messageId,
-      isThinking: message.type === 'ai' && !message.content && message.isStreaming, // 只在流式响应时显示思考状态
-      nickname: message.type === 'ai' ? '小麦' : this.data.userNickname,
-      time: message.time || this.formatTime(new Date())
+      isThinking: message.type === "ai" && message.isThinking, // 只在AI响应且明确设置isThinking时显示
+      nickname: message.type === "ai" ? "小麦" : this.data.userNickname,
+      time: message.time || this.formatTime(new Date()),
     };
 
     // 创建新的消息列表
     const messageList = [...this.data.messageList, newMessage];
-    
+
     // 更新状态并滚动
-    this.setData({
-      messageList
-    }, () => {
-      // 使用nextTick确保DOM更新后再滚动
-      wx.nextTick(() => {
-        // 增加延迟时间，确保内容完全渲染
-        setTimeout(() => {
-          this.setData({
-            scrollToView: `msg${messageId}`
-          });
-        }, 300);
-      });
-    });
+    this.setData(
+      {
+        messageList,
+      },
+      () => {
+        // 使用nextTick确保DOM更新后再滚动
+        wx.nextTick(() => {
+          // 增加延迟时间，确保内容完全渲染
+          setTimeout(() => {
+            this.setData({
+              scrollToView: `msg${messageId}`,
+            });
+          }, 300);
+        });
+      },
+    );
 
     // 保存到缓存
     this.saveChatHistory();
@@ -240,7 +329,7 @@ Page({
           // 获取并解码数据块
           let chunk = "";
           console.log("res.data类型:", typeof res.data);
-          
+
           if (typeof res.data === "string") {
             chunk = res.data;
           } else if (res.data instanceof ArrayBuffer) {
@@ -268,9 +357,9 @@ Page({
   // 处理数据块
   processDataChunk(chunk) {
     // 确保 chunk 是字符串
-    if (typeof chunk !== 'string') {
+    if (typeof chunk !== "string") {
       console.warn("收到非字符串数据块，跳过处理");
-      return { content: '', done: false };
+      return { content: "", done: false };
     }
 
     // 添加数据到缓冲区
@@ -286,27 +375,30 @@ Page({
           // 创建新的消息列表，避免直接修改原数组
           const updatedMessageList = [...messageList];
           const currentMessage = { ...updatedMessageList[i] };
-          
+
           // 更新消息内容和状态
           currentMessage.content = currentMessage.content + content;
           currentMessage.isThinking = false; // 一旦有内容就关闭思考指示器
-          
+
           updatedMessageList[i] = currentMessage;
-          
+
           // 更新状态并滚动
-          this.setData({ 
-            messageList: updatedMessageList
-          }, () => {
-            // 使用nextTick确保DOM更新后再滚动
-            wx.nextTick(() => {
-              // 增加延迟时间，确保内容完全渲染
-              setTimeout(() => {
-                this.setData({
-                  scrollToView: `msg${currentMessage.id}`
-                });
-              }, 300);
-            });
-          });
+          this.setData(
+            {
+              messageList: updatedMessageList,
+            },
+            () => {
+              // 使用nextTick确保DOM更新后再滚动
+              wx.nextTick(() => {
+                // 增加延迟时间，确保内容完全渲染
+                setTimeout(() => {
+                  this.setData({
+                    scrollToView: `msg${currentMessage.id}`,
+                  });
+                }, 300);
+              });
+            },
+          );
           break;
         }
       }
@@ -321,28 +413,28 @@ Page({
     let isDone = false;
 
     // 按行分割数据，并过滤掉空行
-    const lines = this.buffer.split('\n').filter(line => line.trim());
-    
+    const lines = this.buffer.split("\n").filter((line) => line.trim());
+
     for (const line of lines) {
       let jsonStr = line;
-      
+
       // 处理带有 data: 前缀的行
-      if (line.startsWith('data:')) {
+      if (line.startsWith("data:")) {
         jsonStr = line.substring(5).trim();
       }
-      
+
       // 跳过空字符串
       if (!jsonStr) continue;
-      
+
       try {
         // 尝试解析 JSON
         const jsonObj = JSON.parse(jsonStr);
-        
+
         // 处理响应内容
         if (jsonObj.response !== undefined) {
           extractedText += jsonObj.response;
         }
-        
+
         // 检查是否结束
         if (jsonObj.done === true) {
           isDone = true;
@@ -355,9 +447,10 @@ Page({
     }
 
     // 清理已处理的数据
-    this.buffer = this.buffer.split('\n')
-      .filter(line => !line.trim()) // 只保留空行
-      .join('\n')
+    this.buffer = this.buffer
+      .split("\n")
+      .filter((line) => !line.trim()) // 只保留空行
+      .join("\n")
       .trim();
 
     // 如果流结束，更新最后一条AI消息的状态
@@ -370,7 +463,7 @@ Page({
           updatedMessageList[i] = {
             ...updatedMessageList[i],
             isThinking: false,
-            isStreaming: false
+            isStreaming: false,
           };
           this.setData({ messageList: updatedMessageList });
           break;
@@ -492,7 +585,7 @@ Page({
         // 增加延迟时间，确保内容完全渲染
         setTimeout(() => {
           this.setData({
-            scrollToView: `msg${lastMessageId}`
+            scrollToView: `msg${lastMessageId}`,
           });
         }, 300);
       });
@@ -513,8 +606,8 @@ Page({
   // 获取当前时间
   getCurrentTime() {
     const now = new Date();
-    const hours = now.getHours().toString().padStart(2, '0');
-    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   },
 });

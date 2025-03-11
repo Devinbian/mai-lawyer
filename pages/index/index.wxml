@@ -1,5 +1,5 @@
 <!--index.wxml-->
-<view class="container-bg">
+<view class="container-bg" bindtouchstart="onPageTouch">
   <main-nav></main-nav>
   <image class="container-bg-image" src="{{imgUrls.containerBg}}" mode="widthFix" />
   <view class="container">
@@ -37,10 +37,18 @@
           <view class="message-list">
             <block wx:for="{{messageList}}" wx:key="id">
               <view id="msg{{item.id}}" class="message-item {{item.type === 'user' ? 'user-message' : 'ai-message'}}">
+                <!-- 消息操作菜单 -->
+                <view class="message-menu {{item.showMenu ? 'show' : ''}}" style="{{item.type === 'user' ? 'right: 0;' : 'left: 0;'}}">
+                  <view class="menu-item" catchtap="handleCopy" data-index="{{index}}" data-content="{{item.content}}">复制</view>
+                  <view class="menu-item" catchtap="handleDelete" data-index="{{index}}">删除</view>
+                </view>
                 <view class="message-header">
                   <text class="message-nickname">{{item.nickname}}</text>
                 </view>
-                <view class="message-content">
+                <view class="message-content" 
+                      bindlongpress="handleLongPress" 
+                      data-index="{{index}}" 
+                      data-content="{{item.content}}">
                   <block wx:if="{{item.type === 'ai' && item.isThinking}}">
                     <view class="thinking-indicator">
                       <view class="dot"></view>
