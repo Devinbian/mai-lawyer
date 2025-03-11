@@ -65,7 +65,7 @@
 
     <!-- 空状态 -->
     <view class="empty-state" wx:elif="{{!isInitialLoading && list.length === 0}}">
-      <image class="empty-icon" src="{{imgUrls.noorder}}" mode="aspectFit"/>
+      <image class="empty-icon" src="{{imgUrls.empty}}" mode="aspectFit"/>
       <text class="empty-text">暂无专家</text>
     </view>
 

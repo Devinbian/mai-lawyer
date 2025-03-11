@@ -175,6 +175,8 @@ Page({
 
   // 发送消息
   async sendMessage() {
+    if (!this.checkLogin()) return;
+
     const userInput = this.data.inputValue.trim();
     if (!userInput) return;
 
@@ -529,7 +531,7 @@ Page({
   // 输入框获得焦点
   onInputFocus(e) {
     const { height } = e.detail;
-    const adjustedHeight = height - 80;
+    const adjustedHeight = height - 86;
 
     this.setData(
       {

@@ -1,22 +1,17 @@
 // app.js
-const imageUtil = require("./utils/image.js");
 import TencentCloudChat from "@tencentcloud/chat";
 import TIMUploadPlugin from "tim-upload-plugin";
 import TIMProfanityFilterPlugin from "tim-profanity-filter-plugin";
 import { genTestUserSig } from "./debug/GenerateTestUserSig";
+const imageUtil = require("./utils/image.js");
+const config = require("./utils/config.js");
 
 App({
   globalData: {
     userInfo: null,
     isLogin: false,
     token: "",
-    config: {
-      userID: "laywer3", // User ID
-      SECRETKEY:
-        "ba92e763ab7975718da625afa6f60465dee472f0e4524f2028f83e161e5e1f8b", // Your secretKey
-      SDKAPPID: 1600075596, // Your SDKAppID
-      EXPIRETIME: 604800,
-    },
+    config: config.IM,
   },
 
   onLaunch() {

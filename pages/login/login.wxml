@@ -9,7 +9,7 @@
         <text class="link" data-type="agreement" bindtap="gotoProtocol">《用户协议》</text>和
         <text class="link" data-type="privacy" bindtap="gotoProtocol">《隐私政策》</text>
       </view>
-      <button class="weui-btn" type="primary" open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">
+      <button class="weui-btn" type="primary" open-type="getPhoneNumber" bindgetphonenumber="wechatAuth">
         微信一键授权登录
       </button>
     </view>

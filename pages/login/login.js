@@ -1,15 +1,54 @@
+const config = require('../../utils/config.js');
+
 Page({
   data: {
     isAgree: false,
-    appId: "wxb7f2a8c8c8ea8c73",
-    appSecret: "592dc14581988e4dadca20a5d0ab887c",
+    appId: config.appId,
+    appSecret: config.appSecret,
   },
 
-  getPhoneNumber(e) {
-    console.log(e.detail.code); // 动态令牌
-    console.log(e.detail.errMsg); // 回调信息（成功失败都会返回）
-    console.log(e.detail.errno); // 错误码（失败时返回）
-    wx.navigateBack();
+  wechatAuth(e) {
+    // console.log(e.detail.code); // 动态令牌
+    // console.log(e.detail.errMsg); // 回调信息（成功失败都会返回）
+    // console.log(e.detail.errno); // 错误码（失败时返回）
+    wx.request({
+      url: config.baseURL + "/api/auth/wechat/auth",
+      method: "GET",
+      data: {
+        code: e.detail.code,
+      },
+      dataType: "json",
+      success: (res) => {
+        console.log(res);
+        wx.setStorageSync("openid", res.data.data);
+        wx.setStorageSync("code", res.data.code)
+        wx.request({
+          url: config.baseURL + "/api/auth/wechat/login",
+          method: "GET",
+          data: {
+            openid: res.data.data,
+            code: res.data.code,
+          },
+          dataType: "json",
+          success: (res) => {
+            this.globalData.isLogin = true;
+            this.globalData.userInfo = res.data.data;
+            wx.setStorageSync("userinfo", res.data.data);
+            console.log(res);
+          },
+          fail: (err) => {
+            console.log("登录失败" + err);
+          },
+
+
+
+        });
+        wx.navigateBack();
+      },
+      fail: (err) => {
+        console.log("获取授权失败" + err);
+      },
+    });
   },
 
   // 切换协议同意状态

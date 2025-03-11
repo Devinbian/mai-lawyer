@@ -54,7 +54,7 @@ Component({
   },
   pageLifetimes: {
     show() {
-      console.log("页面显示");
+      // console.log("页面显示");
     },
   },
   methods: {

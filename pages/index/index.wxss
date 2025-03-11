@@ -158,12 +158,12 @@
 /* 重置按钮的默认样式 */
 .send-btn {
   padding: 0;
-  width: 72rpx !important;
-  height: 72rpx !important;
+  width: 90rpx !important;
+  height: 90rpx !important;
   min-height: 0;
   margin: 0;
   background: #0084ff;
-  border-radius: 12rpx;
+  border-radius: 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,8 +175,8 @@
 }
 
 .send-icon {
-  width: 72rpx;
-  height: 72rpx;
+  width: 90rpx;
+  height: 90rpx;
 }
 
 /* 聊天消息样式 */

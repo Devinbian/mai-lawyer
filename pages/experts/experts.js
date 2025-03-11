@@ -1,5 +1,6 @@
 const imageUtils = require("../../utils/image.js");
 const refreshLoadingBehavior = require("../../behaviors/refresh-loading.js");
+const config = require("../../utils/config.js");
 
 // pages/experts/experts.js
 Page({
@@ -17,17 +18,7 @@ Page({
   /**
    * 生命周期函数--监听页面加载
    */
-  onLoad(options) {
-    // 根据source设置标题
-    let title = "在线咨询"; // 默认标题
-    if (options.source === "profile-live-chat") {
-      title = "人工客服";
-    } else if (options.source === "experts-live-chat") {
-      title = "在线咨询";
-    }
-    this.setData({
-      title: title,
-    });
+  onLoad() {
 
     wx.showToast({
       title: "加载中...",
@@ -42,7 +33,7 @@ Page({
   setImagesByPixelRatio() {
     this.setData({
       imgUrls: {
-        ...imageUtils.getCommonImages(["experts", "expertsDetail", "profile"]),
+        ...imageUtils.getCommonImages(["experts", "profile", "default"]),
       },
     });
   },
@@ -51,11 +42,17 @@ Page({
   loadData(isLoadMore = false) {
     return new Promise((resolve) => {
       const { pageNum, pageSize } = this.data;
-      const mockExperts = this.getMockExperts();
-      const start = (pageNum - 1) * pageSize;
-      const end = start + pageSize;
-      const list = mockExperts.slice(start, end);
-      const hasMore = end < mockExperts.length;
+      // const mockExperts = this.getMockExperts();
+      // const start = (pageNum - 1) * pageSize;
+      // const end = start + pageSize;
+      // const list = mockExperts.slice(start, end);
+      // const hasMore = end < mockExperts.length;
+
+      const experts = this.getExperts(pageNum,pageSize);
+      
+      const list = experts;
+      const end = pageNum*pageSize;
+      const hasMore = end < experts.length;
 
       // 如果是最后一页，计算底部填充
       if (!hasMore) {
@@ -282,5 +279,43 @@ Page({
     }
 
     return [...baseExperts, ...moreExperts];
+  },
+
+  getExperts(pageNum, pageSize) {
+    wx.request({
+      url: config.baseURL + "/api/lawyer/list",
+      method: "GET",
+      data: {
+        pageNo: pageNum,
+        pageSize: pageSize,
+      },
+      dataType: "json",
+      success: (res) => {
+        console.log(res);
+        if(res.data.data.rows.length > 0){
+          const formattedList = res.data.data.rows.map(expert => {
+            return {
+              id: expert.id,
+            name: expert.name,
+            tags: expert.type || [],
+            avatar: expert.avatar || imgUrls.avatar,
+            title: expert.title || '律师',
+            fields: expert.specialties || [],
+            consultCount: expert.servedNum || 0,
+            years: expert.years || '5年以上',
+            phone: expert.phone || '',
+            brief: expert.brief || '',
+            description: expert.description || '',
+            // 可以添加更多需要的字段
+          }
+        });
+        console.log("formattedList" + formattedList);
+          return formattedList;
+        }
+      },
+      fail: (err) => {
+        console.log("err" + err);
+      },
+    });
   },
 });

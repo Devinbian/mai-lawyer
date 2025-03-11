@@ -84,7 +84,7 @@
             />
           </view>
           <button class="send-btn" bindtap="sendMessage">
-            <image class="send-icon" src="{{imgUrls.sendIcon}}" mode="widthFix" />
+            <image class="send-icon" src="{{imgUrls.sendIcon}}" mode="aspectFill" />
           </button>
         </view>
       </view>
