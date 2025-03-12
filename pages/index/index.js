@@ -7,6 +7,7 @@ Page({
     userInfo: null,
     messages: [],
     inputValue: "",
+    showSuggestions: true,
     suggestions: [
       "起诉状如何写",
       "恶意拖欠劳动工资，如何申请仲裁处理？",
@@ -63,7 +64,7 @@ Page({
 
     this.setData({
       userInfo: userInfo,
-      userNickname: userInfo.name || "用户",
+      userNickname: userInfo.name || "用户"
     });
 
     // 获取缓存的聊天记录
@@ -256,6 +257,7 @@ Page({
         type: "user",
         content: userInput,
         time: this.formatTime(new Date()),
+        nickname: this.data.userNickname
       };
 
       // 使用一次setData添加用户消息

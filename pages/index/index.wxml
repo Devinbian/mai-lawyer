@@ -36,8 +36,8 @@
           </view>
 
           <!-- 保留原有的指导提示 -->
-          <view class="guide-title" wx:if="{{messageList.length === 0}}">您可以这样问我：</view>
-          <view class="guide-list" wx:if="{{messageList.length === 0}}">
+          <view class="guide-title" wx:if="{{showSuggestions}}">您可以这样问我：</view>
+          <view class="guide-list" wx:if="{{showSuggestions}}">
             <view class="guide-item" wx:for="{{suggestions}}" wx:key="*this" bindtap="handleTapSuggestion" data-text="{{item}}">
               <view class="guide-message">{{item}}</view>
             </view>
