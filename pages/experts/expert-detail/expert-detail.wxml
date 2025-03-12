@@ -1,120 +1,131 @@
 <view class="container">
   <bg-titlecenter-nav title="律师详情"></bg-titlecenter-nav>
   
-  <!-- 律师基本信息 -->
-  <view class="lawyer-info">
-    <image class="lawyer-bg" src="{{imgUrls.expertBg}}" mode="widthFix"></image>
-    <view class="lawyer-header">
-      <image class="lawyer-avatar" src="{{expert.avatar}}" mode="aspectFill"></image>
-      <view class="lawyer-basic">
-        <view class="name-location">
-          <text class="lawyer-name">{{expert.name}}</text>
-          <text class="lawyer-location">上海（某某律师事务所）在职</text>
-        </view>
-        <view class="follow-btn" bindtap="handleFollow">关注</view>
-      </view>
-    </view>
-
-    <!-- 数据统计 -->
-    <view class="stats">
-      <view class="stat-item">
-        <text class="stat-num">{{expert.years}}</text>
-        <text class="stat-label">关注</text>
-      </view>
-      <view class="stat-divider"></view>
-      <view class="stat-item">
-        <text class="stat-num">{{expert.consultCount}}</text>
-        <text class="stat-label">服务人数</text>
-      </view>
-      <view class="stat-divider"></view>
-      <view class="stat-item">
-        <text class="stat-num">{{expert.years}}</text>
-        <text class="stat-label">执业年限</text>
-      </view>
-    </view>
-
-    <!-- 擅长领域标签 -->
-    <view class="skill-tags" wx:if="{{expert.fieldArray && expert.fieldArray.length > 0}}">
-      <view class="tags-wrapper {{isTagsExpanded ? 'tags-expanded' : ''}}">
-        <text class="tag" 
-              wx:for="{{expert.fieldArray}}" 
-              wx:key="*this" 
-              wx:for-item="field"
-              wx:for-index="index">{{field}}</text>
-      </view>
-      <text class="tag more-tag" 
-            wx:if="{{expert.fieldArray.length > 3 && !isTagsExpanded}}"
-            catchtap="toggleTags">...</text>
-    </view>
-  </view>
-
-  <!-- 律师介绍 -->
-  <view class="lawyer-intro">
-    <text class="section-title">律师简介</text>
-    <text class="intro-text {{isIntroExpanded ? 'expanded' : ''}}">{{expert.introduction}}</text>
-    <view class="expand-btn {{isIntroExpanded ? 'expanded' : ''}}" bindtap="toggleIntro">
-      {{isIntroExpanded ? '收起' : '展开'}}
-    </view>
-  </view>
-
-  <!-- 服务项目 -->
-  <view class="service-items">
-    <text class="section-title">服务项目</text>
-    <view class="service-list">
-      <view class="service-item" bindtap="handleTextConsult">
-        <view class="service-left">
-          <image class="service-icon" src="{{imgUrls.chat}}" mode="aspectFit"></image>
-          <view class="service-info">
-            <text class="service-name">图文咨询</text>
-            <text class="service-desc">通过图文与律师在线沟通</text>
+  <scroll-view 
+    class="content-scroll" 
+    scroll-y="{{true}}" 
+    enhanced="{{true}}" 
+    show-scrollbar="{{false}}"
+  >
+    <view class="expert-detail">
+      <!-- 律师基本信息 -->
+      <view class="lawyer-info">
+        <image class="lawyer-bg" src="{{imgUrls.expertBg}}" mode="widthFix"></image>
+        <view class="lawyer-header">
+          <image class="lawyer-avatar" src="{{expert.avatar}}" mode="aspectFill"></image>
+          <view class="lawyer-basic">
+            <view class="name-location">
+              <text class="lawyer-name">{{expert.name}}</text>
+              <text class="lawyer-location">上海（某某律师事务所）在职</text>
+            </view>
+            <view class="follow-btn {{isFollowed ? 'followed' : ''}}" bindtap="handleFollow">
+              {{isFollowed ? '已关注' : '关注'}}
+            </view>
           </view>
         </view>
-        <text class="service-price">¥ 40/次</text>
-      </view>
 
-      <view class="service-item">
-        <view class="service-left">
-          <image class="service-icon" src="{{imgUrls.phone}}" mode="aspectFit"></image>
-          <view class="service-info">
-            <text class="service-name">电话咨询</text>
-            <text class="service-desc">高效沟通解决问题，便捷服务</text>
+        <!-- 数据统计 -->
+        <view class="stats">
+          <view class="stat-item">
+            <text class="stat-num">{{expert.fans}}</text>
+            <text class="stat-label">关注</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-num">{{expert.consultCount}}</text>
+            <text class="stat-label">服务人数</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-num">{{expert.years}}</text>
+            <text class="stat-label">执业年限</text>
           </view>
         </view>
-        <text class="service-price">¥ 40/次</text>
+
+        <!-- 擅长领域标签 -->
+        <view class="skill-tags" wx:if="{{expert.fieldArray && expert.fieldArray.length > 0}}">
+          <view class="tags-wrapper {{isTagsExpanded ? 'tags-expanded' : ''}}">
+            <text class="tag" 
+                  wx:for="{{expert.fieldArray}}" 
+                  wx:key="*this" 
+                  wx:for-item="field"
+                  wx:for-index="index">{{field}}</text>
+          </view>
+          <text class="tag more-tag" 
+                wx:if="{{expert.fieldArray.length > 3 && !isTagsExpanded}}"
+                catchtap="toggleTags">...</text>
+        </view>
       </view>
 
-      <view class="service-item">
-        <view class="service-left">
-          <image class="service-icon" src="{{imgUrls.meeting}}" mode="aspectFit"></image>
-          <view class="service-info">
-            <text class="service-name">见面咨询</text>
-            <text class="service-desc">当面沟通</text>
-          </view>
+      <!-- 律师介绍 -->
+      <view class="lawyer-intro">
+        <text class="section-title">律师简介</text>
+        <text class="intro-text {{isIntroExpanded ? 'expanded' : ''}}">{{expert.introduction}}</text>
+        <view class="expand-btn {{isIntroExpanded ? 'expanded' : ''}}" bindtap="toggleIntro">
+          {{isIntroExpanded ? '收起' : '展开'}}
         </view>
-        <text class="service-price">¥ 100/次</text>
       </view>
 
-      <view class="service-item">
-        <view class="service-left">
-          <image class="service-icon" src="{{imgUrls.case}}" mode="aspectFit"></image>
-          <view class="service-info">
-            <text class="service-name">代理诉讼案</text>
-            <text class="service-desc">低成本起诉（待写诉状）提供方案，高效</text>
+      <!-- 服务项目 -->
+      <view class="service-items">
+        <text class="section-title">服务项目</text>
+        <view class="service-list">
+          <view class="service-item" bindtap="handleTextConsult">
+            <view class="service-left">
+              <image class="service-icon" src="{{imgUrls.chat}}" mode="aspectFit"></image>
+              <view class="service-info">
+                <text class="service-name">图文咨询</text>
+                <text class="service-desc">通过图文与律师在线沟通</text>
+              </view>
+            </view>
+            <text class="service-price">¥ {{expert.consultationFee}}/次</text>
           </view>
-        </view>
-        <text class="service-price">¥ 80/次</text>
-      </view>
 
-      <view class="service-item">
-        <view class="service-left">
-          <image class="service-icon" src="{{imgUrls.document}}" mode="aspectFit"></image>
-          <view class="service-info">
-            <text class="service-name">律师函</text>
-            <text class="service-desc">专业人员办理</text>
+          <view class="service-item">
+            <view class="service-left">
+              <image class="service-icon" src="{{imgUrls.phone}}" mode="aspectFit"></image>
+              <view class="service-info">
+                <text class="service-name">电话咨询</text>
+                <text class="service-desc">高效沟通解决问题，便捷服务</text>
+              </view>
+            </view>
+            <text class="service-price">¥ 40/次</text>
+          </view>
+
+          <view class="service-item">
+            <view class="service-left">
+              <image class="service-icon" src="{{imgUrls.meeting}}" mode="aspectFit"></image>
+              <view class="service-info">
+                <text class="service-name">见面咨询</text>
+                <text class="service-desc">当面沟通</text>
+              </view>
+            </view>
+            <text class="service-price">¥ 100/次</text>
+          </view>
+
+          <view class="service-item">
+            <view class="service-left">
+              <image class="service-icon" src="{{imgUrls.case}}" mode="aspectFit"></image>
+              <view class="service-info">
+                <text class="service-name">代理诉讼案</text>
+                <text class="service-desc">低成本起诉（待写诉状）提供方案，高效</text>
+              </view>
+            </view>
+            <text class="service-price">¥ 80/次</text>
+          </view>
+
+          <view class="service-item">
+            <view class="service-left">
+              <image class="service-icon" src="{{imgUrls.document}}" mode="aspectFit"></image>
+              <view class="service-info">
+                <text class="service-name">律师函</text>
+                <text class="service-desc">专业人员办理</text>
+              </view>
+            </view>
+            <text class="service-price">¥ 80/次</text>
           </view>
         </view>
-        <text class="service-price">¥ 80/次</text>
       </view>
     </view>
-  </view>
+  </scroll-view>
 </view> 
