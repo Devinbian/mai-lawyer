@@ -126,19 +126,49 @@
 .skill-tags {
   position: relative;
   display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
+  align-items: flex-start;
+  margin-top: 20rpx;
   z-index: 1;
-  padding-top: 8rpx;
 }
 
-.tag {
-  padding: 6rpx 16rpx;
-  background: rgba(255, 255, 255, 0.15);
-  color: #6F737C;
+.tags-wrapper {
+  flex: 1;
+  display: flex;
+  gap: 16rpx;
+  overflow: hidden;
+  height: 40rpx;
+  transition: height 0.3s ease;
+}
+
+.tags-wrapper.tags-expanded {
+  height: auto;
+  flex-wrap: wrap;
+}
+
+.skill-tags .tag {
+  height: 40rpx;
+  padding: 6rpx 20rpx;
+  background: #F5F7FA;
+  border-radius: 8rpx;
   font-size: 24rpx;
-  border-radius: 6rpx;
-  border: 1px solid rgba(111, 115, 124, 0.2);
+  color: #666666;
+  white-space: nowrap;
+  flex-shrink: 0;
+  line-height: 28rpx;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.skill-tags .more-tag {
+  background: #F5F7FA;
+  margin-left: 16rpx;
+  padding: 6rpx 12rpx;
+  line-height: 28rpx;
+}
+
+.skill-tags .more-tag:active {
+  opacity: 0.8;
 }
 
 /* 律师介绍 */
@@ -161,15 +191,15 @@
   line-height: 1.6;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;  /* 默认显示4行 */
+  -webkit-line-clamp: 4;
   overflow: hidden;
   margin-bottom: 16rpx;
   text-overflow: ellipsis;
-  transition: all 0.3s ease;  /* 添加过渡动画 */
+  transition: all 0.3s ease;
 }
 
 .intro-text.expanded {
-  -webkit-line-clamp: unset;  /* 展开后不限制行数 */
+  -webkit-line-clamp: unset;
   height: auto;
 }
 
@@ -183,7 +213,7 @@
   padding: 2rpx 0;
   margin-top: 8rpx;
   cursor: pointer;
-  transition: all 0.3s ease;  /* 添加过渡动画 */
+  transition: all 0.3s ease;
 }
 
 .expand-btn::after {
@@ -196,12 +226,12 @@
   transform: rotate(45deg);
   margin-left: 8rpx;
   margin-top: -4rpx;
-  transition: transform 0.3s ease;  /* 添加箭头旋转动画 */
+  transition: transform 0.3s ease;
 }
 
 .expand-btn.expanded::after {
-  transform: rotate(-135deg);  /* 展开时箭头向上 */
-  margin-top: 4rpx;  /* 调整箭头位置 */
+  transform: rotate(-135deg);
+  margin-top: 4rpx;
 }
 
 /* 服务项目特殊样式 */

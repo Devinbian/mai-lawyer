@@ -13,13 +13,13 @@ Page({
     imgUrls: null,
     bottomPadding: 0,
     scrollTop: 0, // 记录滚动位置
+    listHeight: "calc(100vh - 280rpx)", // 默认高度
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad() {
-
     wx.showToast({
       title: "加载中...",
       icon: "loading",
@@ -28,6 +28,7 @@ Page({
 
     this.setImagesByPixelRatio();
     this.initList();
+    this.calculateListHeight();
   },
 
   setImagesByPixelRatio() {
@@ -39,41 +40,37 @@ Page({
   },
 
   // 实现 behavior 中定义的 loadData 方法
-  loadData(isLoadMore = false) {
-    return new Promise((resolve) => {
+  async loadData(isLoadMore = false) {
+    try {
       const { pageNum, pageSize } = this.data;
-      // const mockExperts = this.getMockExperts();
-      // const start = (pageNum - 1) * pageSize;
-      // const end = start + pageSize;
-      // const list = mockExperts.slice(start, end);
-      // const hasMore = end < mockExperts.length;
+      const expertsObj = await this.getExperts(pageNum, pageSize);
 
-      const experts = this.getExperts(pageNum,pageSize);
-      
-      const list = experts;
-      const end = pageNum*pageSize;
-      const hasMore = end < experts.length;
+      const list = expertsObj.listArray;
+      const totalRows = expertsObj.totalRows;
+      const end = pageNum * pageSize;
+      const hasMore = end < totalRows;
 
-      // 如果是最后一页，计算底部填充
-      if (!hasMore) {
-        wx.createSelectorQuery()
-          .select(".experts-list")
-          .boundingClientRect((rect) => {
-            if (rect && rect.height < wx.getSystemInfoSync().windowHeight) {
-              this.setData({
-                bottomPadding:
-                  wx.getSystemInfoSync().windowHeight - rect.height,
-              });
-            }
-          })
-          .exec();
-      }
-
-      // 模拟网络延迟
-      setTimeout(() => {
-        resolve({ list, hasMore });
-      }, 500);
-    });
+      // 返回处理后的数据
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({ list, hasMore });
+          // 数据加载完成后，重新计算高度
+          wx.nextTick(() => {
+            this.calculateListHeight();
+          });
+        }, 500);
+      });
+    } catch (error) {
+      console.error("获取专家列表失败：", error);
+      wx.showToast({
+        title: "获取专家列表失败",
+        icon: "none",
+        duration: 2000,
+      });
+      return new Promise((resolve) => {
+        resolve({ list: [], hasMore: false });
+      });
+    }
   },
 
   // 监听滚动事件
@@ -82,6 +79,8 @@ Page({
     this.setData({
       scrollTop,
     });
+    // 滚动时也重新计算高度
+    this.calculateListHeight();
   },
 
   /**
@@ -154,168 +153,100 @@ Page({
     }
   },
 
-  // 获取模拟数据
-  getMockExperts() {
-    const baseExperts = [
-      {
-        id: 1,
-        name: "张律师",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: ["资深专家", "刑事辩护"],
-        fields: "刑事辩护、经济犯罪、职务犯罪",
-        years: 15,
-        consultCount: 2000,
-      },
-      {
-        id: 2,
-        name: "李律师",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: ["高级专家", "民事纠纷"],
-        fields: "婚姻家事、房产纠纷、合同纠纷",
-        years: 12,
-        consultCount: 1800,
-      },
-      {
-        id: 3,
-        name: "王律师",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: ["精选专家", "商事诉讼"],
-        fields: "公司诉讼、股权纠纷、知识产权",
-        years: 10,
-        consultCount: 1500,
-      },
-      {
-        id: 4,
-        name: "刘律师",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: ["资深专家", "行政法"],
-        fields: "行政诉讼、行政复议、政府法律顾问",
-        years: 18,
-        consultCount: 2500,
-      },
-      {
-        id: 5,
-        name: "陈律师",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: ["高级专家", "劳动法"],
-        fields: "劳动争议、工伤赔偿、劳动合同",
-        years: 13,
-        consultCount: 1900,
-      },
-      {
-        id: 6,
-        name: "杨律师",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: ["精选专家", "知识产权"],
-        fields: "专利诉讼、商标注册、著作权保护",
-        years: 11,
-        consultCount: 1600,
-      },
-      {
-        id: 7,
-        name: "赵律师",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: ["资深专家", "金融法"],
-        fields: "金融诉讼、证券纠纷、保险理赔",
-        years: 16,
-        consultCount: 2200,
-      },
-      {
-        id: 8,
-        name: "周律师",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: ["高级专家", "房地产"],
-        fields: "房地产诉讼、建设工程、物业管理",
-        years: 14,
-        consultCount: 2000,
-      },
-      {
-        id: 9,
-        name: "吴律师",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: ["精选专家", "医疗纠纷"],
-        fields: "医疗事故、医疗纠纷、医疗赔偿",
-        years: 12,
-        consultCount: 1700,
-      },
-      {
-        id: 10,
-        name: "郑律师",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: ["资深专家", "环境法"],
-        fields: "环境诉讼、环保合规、污染治理",
-        years: 15,
-        consultCount: 1800,
-      },
-    ];
+  getExperts(pageNum, pageSize) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: config.baseURL + "/api/lawyer/list",
+        method: "GET",
+        data: {
+          pageNo: pageNum,
+          pageSize: pageSize,
+        },
+        dataType: "json",
+        success: (res) => {
+          if (res.data.success) {
+            const formattedList = res.data.data.rows.map((expert) => {
+              // 根据type值转换为对应的专家类型标签
+              const expertTypeTag = (() => {
+                switch (expert.type) {
+                  case 0:
+                    return "精选专家";
+                  case 1:
+                    return "资深专家";
+                  case 2:
+                    return "高级专家";
+                  default:
+                    return "";
+                }
+              })();
 
-    // 生成更多模拟数据
-    const moreExperts = [];
-    for (let i = 11; i <= 30; i++) {
-      const expert = {
-        id: i,
-        name: `${
-          ["张", "李", "王", "刘", "陈", "杨", "赵", "周", "吴", "郑"][i % 10]
-        }律师${i}`,
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-        tags: [
-          ["资深专家", "刑事辩护"],
-          ["高级专家", "民事纠纷"],
-          ["精选专家", "商事诉讼"],
-          ["资深专家", "行政法"],
-          ["高级专家", "劳动法"],
-        ][i % 5],
-        fields: [
-          "刑事辩护、经济犯罪、职务犯罪",
-          "婚姻家事、房产纠纷、合同纠纷",
-          "公司诉讼、股权纠纷、知识产权",
-          "行政诉讼、行政复议、政府法律顾问",
-          "劳动争议、工伤赔偿、劳动合同",
-        ][i % 5],
-        years: 10 + (i % 10),
-        consultCount: 1500 + i * 100,
-      };
-      moreExperts.push(expert);
-    }
+              // 构建tags数组，包含专家类型和平台保证标记
+              const tags = [];
+              if (expertTypeTag) {
+                tags.push(expertTypeTag);
+              }
+              if (expert.promised === true) {
+                tags.push("平台保证");
+              }
 
-    return [...baseExperts, ...moreExperts];
+              return {
+                id: expert.id,
+                name: expert.name,
+                tags: tags,
+                avatar: expert.avatarUrl || this.data.imgUrls.avatar,
+                title: expert.title || "律师",
+                fields: expert.brief || [],
+                consultCount: expert.servedNum || 0,
+                years: expert.years || "5年以上",
+                phone: expert.phone || "",
+                brief: expert.brief || "",
+                description: expert.description || "",
+                promised: expert.promised || false,
+              };
+            });
+            resolve({
+              listArray: formattedList,
+              totalRows: res.data.data.totalRows,
+            });
+          } else {
+            reject(new Error(res.data.message || "获取专家列表失败"));
+          }
+        },
+        fail: (err) => {
+          reject(err);
+        },
+      });
+    });
   },
 
-  getExperts(pageNum, pageSize) {
-    wx.request({
-      url: config.baseURL + "/api/lawyer/list",
-      method: "GET",
-      data: {
-        pageNo: pageNum,
-        pageSize: pageSize,
-      },
-      dataType: "json",
-      success: (res) => {
-        console.log(res);
-        if(res.data.data.rows.length > 0){
-          const formattedList = res.data.data.rows.map(expert => {
-            return {
-              id: expert.id,
-            name: expert.name,
-            tags: expert.type || [],
-            avatar: expert.avatar || imgUrls.avatar,
-            title: expert.title || '律师',
-            fields: expert.specialties || [],
-            consultCount: expert.servedNum || 0,
-            years: expert.years || '5年以上',
-            phone: expert.phone || '',
-            brief: expert.brief || '',
-            description: expert.description || '',
-            // 可以添加更多需要的字段
-          }
+  // 计算列表实际可用高度
+  calculateListHeight() {
+    const query = wx.createSelectorQuery();
+    query.select(".fixed-header").boundingClientRect();
+    query.select(".exp-title").boundingClientRect();
+    query.select(".main-nav").boundingClientRect();
+
+    query.exec((res) => {
+      if (res[0] && res[1] && res[2]) {
+        const navHeight = res[2].height;
+        const titleHeight = res[1].height;
+        const safeAreaTop = wx.getSystemInfoSync().safeArea.top;
+
+        // 计算实际需要减去的高度（包括安全区域）
+        const totalFixedHeight = navHeight + titleHeight + (safeAreaTop || 0);
+
+        // 转换为rpx（px 转 rpx 需要乘以2）
+        const heightInRpx = Math.ceil(totalFixedHeight * 2);
+
+        this.setData({
+          listHeight: `calc(100vh - ${heightInRpx}rpx)`,
         });
-        console.log("formattedList" + formattedList);
-          return formattedList;
-        }
-      },
-      fail: (err) => {
-        console.log("err" + err);
-      },
+      }
     });
+  },
+
+  // 页面显示时重新计算高度
+  onShow() {
+    this.calculateListHeight();
   },
 });

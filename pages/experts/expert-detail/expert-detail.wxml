@@ -11,7 +11,7 @@
           <text class="lawyer-name">{{expert.name}}</text>
           <text class="lawyer-location">上海（某某律师事务所）在职</text>
         </view>
-        <view class="follow-btn">关注</view>
+        <view class="follow-btn" bindtap="handleFollow">关注</view>
       </view>
     </view>
 
@@ -28,27 +28,32 @@
       </view>
       <view class="stat-divider"></view>
       <view class="stat-item">
-        <text class="stat-num">4</text>
+        <text class="stat-num">{{expert.years}}</text>
         <text class="stat-label">执业年限</text>
       </view>
     </view>
 
     <!-- 擅长领域标签 -->
-    <view class="skill-tags">
-      <text class="tag">一级民事</text>
-      <text class="tag">房产纠纷</text>
-      <text class="tag">一般刑事</text>
-      <text class="tag">股权纠纷</text>
-      <text class="tag">...</text>
+    <view class="skill-tags" wx:if="{{expert.fieldArray && expert.fieldArray.length > 0}}">
+      <view class="tags-wrapper {{isTagsExpanded ? 'tags-expanded' : ''}}">
+        <text class="tag" 
+              wx:for="{{expert.fieldArray}}" 
+              wx:key="*this" 
+              wx:for-item="field"
+              wx:for-index="index">{{field}}</text>
+      </view>
+      <text class="tag more-tag" 
+            wx:if="{{expert.fieldArray.length > 3 && !isTagsExpanded}}"
+            catchtap="toggleTags">...</text>
     </view>
   </view>
 
   <!-- 律师介绍 -->
   <view class="lawyer-intro">
     <text class="section-title">律师简介</text>
-    <text class="intro-text {{isExpanded ? 'expanded' : ''}}">{{expert.introduction}}</text>
-    <view class="expand-btn {{isExpanded ? 'expanded' : ''}}" bindtap="toggleIntro">
-      {{isExpanded ? '收起' : '展开'}}
+    <text class="intro-text {{isIntroExpanded ? 'expanded' : ''}}">{{expert.introduction}}</text>
+    <view class="expand-btn {{isIntroExpanded ? 'expanded' : ''}}" bindtap="toggleIntro">
+      {{isIntroExpanded ? '收起' : '展开'}}
     </view>
   </view>
 

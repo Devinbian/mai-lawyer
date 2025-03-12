@@ -3,6 +3,7 @@ const imageUtils = require("../../../utils/image.js");
 Page({
   data: {
     expert: null,
+    isTagsExpanded: false,
     isIntroExpanded: false,
     isExpanded: false,
     services: [
@@ -49,16 +50,29 @@ Page({
     if (options.expert) {
       try {
         const expertInfo = JSON.parse(decodeURIComponent(options.expert));
-        // 将专家信息的字段拆分为数组
-        const fieldArray = expertInfo.fields.split("、");
+        console.log("专家信息:", expertInfo);
+
+        // 处理擅长领域数组
+        let fieldArray = [];
+        if (typeof expertInfo.fields === "string" && expertInfo.fields) {
+          fieldArray = expertInfo.fields
+            .split("、")
+            .filter((field) => field.trim());
+        } else if (Array.isArray(expertInfo.fields)) {
+          fieldArray = expertInfo.fields;
+        }
+
         this.setData({
           expert: {
             ...expertInfo,
-            fieldArray,
+            fieldArray: fieldArray,
             tags: ["资深专家", "平台保证"],
             introduction: `${expertInfo.name}，从业${expertInfo.years}年，专注于${expertInfo.fields}等领域。累计服务咨询人数${expertInfo.consultCount}人，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验，具有丰富的实践经验。`,
           },
+          isExpanded: false,
         });
+
+        console.log("处理后的擅长领域:", fieldArray);
       } catch (error) {
         console.error("解析专家信息失败:", error);
         wx.showToast({
@@ -75,19 +89,34 @@ Page({
     });
   },
 
+  // 切换标签展开/收起状态
+  toggleTags() {
+    this.setData({
+      isTagsExpanded: !this.data.isTagsExpanded,
+    });
+  },
+
   // 切换简介展开/收起状态
   toggleIntro() {
     this.setData({
-      isExpanded: !this.data.isExpanded,
+      isIntroExpanded: !this.data.isIntroExpanded,
     });
   },
 
   // 关注律师
   handleFollow() {
-    wx.showToast({
-      title: "关注成功",
-      icon: "success",
-    });
+    const userInfo = wx.getStorageSync("userinfo");
+    if (userInfo) {
+      console.log(userInfo);
+      wx.showToast({
+        title: "关注成功",
+        icon: "success",
+      });
+    } else {
+      wx.navigateTo({
+        url: "/pages/login/login",
+      });
+    }
   },
 
   // 处理服务项目点击
@@ -205,6 +234,13 @@ Page({
           icon: "none",
         });
       },
+    });
+  },
+
+  // 处理展开/收起
+  toggleExpand() {
+    this.setData({
+      isExpanded: !this.data.isExpanded,
     });
   },
 });

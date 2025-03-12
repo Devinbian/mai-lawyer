@@ -2,10 +2,16 @@
   min-height: 100vh;
   background: #F5F7FA;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  padding-bottom: env(safe-area-inset-bottom);
   position: relative;
+}
+
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  background: #F6F7F9;
 }
 
 .exp-title {
@@ -41,11 +47,22 @@
 }
 
 .experts-list {
-  margin-top: 80rpx;
-  width: 100%;
+  position: absolute;
+  top: 280rpx;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #F5F7FA;
+  overflow: hidden;
+}
+
+.list-content {
+  padding: 20rpx;
   box-sizing: border-box;
-  padding: 20rpx 20rpx 0;
-  flex: 1;
+}
+
+/* 当列表内容超过3条时才显示滚动条 */
+.experts-list.can-scroll {
   overflow: auto;
 }
 
@@ -144,10 +161,15 @@
   background-color: #21BF7E;
 }
 
-.normal-tag {
+.normal-tag,.platform-guarantee {
   background-color: #D4E8FF;
   color: #007BFF;
 }
+
+/* .platform-guarantee {
+  background-color: #4CAF50 !important;
+  color: #ffffff !important;
+} */
 
 .expert-fields {
   font-size: 26rpx;
