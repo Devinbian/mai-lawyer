@@ -47,7 +47,7 @@
           <view class="doc-title">{{item.title}}</view>
           <view class="doc-desc">{{item.description}}</view>
           <view class="doc-meta">
-            <text class="doc-number">#{{item.number}}</text>
+            <text class="doc-number">#{{item.id}}</text>
             <text class="doc-words">约{{item.words}}字</text>
             <image class="doc-date-icon" src="{{imgUrls.time}}" mode="aspectFit"></image>
             <text class="doc-date">{{item.date}}</text>
