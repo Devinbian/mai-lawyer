@@ -82,6 +82,7 @@
   padding-bottom: 140rpx; /* 增加底部padding */
   -webkit-overflow-scrolling: touch;
   padding-top: 38rpx;
+  overscroll-behavior: contain;
 }
 
 .chat-content.keyboard-show {
@@ -191,6 +192,9 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .user-message {
@@ -211,11 +215,20 @@
 }
 
 .message-content {
-  max-width: 80%;
-  padding: 20rpx 24rpx;
+  max-width: 80%;  /* 恢复普通消息的最大宽度 */
+  padding: 20rpx 24rpx;  /* 恢复普通消息的内边距 */
   font-size: 28rpx;
   border-radius: 12rpx;
   word-break: break-all;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* 为卡片消息单独设置样式 */
+.message-content.has-card {
+  max-width: 100%;
+  width: 100%;
+  padding: 0;
 }
 
 .user-message .message-content {
@@ -251,6 +264,7 @@
   border-radius: 50%;
   margin: 0 2rpx;
   animation: thinking 1.4s infinite;
+  will-change: transform, opacity;
 }
 
 .thinking-indicator .dot:nth-child(2) {
@@ -284,6 +298,8 @@
   padding: 0 16rpx;
   z-index: 999;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.2);
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
 .message-menu.show {
@@ -312,6 +328,7 @@
   font-size: 28rpx;
   padding: 16rpx 24rpx;
   position: relative;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .menu-item:not(:last-child)::after {
@@ -327,4 +344,135 @@
 
 .message-item {
   position: relative;
+}
+
+/* 卡片消息样式 */
+.card-message {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 16rpx;
+  border: 2rpx solid #FFFFFF;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 32rpx;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.card-title {
+  font-size: 28rpx;
+  color: #666;
+  padding: 0 0 24rpx 0;
+  margin-bottom: 24rpx;
+  border-bottom: 2rpx solid rgba(229, 242, 255, 1);
+}
+
+.card-items {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* 垂直居中 */
+  min-height: 240rpx;  /* 设置最小高度确保有足够空间 */
+}
+
+.card-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 16rpx;
+  border: 2rpx solid #FFFFFF;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.item-icon {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: 20rpx;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.item-text-wrapper {
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.5;
+  background: rgba(243, 244, 246, 1);
+  padding: 16rpx 16rpx;
+  border-radius: 8rpx;
+}
+
+.item-text-highlight {
+  color: #0084ff;
+}
+
+.item-arrow {
+  color: #999;
+  margin-left: 4rpx;  /* 减小箭头的左边距 */
+}
+
+/* 加载更多样式 */
+.loading-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20rpx 0;
+}
+
+.loading-dot {
+  width: 12rpx;
+  height: 12rpx;
+  background: #999;
+  border-radius: 50%;
+  margin: 0 6rpx;
+  animation: loading 1s infinite;
+}
+
+.loading-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes loading {
+  0%, 100% {
+    transform: scale(0.5);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 优化滚动性能 */
+.chat-content {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* 优化图片加载 */
+.item-icon {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* 优化动画性能 */
+.thinking-indicator .dot {
+  will-change: transform, opacity;
+}
+
+.message-menu {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+}
+
+/* 优化触摸反馈 */
+.card-item {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menu-item {
+  -webkit-tap-highlight-color: transparent;
 }

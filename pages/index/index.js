@@ -30,6 +30,28 @@ Page({
     scrollTop: 0,
     isAutoScrolling: false, // 添加标记，用于区分手动滚动和自动滚动
     buffer: "", // 缓冲区
+    documentTypes: [
+      {
+        id: 1,
+        name: "《起诉状》",
+        icon: "case",
+        type: "lawsuit"
+      },
+      {
+        id: 2,
+        name: "《申请文书》",
+        icon: "document",
+        type: "application"
+      },
+      {
+        id: 3,
+        name: "《通用文书》",
+        icon: "document",
+        type: "general"
+      }
+    ],
+    pageSize: 20, // 每页显示的消息数量
+    isLoading: false, // 是否正在加载更多
   },
 
   onLoad: function () {
@@ -64,7 +86,7 @@ Page({
   // 根据设备像素比选择图片
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtils.getCommonImages(["index", "default"]),
+      imgUrls: imageUtils.getCommonImages(["index", "default", "expertsDetail"]),
     });
   },
 
@@ -85,14 +107,14 @@ Page({
   // 加载聊天记录
   loadChatHistory() {
     const chatHistory = wx.getStorageSync("chatHistory") || [];
+    // 只加载最近的20条消息
+    const recentMessages = chatHistory.slice(-this.data.pageSize);
+    
     this.setData({
-        messageList: chatHistory,
-      },
-      () => {
-        // 加载历史记录后滚动到最后一条消息
-        this.scrollToBottom();
-      },
-    );
+      messageList: recentMessages
+    }, () => {
+      this.scrollToBottom(false); // 不使用动画
+    });
   },
 
   // 保存聊天记录
@@ -207,13 +229,12 @@ Page({
 
   // 发送消息
   async sendMessage() {
-    // if (!this.checkLogin()) return;
-
+    if (this.data.isAiResponding) return; // 防止重复发送
+    
     const userInput = this.data.inputValue.trim();
     if (!userInput) return;
 
     const checkValue = await this.checkMessage(userInput);
-
     if (checkValue !== "Normal") {
       wx.showToast({
         title: "提问中含有违规词",
@@ -229,63 +250,59 @@ Page({
 
     try {
       // 创建用户消息
-      const messageId = this.addMessage({
+      const messageId = Date.now().toString();
+      const userMessage = {
+        id: messageId,
         type: "user",
         content: userInput,
         time: this.formatTime(new Date()),
+      };
+
+      // 使用一次setData添加用户消息
+      this.setData({
+        messageList: [...this.data.messageList, userMessage]
+      }, () => {
+        this.scrollToBottom();
+        this.saveChatHistory();
       });
 
-      // 先添加一个空的AI消息，不显示思考状态
+      // 检查是否是生成起诉状的请求
+      if (userInput.includes("生成起诉状") || userInput.includes("起诉状生成")) {
+        this.handleLawsuitResponse(userInput);
+        return;
+      }
+
+      // 创建AI消息
       const aiMessageId = Date.now().toString();
       const aiMessage = {
+        id: aiMessageId,
         type: "ai",
         content: "",
         time: this.formatTime(new Date()),
         isStreaming: true,
         isThinking: false,
-        id: aiMessageId,
-        nickname: "小迈", // 添加 AI 的昵称
+        nickname: "小迈",
       };
 
-      const messageList = [...this.data.messageList, aiMessage];
+      // 使用一次setData添加AI消息
       this.setData({
-        messageList
+        messageList: [...this.data.messageList, aiMessage]
+      }, () => {
+        this.scrollToBottom();
       });
 
       try {
         const response = await this.getAIStreamResponse(userInput);
         if (!response) {
-          // 如果响应开始但没有内容，显示思考状态
-          const updatedMessageList = this.data.messageList.map((msg) => {
-            if (msg.id === aiMessageId) {
-              return {
-                ...msg,
-                isThinking: true
-              };
-            }
-            return msg;
-          });
-          this.setData({
-            messageList: updatedMessageList
-          });
+          this.updateAIMessage(aiMessageId, { isThinking: true });
         }
       } catch (error) {
         console.error("获取AI响应失败:", error);
-        // 更新最后一条AI消息为错误提示
-        const messageList = this.data.messageList;
-        for (let i = messageList.length - 1; i >= 0; i--) {
-          if (messageList[i].type === "ai") {
-            messageList[i].content =
-              "抱歉，我暂时无法回答您的问题，请稍后再试。";
-            messageList[i].isThinking = false;
-            this.setData({
-              messageList
-            });
-            this.saveChatHistory();
-            break;
-          }
-        }
-
+        this.updateAIMessage(aiMessageId, {
+          content: "抱歉，我暂时无法回答您的问题，请稍后再试。",
+          isThinking: false
+        });
+        
         wx.showToast({
           title: "网络请求失败",
           icon: "none",
@@ -294,10 +311,22 @@ Page({
     } catch (error) {
       console.error("发送消息失败:", error);
     } finally {
-      this.setData({
-        isAiResponding: false
-      });
+      this.setData({ isAiResponding: false });
     }
+  },
+
+  // 更新AI消息的辅助方法
+  updateAIMessage(messageId, updates) {
+    const messageList = this.data.messageList.map(msg => {
+      if (msg.id === messageId) {
+        return { ...msg, ...updates };
+      }
+      return msg;
+    });
+
+    this.setData({ messageList }, () => {
+      this.saveChatHistory();
+    });
   },
 
   // 添加消息到列表
@@ -746,28 +775,26 @@ Page({
   },
 
   // 滚动到底部的方法
-  scrollToBottom() {
+  scrollToBottom(useAnimation = true) {
     const query = wx.createSelectorQuery();
-    query
-      .select(".message-list")
-      .boundingClientRect((listRect) => {
-        if (!listRect) return;
+    query.select(".message-list").boundingClientRect((listRect) => {
+      if (!listRect) return;
+      
+      this.setData({
+        isAutoScrolling: true,
+        scrollTop: listRect.height,
+        showScrollBtn: false,
+      });
 
-        this.setData({
-            isAutoScrolling: true,
-            scrollTop: listRect.height,
-            showScrollBtn: false,
-          },
-          () => {
-            setTimeout(() => {
-              this.setData({
-                isAutoScrolling: false,
-              });
-            }, 300);
-          },
-        );
-      })
-      .exec();
+      if (!useAnimation) {
+        // 立即取消自动滚动标记
+        this.setData({ isAutoScrolling: false });
+      } else {
+        setTimeout(() => {
+          this.setData({ isAutoScrolling: false });
+        }, 300);
+      }
+    }).exec();
   },
 
   // 获取当前时间
@@ -776,5 +803,67 @@ Page({
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
+  },
+
+  // 处理起诉状文书生成的回复
+  handleLawsuitResponse(userInput) {
+    console.log('documentTypes:', this.data.documentTypes);
+    console.log('imgUrls:', this.data.imgUrls);
+    
+    const cardMessage = {
+      type: "ai",
+      content: "",
+      time: this.formatTime(new Date()),
+      isCard: true,
+      cardData: {
+        title: "猜您需要以下法律文书模版",
+        items: this.data.documentTypes
+      }
+    };
+    
+    // 添加到消息列表
+    const messageList = [...this.data.messageList, cardMessage];
+    this.setData({
+      messageList,
+      isAiResponding: false
+    }, () => {
+      this.saveChatHistory();
+      this.scrollToBottom();
+    });
+  },
+
+  // 处理起诉状类型选择
+  handleDocumentTypeSelect(e) {
+    const { typeId } = e.currentTarget.dataset;
+    const selectedType = this.data.documentTypes.find(type => type.id === typeId);
+    
+    if (selectedType) {
+      wx.navigateTo({
+        url: `/pages/documents/document-list/document-list?type=${selectedType.name}&id=${typeId}`
+      });
+    }
+  },
+
+  // 加载更多历史消息
+  loadMoreHistory() {
+    if (this.data.isLoading) return;
+
+    this.setData({ isLoading: true });
+    
+    const chatHistory = wx.getStorageSync("chatHistory") || [];
+    const currentCount = this.data.messageList.length;
+    const moreMessages = chatHistory.slice(
+      Math.max(0, chatHistory.length - currentCount - this.data.pageSize),
+      chatHistory.length - currentCount
+    );
+
+    if (moreMessages.length > 0) {
+      this.setData({
+        messageList: [...moreMessages, ...this.data.messageList],
+        isLoading: false
+      });
+    } else {
+      this.setData({ isLoading: false });
+    }
   },
 });

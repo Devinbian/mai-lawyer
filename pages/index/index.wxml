@@ -25,36 +25,79 @@
           style="height: calc(100vh - {{isKeyboardShow ? (keyboardHeight + 360) : 460}}rpx);"
           bindscroll="onScroll"
           scroll-anchoring="true"
+          bindscrolltoupper="loadMoreHistory"
+          upper-threshold="50"
         >
+          <!-- 加载更多提示 -->
+          <view class="loading-more" wx:if="{{isLoading}}">
+            <view class="loading-dot"></view>
+            <view class="loading-dot"></view>
+            <view class="loading-dot"></view>
+          </view>
+
           <!-- 保留原有的指导提示 -->
-          <view class="guide-title">您可以这样问我：</view>
-          <view class="guide-list">
+          <view class="guide-title" wx:if="{{messageList.length === 0}}">您可以这样问我：</view>
+          <view class="guide-list" wx:if="{{messageList.length === 0}}">
             <view class="guide-item" wx:for="{{suggestions}}" wx:key="*this" bindtap="handleTapSuggestion" data-text="{{item}}">
               <view class="guide-message">{{item}}</view>
             </view>
           </view>
 
-          <!-- 添加聊天消息列表 -->
+          <!-- 优化消息列表渲染 -->
           <view class="message-list">
             <block wx:for="{{messageList}}" wx:key="id">
-              <view id="msg{{item.id}}" class="message-item {{item.type === 'user' ? 'user-message' : 'ai-message'}}">
+              <view id="msg{{item.id}}" 
+                    class="message-item {{item.type === 'user' ? 'user-message' : 'ai-message'}}"
+                    data-index="{{index}}"
+              >
                 <!-- 消息操作菜单 -->
-                <view class="message-menu {{item.showMenu ? 'show' : ''}}" style="{{item.type === 'user' ? 'right: 0;' : 'left: 0;'}}">
+                <view class="message-menu {{item.showMenu ? 'show' : ''}}" 
+                      style="{{item.type === 'user' ? 'right: 0;' : 'left: 0;'}}"
+                      catchtap="stopPropagation">
                   <view class="menu-item" catchtap="handleCopy" data-index="{{index}}" data-content="{{item.content}}">复制</view>
                   <view class="menu-item" catchtap="handleDelete" data-index="{{index}}">删除</view>
                 </view>
+                
                 <view class="message-header">
                   <text class="message-nickname">{{item.nickname}}</text>
                 </view>
-                <view class="message-content" 
+                
+                <view class="message-content {{item.isCard ? 'has-card' : ''}}" 
                       bindlongpress="handleLongPress" 
                       data-index="{{index}}" 
-                      data-content="{{item.content}}">
+                      data-content="{{item.content}}"
+                      data-id="{{item.id}}">
                   <block wx:if="{{item.type === 'ai' && item.isThinking}}">
                     <view class="thinking-indicator">
                       <view class="dot"></view>
                       <view class="dot"></view>
                       <view class="dot"></view>
+                    </view>
+                  </block>
+                  <block wx:elif="{{item.isCard}}">
+                    <view class="card-message">
+                      <view class="card-title">{{item.cardData.title}}</view>
+                      <view class="card-items">
+                        <view class="card-item" 
+                              wx:for="{{item.cardData.items}}" 
+                              wx:for-item="docType"
+                              wx:key="id"
+                              bindtap="handleDocumentTypeSelect"
+                              data-type-id="{{docType.id}}">
+                          
+                          <view class="item-text-wrapper">
+                          <image class="item-icon" 
+                                 src="{{docType.icon === 'document' ? imgUrls.document : imgUrls.case}}" 
+                                 mode="aspectFit" 
+                                 lazy-load="true">
+                          </image>
+                            <text>点击进入 </text>
+                            <text class="item-text-highlight">{{docType.name}}</text>
+                            <text> 模版</text>
+                            <text class="item-arrow">→</text>
+                          </view>
+                        </view>
+                      </view>
                     </view>
                   </block>
                   <block wx:else>

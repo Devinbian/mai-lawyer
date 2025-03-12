@@ -120,6 +120,8 @@ function getCommonImages(types) {
       sendIcon: getImageByPixelRatio(`${baseImagePath}/index/send`),
       titleBg: getImageByPixelRatio(`${baseImagePath}/documents/title-bg`),
       empty: getImageByPixelRatio(`${baseImagePath}/nodata`),
+      case: getImageByPixelRatio(`${baseImagePath}/experts/case`),
+      document: getImageByPixelRatio(`${baseImagePath}/experts/document`),
     },
   };
 
