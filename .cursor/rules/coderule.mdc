@@ -35,8 +35,8 @@ alwaysApply: true
 - SecretKey：ba92e763ab7975718da625afa6f60465dee472f0e4524f2028f83e161e5e1f8b
 
 # Xlight 小程序
-- appId: "wxb7f2a8c8c8ea8c73",
-- appSecret: "592dc14581988e4dadca20a5d0ab887c",
+- appId: "wx1a652f95e596a237",
+- appSecret: "199d397867dde3dfc723c7147e35c201",
 
 # 域名
 https://cloud.tencent.com/document/product/269/75285#.E5.B8.B8.E8.A7.81.E9.97.AE.E9.A2.98

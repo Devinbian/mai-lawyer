@@ -18,8 +18,8 @@ module.exports = {
     maxSize: 5 * 1024 * 1024, // 5MB
     acceptTypes: ["image/jpeg", "image/png", "application/pdf"],
   },
-  appId: "wxb7f2a8c8c8ea8c73",
-  appSecret: "592dc14581988e4dadca20a5d0ab887c",
+  appId: "wx1a652f95e596a237",
+  appSecret: "199d397867dde3dfc723c7147e35c201",
   IM: {
     userID: "laywer3", // User ID
     SECRETKEY:
