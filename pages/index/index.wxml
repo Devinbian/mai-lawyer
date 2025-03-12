@@ -20,10 +20,11 @@
           scroll-y="true"
           enhanced="true"
           show-scrollbar="true"
-          scroll-anchoring="true"
-          scroll-into-view="{{scrollToView}}"
+          scroll-top="{{scrollTop}}"
           scroll-with-animation="{{true}}"
           style="height: calc(100vh - {{isKeyboardShow ? (keyboardHeight + 360) : 460}}rpx);"
+          bindscroll="onScroll"
+          scroll-anchoring="true"
         >
           <!-- 保留原有的指导提示 -->
           <view class="guide-title">您可以这样问我：</view>
@@ -63,6 +64,8 @@
               </view>
             </block>
           </view>
+          <!-- 底部占位元素，确保内容完全显示 -->
+          <view style="height: 20rpx;" id="bottom-anchor"></view>
         </scroll-view>
 
         <view class="input-area" style="{{inputStyle}}">

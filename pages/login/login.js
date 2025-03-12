@@ -1,4 +1,4 @@
-const config = require('../../utils/config.js');
+const config = require("../../utils/config.js");
 
 Page({
   data: {
@@ -21,7 +21,8 @@ Page({
       success: (res) => {
         console.log(res);
         wx.setStorageSync("openid", res.data.data);
-        wx.setStorageSync("code", res.data.code)
+        wx.setStorageSync("code", res.data.code);
+        const app = getApp();
         wx.request({
           url: config.baseURL + "/api/auth/wechat/login",
           method: "GET",
@@ -31,17 +32,14 @@ Page({
           },
           dataType: "json",
           success: (res) => {
-            this.globalData.isLogin = true;
-            this.globalData.userInfo = res.data.data;
+            app.globalData.isLogin = true;
+            app.globalData.userInfo = res.data.data;
             wx.setStorageSync("userinfo", res.data.data);
             console.log(res);
           },
           fail: (err) => {
             console.log("登录失败" + err);
           },
-
-
-
         });
         wx.navigateBack();
       },
@@ -62,25 +60,26 @@ Page({
   checkLoginStatus() {
     // 先检查本地是否有登录态存储
     const openid = wx.getStorageSync("openid");
+    const app = getApp();
 
     if (openid) {
       // 有登录记录，检查登录态是否过期
       wx.checkSession({
         success: () => {
           // 登录态有效，直接使用现有登录态
-          this.globalData.isLogin = true;
+          app.globalData.isLogin = true;
           console.log("登录态有效，无需重新登录");
         },
         fail: () => {
           // 登录态已过期，需要重新登录
           console.log("登录态已过期，需要重新登录");
           wx.removeStorageSync("openid");
-          this.globalData.isLogin = false;
+          app.globalData.isLogin = false;
         },
       });
     } else {
       // 无登录记录，未登录状态
-      this.globalData.isLogin = false;
+      app.globalData.isLogin = false;
     }
   },
 

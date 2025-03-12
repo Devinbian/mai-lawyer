@@ -190,6 +190,7 @@
   margin-bottom: 30rpx;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .user-message {

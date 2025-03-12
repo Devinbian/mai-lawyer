@@ -25,6 +25,9 @@ Page({
     isTyping: false, // 是否正在打字
     typingSpeed: 50, // 打字速度（毫秒）
     userNickname: "", // 用户昵称
+    showScrollBtn: false,
+    scrollTop: 0,
+    isAutoScrolling: false, // 添加标记，用于区分手动滚动和自动滚动
   },
 
   onLoad: function () {
@@ -187,7 +190,7 @@ Page({
 
     try {
       // 创建用户消息
-      this.addMessage({
+      const messageId = this.addMessage({
         type: "user",
         content: userInput,
         time: this.formatTime(new Date()),
@@ -202,7 +205,7 @@ Page({
         isStreaming: true,
         isThinking: false,
         id: aiMessageId,
-        nickname: "小麦", // 添加 AI 的昵称
+        nickname: "小迈", // 添加 AI 的昵称
       };
 
       const messageList = [...this.data.messageList, aiMessage];
@@ -253,34 +256,23 @@ Page({
     const newMessage = {
       ...message,
       id: messageId,
-      isThinking: message.type === "ai" && message.isThinking, // 只在AI响应且明确设置isThinking时显示
-      nickname: message.type === "ai" ? "小麦" : this.data.userNickname,
+      isThinking: message.type === "ai" && message.isThinking,
+      nickname: message.type === "ai" ? "小迈" : this.data.userNickname,
       time: message.time || this.formatTime(new Date()),
     };
 
     // 创建新的消息列表
     const messageList = [...this.data.messageList, newMessage];
 
-    // 更新状态并滚动
-    this.setData(
-      {
-        messageList,
-      },
-      () => {
-        // 使用nextTick确保DOM更新后再滚动
-        wx.nextTick(() => {
-          // 增加延迟时间，确保内容完全渲染
-          setTimeout(() => {
-            this.setData({
-              scrollToView: `msg${messageId}`,
-            });
-          }, 300);
-        });
-      },
-    );
+    // 更新状态
+    this.setData({
+      messageList,
+    });
 
     // 保存到缓存
     this.saveChatHistory();
+
+    return messageId; // 返回消息ID供后续使用
   },
 
   // 格式化时间
@@ -380,25 +372,48 @@ Page({
 
           // 更新消息内容和状态
           currentMessage.content = currentMessage.content + content;
-          currentMessage.isThinking = false; // 一旦有内容就关闭思考指示器
+          currentMessage.isThinking = false;
 
           updatedMessageList[i] = currentMessage;
 
-          // 更新状态并滚动
+          // 只有在显示了下拉按钮的情况下才自动滚动
+          if (!this.data.showScrollBtn) {
+            this.handleScrollToBottom();
+          }
+
+          // 更新消息列表
           this.setData(
             {
               messageList: updatedMessageList,
             },
             () => {
-              // 使用nextTick确保DOM更新后再滚动
-              wx.nextTick(() => {
-                // 增加延迟时间，确保内容完全渲染
-                setTimeout(() => {
-                  this.setData({
-                    scrollToView: `msg${currentMessage.id}`,
-                  });
-                }, 300);
-              });
+              // 保存到本地存储
+              this.saveChatHistory();
+            },
+          );
+          break;
+        }
+      }
+    }
+
+    // 如果流结束，更新最后一条AI消息的状态
+    if (done) {
+      const messageList = this.data.messageList;
+      const updatedMessageList = [...messageList];
+      for (let i = updatedMessageList.length - 1; i >= 0; i--) {
+        if (updatedMessageList[i].type === "ai") {
+          updatedMessageList[i] = {
+            ...updatedMessageList[i],
+            isThinking: false,
+            isStreaming: false,
+          };
+          this.setData(
+            {
+              messageList: updatedMessageList,
+            },
+            () => {
+              // 消息流结束时保存聊天记录
+              this.saveChatHistory();
             },
           );
           break;
@@ -407,6 +422,13 @@ Page({
     }
 
     return { content, done };
+  },
+
+  // 统一的消息滚动处理函数
+  scrollToMessage(messageId) {
+    this.setData({
+      scrollToView: `msg${messageId}`,
+    });
   },
 
   // 从缓冲区提取完整的JSON对象
@@ -458,7 +480,6 @@ Page({
     // 如果流结束，更新最后一条AI消息的状态
     if (isDone) {
       const messageList = this.data.messageList;
-      // 创建新的消息列表，避免直接修改原数组
       const updatedMessageList = [...messageList];
       for (let i = updatedMessageList.length - 1; i >= 0; i--) {
         if (updatedMessageList[i].type === "ai") {
@@ -467,7 +488,15 @@ Page({
             isThinking: false,
             isStreaming: false,
           };
-          this.setData({ messageList: updatedMessageList });
+          this.setData(
+            {
+              messageList: updatedMessageList,
+            },
+            () => {
+              // 消息流结束时保存聊天记录
+              this.saveChatHistory();
+            },
+          );
           break;
         }
       }
@@ -577,32 +606,103 @@ Page({
     );
   },
 
-  // 滚动到底部的方法
-  scrollToBottom() {
-    const messageList = this.data.messageList;
-    if (messageList.length > 0) {
-      const lastMessageId = messageList[messageList.length - 1].id;
-      // 使用nextTick确保DOM更新后再滚动
-      wx.nextTick(() => {
-        // 增加延迟时间，确保内容完全渲染
-        setTimeout(() => {
-          this.setData({
-            scrollToView: `msg${lastMessageId}`,
-          });
-        }, 300);
-      });
-    }
-  },
+  // 处理下拉箭头点击
+  handleScrollToBottom() {
+    const query = wx.createSelectorQuery();
+    query
+      .select(".message-list")
+      .boundingClientRect((listRect) => {
+        if (!listRect) return;
 
-  // scroll-view 滚动到底部时触发
-  onScrollToLower() {
-    console.log("已滚动到底部");
+        this.setData(
+          {
+            isAutoScrolling: true, // 标记为自动滚动
+            scrollTop: listRect.height,
+            showScrollBtn: false,
+          },
+          () => {
+            // 滚动动画完成后，取消自动滚动标记
+            setTimeout(() => {
+              this.setData({
+                isAutoScrolling: false,
+              });
+            }, 300);
+          },
+        );
+      })
+      .exec();
   },
 
   // scroll-view 滚动时触发
   onScroll(e) {
-    // 可以记录滚动位置
-    const scrollTop = e.detail.scrollTop;
+    // 如果是自动滚动，不处理滚动事件
+    if (this.data.isAutoScrolling) {
+      return;
+    }
+
+    // 使用节流，避免频繁触发
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
+    }
+
+    this.scrollTimer = setTimeout(() => {
+      const scrollTop = e.detail.scrollTop;
+      const query = wx.createSelectorQuery();
+
+      query
+        .select("#scrollView")
+        .boundingClientRect((scrollViewRect) => {
+          if (!scrollViewRect) return;
+
+          query
+            .select(".message-list")
+            .boundingClientRect((listRect) => {
+              if (!listRect) return;
+
+              const scrollViewHeight = scrollViewRect.height;
+              const listHeight = listRect.height;
+              const distanceToBottom =
+                listHeight - (scrollTop + scrollViewHeight);
+
+              // 当距离底部超过200rpx时显示按钮
+              const shouldShow = distanceToBottom > 200;
+
+              if (this.data.showScrollBtn !== shouldShow) {
+                this.setData({
+                  showScrollBtn: shouldShow,
+                });
+              }
+            })
+            .exec();
+        })
+        .exec();
+    }, 200); // 增加节流时间到200ms
+  },
+
+  // 滚动到底部的方法
+  scrollToBottom() {
+    const query = wx.createSelectorQuery();
+    query
+      .select(".message-list")
+      .boundingClientRect((listRect) => {
+        if (!listRect) return;
+
+        this.setData(
+          {
+            isAutoScrolling: true,
+            scrollTop: listRect.height,
+            showScrollBtn: false,
+          },
+          () => {
+            setTimeout(() => {
+              this.setData({
+                isAutoScrolling: false,
+              });
+            }, 300);
+          },
+        );
+      })
+      .exec();
   },
 
   // 获取当前时间
