@@ -162,11 +162,6 @@ Page({
     wx.setClipboardData({
       data: content,
       success: () => {
-        wx.showToast({
-          title: "复制成功",
-          icon: "success",
-          duration: 1500,
-        });
         this.closeAllMenus();
       },
     });
@@ -188,11 +183,6 @@ Page({
             messageList
           }, () => {
             this.saveChatHistory();
-            wx.showToast({
-              title: "删除成功",
-              icon: "success",
-              duration: 1500,
-            });
           });
         }
         this.closeAllMenus();
