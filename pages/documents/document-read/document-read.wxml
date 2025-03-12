@@ -1,34 +1,8 @@
 <view class="container">
   <bg-titlecenter-nav title="合同协议"></bg-titlecenter-nav>
-
-  <!-- 文档阅读区域 -->
-  <scroll-view class="document-reader" scroll-y>
-    <!-- 目录部分 -->
-    <view class="catalog-section">
-      <view class="catalog-title">目录</view>
-      <view class="catalog-list">
-        <view class="catalog-item" 
-          wx:for="{{documentInfo.catalog}}" 
-          wx:key="*this"
-          bindtap="onCatalogTap"
-          data-index="{{index}}"
-        >{{item}}</view>
-      </view>
-    </view>
-
-    <!-- 正文部分 -->
-    <view class="content-section">
-      <view class="content-title">正文</view>
-      <view class="content-text">
-        <view class="text-item" wx:for="{{documentInfo.content}}" wx:key="*this">{{item}}</view>
-      </view>
-    </view>
-
-    <!-- 底部占位，防止内容被底栏遮挡 -->
-    <view class="bottom-placeholder"></view>
-  </scroll-view>
-
-  <!-- 固定底部操作栏 -->
+  <view class="content">
+    
+  </view>
   <view class="bottom-bar">
     <view class="collect-btn" bindtap="toggleCollect">
       <image class="collect-icon" 
