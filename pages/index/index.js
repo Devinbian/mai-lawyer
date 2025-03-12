@@ -29,24 +29,20 @@ Page({
     showScrollBtn: false,
     scrollTop: 0,
     isAutoScrolling: false, // 添加标记，用于区分手动滚动和自动滚动
+    buffer: "", // 缓冲区
   },
 
   onLoad: function () {
     // 根据设备像素比选择合适的图片
     this.setImagesByPixelRatio();
-    const app = getApp();
+    console.log("++++++++++++++++index++++++++++++++++");
+    const userInfo = wx.getStorageSync("userinfo");
+    console.log(userInfo);
 
-    // 获取用户信息
-    if (app.globalData.isLogin) {
-      this.setData({
-        userInfo: app.globalData.userInfo,
-        userNickname: app.globalData.userInfo.nickName || "用户",
-      });
-    } else {
-      this.setData({
-        userNickname: "用户",
-      });
-    }
+    this.setData({
+      userInfo: userInfo,
+      userNickname: userInfo.name || "用户",
+    });
 
     // 获取缓存的聊天记录
     this.loadChatHistory();
@@ -57,16 +53,12 @@ Page({
       statusBarHeight: windowInfo.statusBarHeight,
       navBarHeight: windowInfo.navigationBarHeight || 44,
     });
-
-    this.buffer = ""; // 初始化buffer为实例属性
   },
 
   onReady: function () {
-    console.log("页面ready");
   },
 
   onShow: function () {
-    console.log("页面show");
   },
 
   // 根据设备像素比选择图片
@@ -78,8 +70,9 @@ Page({
 
   // 检查登录状态
   checkLogin() {
-    const app = getApp();
-    if (!app.globalData.isLogin) {
+    console.log("++++++++++++++++checkLogin++++++++++++++++");
+    console.log(typeof this.data.userInfo);
+    if (this.data.userInfo === null || this.data.userInfo === undefined || this.data.userInfo === "") {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -87,6 +80,7 @@ Page({
     }
     return true;
   },
+
 
   // 加载聊天记录
   loadChatHistory() {
@@ -213,7 +207,7 @@ Page({
 
   // 发送消息
   async sendMessage() {
-    if (!this.checkLogin()) return;
+    // if (!this.checkLogin()) return;
 
     const userInput = this.data.inputValue.trim();
     if (!userInput) return;
@@ -343,7 +337,7 @@ Page({
   // 模拟AI回复
   getAIStreamResponse(userInput) {
     return new Promise((resolve, reject) => {
-      this.buffer = ""; // 重置缓冲区
+      this.data.buffer = ""; // 重置缓冲区
       let fullResponse = "";
       let isComplete = false;
 
@@ -380,7 +374,7 @@ Page({
         try {
           // 获取并解码数据块
           let chunk = "";
-          console.log("res.data类型:", typeof res.data);
+          // console.log("res.data类型:", typeof res.data);
 
           if (typeof res.data === "string") {
             chunk = res.data;
@@ -389,7 +383,7 @@ Page({
             chunk = util.arrayBufferToString(res.data);
           }
 
-          console.log("解析后数据块:", chunk);
+          // console.log("解析后数据块:", chunk);
 
           // 处理数据块
           const {
@@ -421,7 +415,7 @@ Page({
     }
 
     // 添加数据到缓冲区
-    this.buffer += chunk;
+    this.data.buffer += chunk;
 
     // 提取并处理完整的JSON对象
     const {
@@ -507,7 +501,7 @@ Page({
     let isDone = false;
 
     // 按行分割数据，并过滤掉空行
-    const lines = this.buffer.split("\n").filter((line) => line.trim());
+    const lines = this.data.buffer.split("\n").filter((line) => line.trim());
 
     for (const line of lines) {
       let jsonStr = line;
@@ -541,7 +535,7 @@ Page({
     }
 
     // 清理已处理的数据
-    this.buffer = this.buffer
+    this.data.buffer = this.data.buffer
       .split("\n")
       .filter((line) => !line.trim()) // 只保留空行
       .join("\n")

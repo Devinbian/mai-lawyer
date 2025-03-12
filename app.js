@@ -9,8 +9,6 @@ const config = require("./utils/config.js");
 App({
   globalData: {
     userInfo: null,
-    isLogin: false,
-    token: "",
     config: config.IM,
   },
 
@@ -34,7 +32,6 @@ App({
 
   initSDKInstance() {
     if (!wx.$TUIKit) {
-      console.log("全局初始化 SDK 实例...");
       wx.$TUIKit = TencentCloudChat.create({
         SDKAppID: this.globalData.config.SDKAPPID,
       });
@@ -90,44 +87,24 @@ App({
   },
 
   checkLoginStatus() {
-    const openid = wx.getStorageSync("openid");
-    if (openid) {
+    const userinfo = wx.getStorageSync("userinfo");
+    if (userinfo) {
       wx.checkSession({
         success: () => {
           // 登录态有效
-          this.globalData.isLogin = true;
+          this.data.userInfo = userinfo;
         },
         fail: () => {
           // 登录态过期，清除存储
-          wx.removeStorageSync("openid");
-          this.globalData.isLogin = false;
+          wx.removeStorageSync("userinfo");
+          wx.navigateTo({
+            url: "/pages/login/login",
+          });
         },
       });
     } else {
-      this.globalData.isLogin = false;
+      wx.removeStorageSync("userinfo");
     }
-  },
-
-  getUserInfo() {
-    // 从后端获取用户信息
-    // ...
-  },
-
-  login() {
-    return new Promise((resolve, reject) => {
-      wx.login({
-        success: (res) => {
-          if (res.code) {
-            // 发送 code 到后端换取 token
-            // ...
-            resolve(res);
-          } else {
-            reject(new Error("登录失败"));
-          }
-        },
-        fail: reject,
-      });
-    });
   },
 
   enableShare() {
