@@ -14,6 +14,7 @@ Page({
     bottomPadding: 0,
     scrollTop: 0, // 记录滚动位置
     listHeight: "calc(100vh - 280rpx)", // 默认高度
+    userInfo: null,
   },
 
   /**
@@ -26,6 +27,9 @@ Page({
       duration: 2000,
     });
 
+    this.setData({
+      userInfo: wx.getStorageSync("userinfo"),
+    });
     this.setImagesByPixelRatio();
     this.initList();
     this.calculateListHeight();
@@ -104,13 +108,33 @@ Page({
     });
   },
 
+  // 格式化电话号码
+  formatPhoneNumber(phone) {
+    if (!phone) return "";
+    // 移除所有非数字字符
+    const cleaned = phone.replace(/\D/g, "");
+    // 如果是11位手机号
+    if (cleaned.length === 11) {
+      return cleaned.replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
+    }
+    // 如果是座机号（比如 0571-88888888）
+    if (cleaned.length >= 10) {
+      const areaCode = cleaned.slice(0, 4);
+      const rest = cleaned.slice(4);
+      return `${areaCode}-${rest}`;
+    }
+    // 其他情况直接返回原始号码
+    return phone;
+  },
+
   // 电话咨询
   handlePhoneConsult(e) {
-    const expertId = e.currentTarget.dataset.id;
-    const expert = this.data.list.find((item) => item.id === expertId);
-    if (expert) {
+    if (this.data.userInfo) {
+      const phone = e.currentTarget.dataset.phone;
+      // 拨打电话时移除所有非数字字符
+      const cleanedPhone = phone.replace(/\D/g, "");
       wx.makePhoneCall({
-        phoneNumber: "400-000-0000", // 这里替换为实际的咨询电话
+        phoneNumber: cleanedPhone,
         fail(err) {
           wx.showToast({
             title: "拨打电话失败",
@@ -118,37 +142,36 @@ Page({
           });
         },
       });
+    } else {
+      wx.navigateTo({
+        url: "/pages/login/login",
+      });
     }
   },
 
   // 在线咨询
   handleOnlineConsult(e) {
-    const expertId = e.currentTarget.dataset.id;
-    const expert = this.data.list.find((item) => item.id === expertId);
-    if (expert) {
-      // 构建专家信息对象
-      const expertInfo = {
-        id: expert.id,
-        name: expert.name,
-        avatar: expert.avatar,
-        years: expert.years,
-        consultCount: expert.consultCount,
-        fields: expert.fields,
-      };
+    if (this.data.userInfo) {
+      const expertId = e.currentTarget.dataset.id;
+      const expert = this.data.list.find((item) => item.id === expertId);
 
       // 使用当前页面设置的标题
       const title = this.data.title || "在线咨询";
 
       wx.navigateTo({
-        url: `../../tim-chat/pages/index?conversationID=C2Claywer2&source=experts-live-chat&title=${encodeURIComponent(
-          title,
-        )}`,
+        url: `../../tim-chat/pages/index?conversationID=C2C${
+          expert.phone
+        }&source=experts-live-chat&title=${encodeURIComponent(title)}`,
         fail(err) {
           wx.showToast({
             title: "打开聊天失败",
             icon: "none",
           });
         },
+      });
+    } else {
+      wx.navigateTo({
+        url: "/pages/login/login",
       });
     }
   },

@@ -59,8 +59,8 @@
             </view>
           </view>
           <view class="expert-actions">
-            <button class="action-btn phone" catchtap="handlePhoneConsult" data-id="{{item.id}}">
-              <text>电话咨询</text>
+            <button class="action-btn phone" catchtap="handlePhoneConsult" data-phone="{{item.phone}}">
+              <text>电话咨询 {{item.phone ? formatPhoneNumber(item.phone) : ''}}</text>
             </button>
             <button class="action-btn online" catchtap="handleOnlineConsult" data-id="{{item.id}}">
               <image class="btn-bg" src="{{imgUrls.btnBg}}" mode="adjust"></image>
