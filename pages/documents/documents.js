@@ -1,5 +1,6 @@
 // pages/documents/documents.js
 const imageUtil = require("../../utils/image.js");
+const config = require("../../utils/config.js");
 
 Page({
   /**
@@ -51,6 +52,7 @@ Page({
       },
     ],
     imgUrls: null,
+    userInfo: null,
   },
 
   /**
@@ -58,6 +60,40 @@ Page({
    */
   onLoad(options) {
     this.setImagesByPixelRatio();
+    this.setData({
+      userInfo: wx.getStorageSync("userinfo"),
+    });
+
+    wx.request({
+      url: config.baseURL + "/api/document/category",
+      method: "GET",
+      dataType: "json",
+      success: (res) => {
+        if (res.data.success) {
+          // 创建一个新的数组来存储更新后的数据
+          const updatedDocuments = this.data.documents.map((doc) => {
+            const matchingItem = res.data.data.find(
+              (item) => item.name === doc.name,
+            );
+            if (matchingItem) {
+              return {
+                ...doc,
+                count: matchingItem.total,
+              };
+            }
+            return doc;
+          });
+
+          // 使用setData更新数据
+          this.setData({
+            documents: updatedDocuments,
+          });
+        }
+      },
+      fail: (err) => {
+        console.log(err);
+      },
+    });
   },
 
   /**
@@ -101,7 +137,7 @@ Page({
     const doc = this.data.documents.find((item) => item.id === docId);
     if (doc) {
       wx.navigateTo({
-        url: `/pages/documents/document-list/document-list?type=${doc.id}&name=${doc.name}`,
+        url: `/pages/documents/document-list/document-list?docType=${doc.name}`,
         fail(err) {
           wx.showToast({
             title: "打开失败",

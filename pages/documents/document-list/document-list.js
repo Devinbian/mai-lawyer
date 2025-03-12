@@ -1,5 +1,6 @@
 const imageUtil = require("../../../utils/image.js");
 const refreshLoadingBehavior = require("../../../behaviors/refresh-loading.js");
+const config = require("../../../utils/config.js");
 
 Page({
   behaviors: [refreshLoadingBehavior],
@@ -157,9 +158,14 @@ Page({
     isLoading: false,
     hasMore: true,
     isRefreshing: false,
+    docType: "",
   },
 
-  onLoad() {
+  onLoad(options) {
+    this.setData({
+      docType: options.docType || "",
+    });
+
     wx.showToast({
       title: "加载中...",
       icon: "loading",
@@ -216,37 +222,77 @@ Page({
   },
 
   // 实现 loadData 方法，这是 behavior 中约定的接口
-  loadData(isLoadMore = false) {
+  async loadData(isLoadMore = false) {
+    // 使用已有的文档数据，此处的this.data是behavior中的data
+    const { searchKeyword, pageNum, pageSize } = this.data;
+
+    // 根据搜索关键词筛选文档
+    const doclistObj = await this.getDocuments(
+      pageNum,
+      pageSize,
+      this.data.docType,
+    );
+    const list = doclistObj.listArray;
+    const totalRows = doclistObj.totalRows;
+    const end = pageNum * pageSize;
+    const hasMore = end < totalRows;
+
+    let filteredDocuments = list;
+    if (searchKeyword) {
+      const keyword = searchKeyword.toLowerCase();
+      filteredDocuments = documents.filter(
+        (doc) =>
+          doc.title.toLowerCase().includes(keyword) ||
+          doc.description.toLowerCase().includes(keyword),
+      );
+    }
+
     return new Promise((resolve) => {
-      // 使用已有的文档数据
-      const { documents, searchKeyword, pageNum, pageSize } = this.data;
+      resolve({
+        list: filteredDocuments,
+        hasMore,
+      });
+    });
+  },
 
-      // 模拟API请求延迟
-      setTimeout(() => {
-        // 根据搜索关键词筛选文档
-        let filteredDocuments = documents;
-        if (searchKeyword) {
-          const keyword = searchKeyword.toLowerCase();
-          filteredDocuments = documents.filter(
-            (doc) =>
-              doc.title.toLowerCase().includes(keyword) ||
-              doc.description.toLowerCase().includes(keyword),
-          );
-        }
-
-        // 模拟分页
-        const startIndex = (pageNum - 1) * pageSize;
-        const endIndex = startIndex + pageSize;
-        const currentPageDocuments = filteredDocuments.slice(
-          startIndex,
-          endIndex,
-        );
-
-        resolve({
-          list: currentPageDocuments,
-          hasMore: endIndex < filteredDocuments.length,
-        });
-      }, 1000);
+  getDocuments(pageNum, pageSize, docType) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: config.baseURL + "/api/document/list",
+        method: "GET",
+        data: {
+          pageNo: pageNum,
+          pageSize: pageSize,
+          title: docType,
+        },
+        dataType: "json",
+        success: (res) => {
+          if (res.data.success) {
+            const docList = res.data.data.rows.map((doc) => {
+              return {
+                id: doc.id,
+                title: doc.title,
+                description: doc.brief,
+                number: doc.number,
+                words: doc.wordCount,
+                date: doc.createTime,
+                price: doc.price,
+                url: doc.url,
+                ext: doc.fileExtension,
+              };
+            });
+            resolve({
+              listArray: docList,
+              totalRows: res.data.data.totalRows,
+            });
+          } else {
+            reject(new Error(res.data.message || "获取文档列表失败"));
+          }
+        },
+        fail: (err) => {
+          reject(err);
+        },
+      });
     });
   },
 });
