@@ -94,7 +94,7 @@
                             <text>点击进入 </text>
                             <text class="item-text-highlight">{{docType.name}}</text>
                             <text> 模版</text>
-                            <text class="item-arrow">→</text>
+                            <text class="item-arrow">⇀</text>
                           </view>
                         </view>
                       </view>

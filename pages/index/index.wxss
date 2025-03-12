@@ -353,7 +353,7 @@
   border: 2rpx solid #FFFFFF;
   width: 100%;
   box-sizing: border-box;
-  padding: 32rpx;
+  padding: 20rpx;
   will-change: transform;
   transform: translateZ(0);
 }
@@ -370,13 +370,13 @@
   display: flex;
   flex-direction: column;
   justify-content: center;  /* 垂直居中 */
-  min-height: 240rpx;  /* 设置最小高度确保有足够空间 */
+  min-height: 200rpx;  /* 设置最小高度确保有足够空间 */
 }
 
 .card-item {
   display: flex;
   align-items: center;
-  padding: 16rpx 16rpx;
+  padding: 8rpx 4rpx;
   border: 2rpx solid #FFFFFF;
   position: relative;
   -webkit-tap-highlight-color: transparent;
@@ -407,7 +407,7 @@
 
 .item-arrow {
   color: #999;
-  margin-left: 4rpx;  /* 减小箭头的左边距 */
+  margin-left: 8rpx;  /* 减小箭头的左边距 */
 }
 
 /* 加载更多样式 */
