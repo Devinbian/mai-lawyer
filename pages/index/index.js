@@ -1,3 +1,4 @@
+const config = require("../../utils/config.js");
 const imageUtils = require("../../utils/image.js");
 const util = require("../../utils/util.js");
 
@@ -90,8 +91,7 @@ Page({
   // 加载聊天记录
   loadChatHistory() {
     const chatHistory = wx.getStorageSync("chatHistory") || [];
-    this.setData(
-      {
+    this.setData({
         messageList: chatHistory,
       },
       () => {
@@ -108,13 +108,17 @@ Page({
 
   // 长按消息处理函数
   handleLongPress(e) {
-    const { index } = e.currentTarget.dataset;
+    const {
+      index
+    } = e.currentTarget.dataset;
     // 更新消息列表，显示当前消息的菜单
     const messageList = this.data.messageList.map((msg, i) => ({
       ...msg,
       showMenu: i === index,
     }));
-    this.setData({ messageList });
+    this.setData({
+      messageList
+    });
 
     // 点击空白处关闭菜单
     this.closeMenuTimeout = setTimeout(() => {
@@ -128,12 +132,16 @@ Page({
       ...msg,
       showMenu: false,
     }));
-    this.setData({ messageList });
+    this.setData({
+      messageList
+    });
   },
 
   // 复制单条消息
   handleCopy(e) {
-    const { content } = e.currentTarget.dataset;
+    const {
+      content
+    } = e.currentTarget.dataset;
     wx.setClipboardData({
       data: content,
       success: () => {
@@ -149,7 +157,9 @@ Page({
 
   // 删除消息
   handleDelete(e) {
-    const { index } = e.currentTarget.dataset;
+    const {
+      index
+    } = e.currentTarget.dataset;
     wx.showModal({
       title: "提示",
       content: "确定要删除这条消息吗？",
@@ -157,7 +167,9 @@ Page({
         if (res.confirm) {
           const messageList = [...this.data.messageList];
           messageList.splice(index, 1);
-          this.setData({ messageList }, () => {
+          this.setData({
+            messageList
+          }, () => {
             this.saveChatHistory();
             wx.showToast({
               title: "删除成功",
@@ -176,12 +188,45 @@ Page({
     this.closeAllMenus();
   },
 
+  // 检查消息文本安全
+  checkMessage(message) {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: config.baseURL + "/api/aichat/textcheck",
+        method:"POST",
+        data: {
+          prompt: message,
+        },
+        success: (result => {
+          if(result.data.success){
+            resolve(result.data.data)
+          }else{
+            resolve("Normal")
+          }
+        }),
+        fail: (err => {
+          reject(err)
+        })
+      })
+    })
+  },
+
   // 发送消息
   async sendMessage() {
     if (!this.checkLogin()) return;
 
     const userInput = this.data.inputValue.trim();
     if (!userInput) return;
+
+    const checkValue = await this.checkMessage(userInput);
+
+    if (checkValue !== "Normal") {
+      wx.showToast({
+        title: "提问中含有违规词",
+        icon: "none",
+      });
+      return;
+    }
 
     this.setData({
       inputValue: "",
@@ -209,7 +254,9 @@ Page({
       };
 
       const messageList = [...this.data.messageList, aiMessage];
-      this.setData({ messageList });
+      this.setData({
+        messageList
+      });
 
       try {
         const response = await this.getAIStreamResponse(userInput);
@@ -217,11 +264,16 @@ Page({
           // 如果响应开始但没有内容，显示思考状态
           const updatedMessageList = this.data.messageList.map((msg) => {
             if (msg.id === aiMessageId) {
-              return { ...msg, isThinking: true };
+              return {
+                ...msg,
+                isThinking: true
+              };
             }
             return msg;
           });
-          this.setData({ messageList: updatedMessageList });
+          this.setData({
+            messageList: updatedMessageList
+          });
         }
       } catch (error) {
         console.error("获取AI响应失败:", error);
@@ -232,7 +284,9 @@ Page({
             messageList[i].content =
               "抱歉，我暂时无法回答您的问题，请稍后再试。";
             messageList[i].isThinking = false;
-            this.setData({ messageList });
+            this.setData({
+              messageList
+            });
             this.saveChatHistory();
             break;
           }
@@ -246,7 +300,9 @@ Page({
     } catch (error) {
       console.error("发送消息失败:", error);
     } finally {
-      this.setData({ isAiResponding: false });
+      this.setData({
+        isAiResponding: false
+      });
     }
   },
 
@@ -313,7 +369,9 @@ Page({
           reject(err);
         },
         complete: () => {
-          this.setData({ isAiResponding: false });
+          this.setData({
+            isAiResponding: false
+          });
         },
       });
 
@@ -334,7 +392,10 @@ Page({
           console.log("解析后数据块:", chunk);
 
           // 处理数据块
-          const { content, done } = this.processDataChunk(chunk);
+          const {
+            content,
+            done
+          } = this.processDataChunk(chunk);
           if (content) {
             fullResponse += content;
           }
@@ -353,14 +414,20 @@ Page({
     // 确保 chunk 是字符串
     if (typeof chunk !== "string") {
       console.warn("收到非字符串数据块，跳过处理");
-      return { content: "", done: false };
+      return {
+        content: "",
+        done: false
+      };
     }
 
     // 添加数据到缓冲区
     this.buffer += chunk;
 
     // 提取并处理完整的JSON对象
-    const { content, done } = this.extractJsonObjects();
+    const {
+      content,
+      done
+    } = this.extractJsonObjects();
     if (content) {
       const messageList = this.data.messageList;
       // 找到最后一条AI消息
@@ -368,7 +435,9 @@ Page({
         if (messageList[i].type === "ai" && messageList[i].isStreaming) {
           // 创建新的消息列表，避免直接修改原数组
           const updatedMessageList = [...messageList];
-          const currentMessage = { ...updatedMessageList[i] };
+          const currentMessage = {
+            ...updatedMessageList[i]
+          };
 
           // 更新消息内容和状态
           currentMessage.content = currentMessage.content + content;
@@ -382,8 +451,7 @@ Page({
           }
 
           // 更新消息列表
-          this.setData(
-            {
+          this.setData({
               messageList: updatedMessageList,
             },
             () => {
@@ -407,8 +475,7 @@ Page({
             isThinking: false,
             isStreaming: false,
           };
-          this.setData(
-            {
+          this.setData({
               messageList: updatedMessageList,
             },
             () => {
@@ -421,7 +488,10 @@ Page({
       }
     }
 
-    return { content, done };
+    return {
+      content,
+      done
+    };
   },
 
   // 统一的消息滚动处理函数
@@ -488,8 +558,7 @@ Page({
             isThinking: false,
             isStreaming: false,
           };
-          this.setData(
-            {
+          this.setData({
               messageList: updatedMessageList,
             },
             () => {
@@ -502,7 +571,10 @@ Page({
       }
     }
 
-    return { content: extractedText, done: isDone };
+    return {
+      content: extractedText,
+      done: isDone
+    };
   },
 
   // 输入框内容变化
@@ -516,9 +588,10 @@ Page({
   handleTapSuggestion(e) {
     if (!this.checkLogin()) return;
 
-    const { text } = e.currentTarget.dataset;
-    this.setData(
-      {
+    const {
+      text
+    } = e.currentTarget.dataset;
+    this.setData({
         inputValue: text,
       },
       () => {
@@ -559,11 +632,12 @@ Page({
 
   // 输入框获得焦点
   onInputFocus(e) {
-    const { height } = e.detail;
+    const {
+      height
+    } = e.detail;
     const adjustedHeight = height - 86;
 
-    this.setData(
-      {
+    this.setData({
         isKeyboardShow: true,
         keyboardHeight: adjustedHeight,
         inputStyle: `position: fixed; left: 0; right: 0; bottom: ${adjustedHeight}px; background: #fff;`,
@@ -585,8 +659,7 @@ Page({
 
   // 输入框失去焦点
   onInputBlur() {
-    this.setData(
-      {
+    this.setData({
         isKeyboardShow: false,
         keyboardHeight: 0,
         inputStyle: "position: fixed; left: 0; right: 0; bottom: 0;",
@@ -614,8 +687,7 @@ Page({
       .boundingClientRect((listRect) => {
         if (!listRect) return;
 
-        this.setData(
-          {
+        this.setData({
             isAutoScrolling: true, // 标记为自动滚动
             scrollTop: listRect.height,
             showScrollBtn: false,
@@ -687,8 +759,7 @@ Page({
       .boundingClientRect((listRect) => {
         if (!listRect) return;
 
-        this.setData(
-          {
+        this.setData({
             isAutoScrolling: true,
             scrollTop: listRect.height,
             showScrollBtn: false,
