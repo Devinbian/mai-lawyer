@@ -78,6 +78,25 @@
   padding: 0 32rpx;
 }
 
+.avatar-wrapper {
+  margin: 0;
+  padding: 0;
+  width: 100% !important;
+  background: none;
+  border: none;
+  line-height: normal;
+  font-weight: normal;
+}
+
+.avatar-wrapper::after {
+  border: none;
+}
+
+.avatar-wrapper .info-item {
+  background: #fff;
+}
+
+
 .avatar-container {
   width: 80rpx;
   height: 80rpx;
@@ -92,6 +111,13 @@
 }
 
 .avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 默认头像样式 */
+.avatar-container image[src*="default"] {
   width: 50%;
   height: 50%;
   object-fit: contain;
@@ -142,4 +168,23 @@
 .gender-label {
   font-size: 28rpx;
   color: #666666;
+}
+
+/* 手机号按钮样式 */
+.phone-wrapper {
+  margin: 0;
+  padding: 0;
+  width: 100% !important;
+  background: none;
+  border: none;
+  line-height: normal;
+  font-weight: normal;
+}
+
+.phone-wrapper::after {
+  border: none;
+}
+
+.phone-wrapper .info-item {
+  background: #fff;
 }

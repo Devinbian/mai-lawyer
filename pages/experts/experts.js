@@ -28,7 +28,7 @@ Page({
     });
 
     this.setData({
-      userInfo: wx.getStorageSync("userinfo"),
+      userInfo: wx.getStorageSync("userInfo"),
     });
     this.setImagesByPixelRatio();
     this.initList();
@@ -159,9 +159,7 @@ Page({
       const title = this.data.title || "在线咨询";
 
       wx.navigateTo({
-        url: `../../tim-chat/pages/index?conversationID=C2C${
-          expert.phone
-        }&source=experts-live-chat&title=${encodeURIComponent(title)}`,
+        url: `../../tim-chat/pages/index?conversationID=C2C${expert.phone}&source=experts-live-chat&title=${encodeURIComponent(title)}`,
         fail(err) {
           wx.showToast({
             title: "打开聊天失败",

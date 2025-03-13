@@ -15,7 +15,7 @@ Page({
     wx.login({
       success: (res) => {
         console.log("开始登录");
-        console.log("返回了wx.login的code",res.code);
+        console.log("返回了wx.login的code", res.code);
         wx.request({
           url: config.baseURL + "/api/auth/wechat/auth",
           method: "GET",
@@ -24,7 +24,7 @@ Page({
           },
           dataType: "json",
           success: (res) => {
-            console.log("/api/auth/wechat/auth执行成功了",res.data);
+            console.log("/api/auth/wechat/auth执行成功了", res.data);
             if (res.data.success) {
               console.log("==================");
               console.log(res.data.data);
@@ -38,7 +38,7 @@ Page({
                 },
                 dataType: "json",
                 success: (res) => {
-                  wx.setStorageSync("userinfo", res.data.data);
+                  wx.setStorageSync("userInfo", res.data.data);
                   console.log("登录成功");
                   console.log(res.data.data);
                 },
@@ -47,7 +47,7 @@ Page({
                 },
               });
               wx.navigateBack();
-            }else{
+            } else {
               console.log("获取授权失败" + res.data.message);
             }
           },

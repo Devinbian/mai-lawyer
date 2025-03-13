@@ -8,11 +8,7 @@ Page({
     // messages: [], // 已被 messageList 替代，不再使用
     inputValue: "", // 输入框的值
     showSuggestions: true, // 是否显示建议问题
-    suggestions: [
-      "起诉状如何写",
-      "恶意拖欠劳动工资，如何申请仲裁处理？",
-      "律师费如何计算",
-    ],
+    suggestions: ["起诉状如何写", "恶意拖欠劳动工资，如何申请仲裁处理？", "律师费如何计算"],
     // loading: false, // 已被 isLoading 替代，不再使用
     navHeight: 0, // 导航栏高度
     statusBarHeight: 20, // 状态栏高度
@@ -61,17 +57,13 @@ Page({
 
   onLoad: function () {
     console.log("++++++++++++++++index++++++++++++++++");
-    const userInfo = wx.getStorageSync("userinfo");
+    const userInfo = wx.getStorageSync("userInfo");
     console.log(userInfo);
 
     this.setData({
       userInfo: userInfo,
       userNickname: userInfo.name || "用户",
-      imgUrls: imageUtils.getCommonImages([
-        "index",
-        "default",
-        "expertsDetail",
-      ]),
+      imgUrls: imageUtils.getCommonImages(["index", "default", "expertsDetail"]),
     });
 
     // 获取缓存的聊天记录时进行数量限制
@@ -89,11 +81,7 @@ Page({
   checkLogin() {
     console.log("++++++++++++++++checkLogin++++++++++++++++");
     console.log(typeof this.data.userInfo);
-    if (
-      this.data.userInfo === null ||
-      this.data.userInfo === undefined ||
-      this.data.userInfo === ""
-    ) {
+    if (this.data.userInfo === null || this.data.userInfo === undefined || this.data.userInfo === "") {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -123,7 +111,7 @@ Page({
           },
           () => {
             this.scrollToBottom(false);
-          },
+          }
         );
       });
     } catch (error) {
@@ -211,7 +199,7 @@ Page({
             () => {
               this.saveChatHistory();
               this.closeAllMenus();
-            },
+            }
           );
         } else {
           this.closeAllMenus();
@@ -270,10 +258,7 @@ Page({
         await this.handleWhatIsLawsuitResponse(userInput); // 传入userInput
         this.setData({ inputValue: "" }); // 移到这里清空输入框
         return;
-      } else if (
-        userInput.includes("生成起诉状") ||
-        userInput.includes("起诉状生成")
-      ) {
+      } else if (userInput.includes("生成起诉状") || userInput.includes("起诉状生成")) {
         await this.handleLawsuitResponse(userInput);
         this.setData({ inputValue: "" }); // 移到这里清空输入框
         return;
@@ -457,7 +442,7 @@ Page({
               }, 1000);
             }
             resolve();
-          },
+          }
         );
       }
     });
@@ -489,8 +474,7 @@ Page({
       if (this._lastAiMessageIndex !== undefined) {
         // 使用本地变量累积内容，减少setData调用
         if (!this._accumulatedContent) {
-          this._accumulatedContent =
-            this.data.messageList[this._lastAiMessageIndex].content || "";
+          this._accumulatedContent = this.data.messageList[this._lastAiMessageIndex].content || "";
         }
         this._accumulatedContent += content;
 
@@ -501,11 +485,8 @@ Page({
         // 每累积2次内容就更新一次界面，使更新更及时
         if (this._updateCounter >= 2) {
           const updateData = {};
-          updateData[`messageList[${this._lastAiMessageIndex}].content`] =
-            this._accumulatedContent;
-          updateData[
-            `messageList[${this._lastAiMessageIndex}].isThinking`
-          ] = false;
+          updateData[`messageList[${this._lastAiMessageIndex}].content`] = this._accumulatedContent;
+          updateData[`messageList[${this._lastAiMessageIndex}].isThinking`] = false;
 
           // 使用Promise确保状态更新完成
           new Promise((resolve) => {
@@ -533,14 +514,9 @@ Page({
       // 清理缓存
       if (this._accumulatedContent) {
         const updateData = {};
-        updateData[`messageList[${this._lastAiMessageIndex}].content`] =
-          this._accumulatedContent;
-        updateData[
-          `messageList[${this._lastAiMessageIndex}].isThinking`
-        ] = false;
-        updateData[
-          `messageList[${this._lastAiMessageIndex}].isStreaming`
-        ] = false;
+        updateData[`messageList[${this._lastAiMessageIndex}].content`] = this._accumulatedContent;
+        updateData[`messageList[${this._lastAiMessageIndex}].isThinking`] = false;
+        updateData[`messageList[${this._lastAiMessageIndex}].isStreaming`] = false;
 
         // 使用Promise确保状态更新完成
         new Promise((resolve) => {
@@ -636,7 +612,7 @@ Page({
             () => {
               // 消息流结束时保存聊天记录
               this.saveChatHistory();
-            },
+            }
           );
           break;
         }
@@ -669,7 +645,7 @@ Page({
         this.sendMessage();
         // 点击建议问题后也需要滚动
         this.scrollToBottom();
-      },
+      }
     );
   },
 
@@ -717,7 +693,7 @@ Page({
           setTimeout(() => {
             this.scrollToBottom(true);
           }, 100);
-        },
+        }
       );
     });
   },
@@ -735,7 +711,7 @@ Page({
           setTimeout(() => {
             this.scrollToBottom(true);
           }, 100);
-        },
+        }
       );
     });
   },
@@ -760,7 +736,7 @@ Page({
                 isAutoScrolling: false,
               });
             }, 500); // 增加动画时间
-          },
+          }
         );
       })
       .exec();
@@ -794,8 +770,7 @@ Page({
 
               const scrollViewHeight = scrollViewRect.height;
               const listHeight = listRect.height;
-              const distanceToBottom =
-                listHeight - (scrollTop + scrollViewHeight);
+              const distanceToBottom = listHeight - (scrollTop + scrollViewHeight);
 
               // 当距离底部超过200rpx时显示按钮
               const shouldShow = distanceToBottom > 200;
@@ -845,7 +820,7 @@ Page({
                       this.setData({ isAutoScrolling: false }, resolve);
                     }, 300);
                   }
-                },
+                }
               );
             });
           })
@@ -899,8 +874,7 @@ Page({
       nickname: "小迈",
       cardData: {
         type: "explanation",
-        content:
-          "起诉状是启动民事诉讼的重要法律文书，需包含明确的当事人信息、清晰的诉讼请求、准确的事实陈述与理由阐述以及合法的证据支持等内容，以确保诉求得到法院有效受理和审理。",
+        content: "起诉状是启动民事诉讼的重要法律文书，需包含明确的当事人信息、清晰的诉讼请求、准确的事实陈述与理由阐述以及合法的证据支持等内容，以确保诉求得到法院有效受理和审理。",
         showHelpButton: true,
         buttonText: "求助人工",
       },
@@ -947,7 +921,7 @@ Page({
             isAiResponding: false,
             isAutoScrolling: false,
           },
-          resolve,
+          resolve
         );
       });
     });
@@ -956,9 +930,7 @@ Page({
   // 处理起诉状类型选择
   handleDocumentTypeSelect(e) {
     const { typeId } = e.currentTarget.dataset;
-    const selectedType = this.data.documentTypes.find(
-      (type) => type.id === typeId,
-    );
+    const selectedType = this.data.documentTypes.find((type) => type.id === typeId);
 
     if (selectedType) {
       wx.navigateTo({
@@ -979,8 +951,7 @@ Page({
       const nextPage = this.data.currentPage + 1;
 
       // 计算下一页的起始和结束索引
-      const endIndex =
-        totalMessages - this.data.currentPage * this.data.pageSize;
+      const endIndex = totalMessages - this.data.currentPage * this.data.pageSize;
       const startIndex = Math.max(0, endIndex - this.data.pageSize);
 
       if (startIndex >= 0) {

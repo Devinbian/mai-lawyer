@@ -16,7 +16,7 @@ Page({
     if (options.expert) {
       try {
         const expertInfo = JSON.parse(decodeURIComponent(options.expert));
-        const userInfo = wx.getStorageSync("userinfo");
+        const userInfo = wx.getStorageSync("userInfo");
         this.setData({
           userInfo: userInfo,
         });
@@ -48,13 +48,8 @@ Page({
 
             // 处理擅长领域数组
             let fieldArray = [];
-            if (
-              typeof res.data.data.brief === "string" &&
-              res.data.data.brief
-            ) {
-              fieldArray = res.data.data.brief
-                .split("、")
-                .filter((field) => field.trim());
+            if (typeof res.data.data.brief === "string" && res.data.data.brief) {
+              fieldArray = res.data.data.brief.split("、").filter((field) => field.trim());
             } else if (Array.isArray(res.data.data.brief)) {
               fieldArray = res.data.data.brief;
             }
@@ -109,7 +104,7 @@ Page({
       isFollowed: !this.data.isFollowed,
     });
 
-    const userInfo = wx.getStorageSync("userinfo");
+    const userInfo = wx.getStorageSync("userInfo");
     console.log("专家信息：", this.data.expert);
     console.log("this.data.expert.id：", this.data.expert.id);
     console.log("userInfo.token：", userInfo.token);
@@ -153,11 +148,7 @@ Page({
   handleTextConsult() {
     if (this.data.userInfo) {
       wx.navigateTo({
-        url: `../../../tim-chat/pages/index?conversationID=C2C${
-          this.data.expert.phone
-        }&source=experts-live-chat&title=${encodeURIComponent(
-          this.data.expert.name,
-        )}`,
+        url: `../../../tim-chat/pages/index?conversationID=C2C${this.data.expert.phone}&source=experts-live-chat&title=${encodeURIComponent(this.data.expert.name)}`,
         fail(err) {
           wx.showToast({
             title: "打开聊天失败",
