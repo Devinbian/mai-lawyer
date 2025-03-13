@@ -18,6 +18,7 @@ Page({
     hasMore: true,
     isRefreshing: false,
     docType: "",
+    listHeight: "calc(100vh - 280rpx)", // 默认高度
   },
 
   onLoad(options) {
@@ -34,6 +35,7 @@ Page({
 
     this.setImagesByPixelRatio();
     this.initList();
+    this.calculateListHeight();
   },
 
   setImagesByPixelRatio() {
@@ -49,6 +51,39 @@ Page({
       scrollTop,
       canRefresh: scrollTop <= 0,
     });
+    // 滚动时重新计算高度
+    this.calculateListHeight();
+  },
+
+  // 计算列表实际可用高度
+  calculateListHeight() {
+    const query = wx.createSelectorQuery();
+    query.select(".search-box").boundingClientRect();
+    query.select("bg-titlecenter-nav").boundingClientRect();
+
+    query.exec((res) => {
+      if (res[0] && res[1]) {
+        const searchBoxHeight = res[0].height;
+        const navHeight = res[1].height;
+        const safeAreaTop = wx.getSystemInfoSync().safeArea.top;
+
+        // 计算实际需要减去的高度（包括安全区域）
+        const totalFixedHeight =
+          searchBoxHeight + navHeight + (safeAreaTop || 0);
+
+        // 转换为rpx（px 转 rpx 需要乘以2）
+        const heightInRpx = Math.ceil(totalFixedHeight * 2);
+
+        this.setData({
+          listHeight: `calc(100vh - ${heightInRpx}rpx)`,
+        });
+      }
+    });
+  },
+
+  // 页面显示时重新计算高度
+  onShow() {
+    this.calculateListHeight();
   },
 
   // 搜索输入
@@ -68,9 +103,31 @@ Page({
     const { id } = e.currentTarget.dataset;
     const document = this.data.list.find((doc) => doc.id === id);
     if (document) {
-      const documentInfo = encodeURIComponent(JSON.stringify(document));
+      // console.log("documentInfo", document);
+      // wx.downloadFile({
+      //   url: document.url,
+      //   success: (res) => {
+      //     const filePath = res.tempFilePath;
+      //     console.log("document.ext", document.ext);
+      //     wx.openDocument({
+      //       filePath: filePath,
+      //       fileType: document.ext,
+      //       success: () => {
+      //         console.log("打开文档成功");
+      //       },
+      //       fail: (err) => {
+      //         console.log("打开文档失败", err);
+      //       },
+      //     });
+      //   },
+      // });
+
+      // return;
+
       wx.navigateTo({
-        url: `/pages/documents/document-read/document-read?id=${id}&document=${documentInfo}`,
+        url: `/pages/documents/document-read/document-read?id=${id}&document=${encodeURIComponent(
+          JSON.stringify(document),
+        )}`,
         fail(err) {
           wx.showToast({
             title: "打开文档失败",
@@ -81,38 +138,37 @@ Page({
     }
   },
 
-  // 实现 loadData 方法，这是 behavior 中约定的接口
+  // 实现 loadData 方法
   async loadData(isLoadMore = false) {
-    // 使用已有的文档数据，此处的this.data是behavior中的data
-    const { searchKeyword, pageNum, pageSize } = this.data;
+    try {
+      const { pageNum, pageSize, docType } = this.data;
+      const doclistObj = await this.getDocuments(pageNum, pageSize, docType);
 
-    // 根据搜索关键词筛选文档
-    const doclistObj = await this.getDocuments(
-      pageNum,
-      pageSize,
-      this.data.docType,
-    );
-    const list = doclistObj.listArray;
-    const totalRows = doclistObj.totalRows;
-    const end = pageNum * pageSize;
-    const hasMore = end < totalRows;
+      const list = doclistObj.listArray;
+      const totalRows = doclistObj.totalRows;
+      const end = pageNum * pageSize;
+      const hasMore = end < totalRows;
 
-    let filteredDocuments = list;
-    if (searchKeyword) {
-      const keyword = searchKeyword.toLowerCase();
-      filteredDocuments = documents.filter(
-        (doc) =>
-          doc.title.toLowerCase().includes(keyword) ||
-          doc.description.toLowerCase().includes(keyword),
-      );
-    }
-
-    return new Promise((resolve) => {
-      resolve({
-        list: filteredDocuments,
-        hasMore,
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({ list, hasMore });
+          // 数据加载完成后，重新计算高度
+          wx.nextTick(() => {
+            this.calculateListHeight();
+          });
+        }, 500);
       });
-    });
+    } catch (error) {
+      console.error("获取文档列表失败：", error);
+      wx.showToast({
+        title: "获取文档列表失败",
+        icon: "none",
+        duration: 2000,
+      });
+      return new Promise((resolve) => {
+        resolve({ list: [], hasMore: false });
+      });
+    }
   },
 
   getDocuments(pageNum, pageSize, docType) {

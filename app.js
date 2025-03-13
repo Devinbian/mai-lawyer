@@ -15,17 +15,12 @@ App({
   onLaunch() {
     this.initSDKInstance();
 
-    // this.checkLoginStatus();
+    this.checkLoginStatus();
 
     // 延迟设置TabBar图标
     wx.nextTick(() => {
       this.setTabBarIcons();
     });
-
-    // // 异步检查登录状态
-    // setTimeout(() => {
-    //   this.checkLoginStatus();
-    // }, 0);
 
     this.enableShare();
   },
@@ -87,23 +82,23 @@ App({
   },
 
   checkLoginStatus() {
-    const userInfo = wx.getStorageSync("userInfo");
-    if (userInfo) {
+    const userinfo = wx.getStorageSync("userinfo");
+    if (userinfo) {
       wx.checkSession({
         success: () => {
           // 登录态有效
-          this.data.userInfo = userInfo;
+          this.globalData.userInfo = userinfo;
         },
         fail: () => {
           // 登录态过期，清除存储
-          wx.removeStorageSync("userInfo");
+          wx.removeStorageSync("userinfo");
           wx.navigateTo({
             url: "/pages/login/login",
           });
         },
       });
     } else {
-      wx.removeStorageSync("userInfo");
+      wx.removeStorageSync("userinfo");
     }
   },
 
@@ -121,7 +116,7 @@ App({
   onShareAppMessage() {
     return {
       title: "邀请好友加入",
-      imageUrl: this.data.userInfo.avatarUrl,
+      imageUrl: this.globalData.userInfo?.avatarUrl || "",
       path: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
     };
   },
