@@ -8,24 +8,24 @@ Page({
     document: null,
     imgUrls: null,
     userInfo: null,
-    fileUrl: '',
-    loading: true
+    fileUrl: "",
+    loading: true,
   },
 
   onLoad(options) {
     this.setData({
-      userInfo: wx.getStorageSync("userinfo"),
+      userInfo: wx.getStorageSync("userInfo"),
     });
 
     if (options.id && options.document) {
       try {
         const document = JSON.parse(decodeURIComponent(options.document));
-        console.log("document",document);
+        console.log("document", document);
         this.setData({
           documentId: options.id,
           document,
           isCollected: this.checkIsCollected(options.id),
-          fileUrl: document.url
+          fileUrl: document.url,
         });
         // 加载文档内容
         this.loadDocumentInfo(options.id);
@@ -44,7 +44,7 @@ Page({
   // 加载文档信息
   loadDocumentInfo(id) {
     wx.showLoading({
-      title: '加载中...'
+      title: "加载中...",
     });
 
     return new Promise((resolve, reject) => {
@@ -53,7 +53,7 @@ Page({
         method: "GET",
         data: {
           id: id,
-          token: this.data.userInfo.token
+          token: this.data.userInfo.token,
         },
         dataType: "json",
         success: (res) => {
@@ -61,9 +61,9 @@ Page({
             const fileUrl = this.getDocumentViewerUrl(res.data.data.url, res.data.data.fileType);
             this.setData({
               fileUrl,
-              loading: false
+              loading: false,
             });
-            
+
             const doc = {
               id: this.data.document.id,
               price: this.data.document.price,
@@ -80,15 +80,15 @@ Page({
         },
         complete: () => {
           wx.hideLoading();
-        }
+        },
       });
     });
   },
 
   // 检查是否已收藏
   checkIsCollected(docId) {
-    const collectedDocs = wx.getStorageSync('collectedDocuments') || [];
-    return collectedDocs.some(doc => doc.id === docId);
+    const collectedDocs = wx.getStorageSync("collectedDocuments") || [];
+    return collectedDocs.some((doc) => doc.id === docId);
   },
 
   // 切换收藏状态
@@ -96,32 +96,32 @@ Page({
     const { document, isCollected } = this.data;
     if (!document) return;
 
-    let collectedDocs = wx.getStorageSync('collectedDocuments') || [];
-    
+    let collectedDocs = wx.getStorageSync("collectedDocuments") || [];
+
     if (isCollected) {
       // 取消收藏
-      collectedDocs = collectedDocs.filter(doc => doc.id !== document.id);
+      collectedDocs = collectedDocs.filter((doc) => doc.id !== document.id);
       wx.showToast({
-        title: '已取消收藏',
-        icon: 'success'
+        title: "已取消收藏",
+        icon: "success",
       });
     } else {
       // 添加收藏
       collectedDocs.push({
         id: document.id,
         title: document.title,
-        docType: document.docType || 'general',
-        type: document.type || 'word',
-        collectTime: new Date().getTime()
+        docType: document.docType || "general",
+        type: document.type || "word",
+        collectTime: new Date().getTime(),
       });
       wx.showToast({
-        title: '收藏成功',
-        icon: 'success'
+        title: "收藏成功",
+        icon: "success",
       });
     }
 
     // 保存收藏状态
-    wx.setStorageSync('collectedDocuments', collectedDocs);
+    wx.setStorageSync("collectedDocuments", collectedDocs);
     this.setData({ isCollected: !isCollected });
   },
 
@@ -132,7 +132,7 @@ Page({
       JSON.stringify({
         ...document,
         type: document.type || "word",
-      }),
+      })
     );
 
     wx.navigateTo({
@@ -155,17 +155,17 @@ Page({
   // 获取文档预览URL
   getDocumentViewerUrl(fileUrl, fileType) {
     const encodedUrl = encodeURIComponent(fileUrl);
-    
+
     // 根据文件类型选择不同的预览方式
-    switch(fileType.toLowerCase()) {
-      case 'pdf':
+    switch (fileType.toLowerCase()) {
+      case "pdf":
         return `${config.baseURL}/pdf-viewer/web/viewer.html?file=${encodedUrl}`;
-      case 'doc':
-      case 'docx':
-      case 'xls':
-      case 'xlsx':
-      case 'ppt':
-      case 'pptx':
+      case "doc":
+      case "docx":
+      case "xls":
+      case "xlsx":
+      case "ppt":
+      case "pptx":
         return `${config.baseURL}/office-viewer?url=${encodedUrl}&type=${fileType}`;
       default:
         return fileUrl;
@@ -174,10 +174,10 @@ Page({
 
   // 处理webview消息
   handleWebViewMessage(e) {
-    console.log('收到webview消息：', e.detail);
+    console.log("收到webview消息：", e.detail);
   },
 
   onUnload() {
     // 页面卸载时的清理工作
-  }
+  },
 });

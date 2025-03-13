@@ -3,15 +3,17 @@
   <view class="content">
     <!-- 头像 -->
     <view class="info-section">
-      <view class="info-item avatar-item" bindtap="changeAvatar">
-        <text class="label">头像</text>
-        <view class="value-wrap">
-          <view class="avatar-container">
-            <image class="avatar" src="{{userInfo.avatarUrl || imgUrls.avatar}}" mode="widthFix" />
+      <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <view class="info-item avatar-item">
+          <text class="label">头像</text>
+          <view class="value-wrap">
+            <view class="avatar-container">
+              <image class="avatar" src="{{userInfo.avatarUrl || imgUrls.avatar}}" mode="widthFix" />
+            </view>
+            <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
           </view>
-          <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
         </view>
-      </view>
+      </button>
     </view>
     
     <!-- 姓名 -->
@@ -19,7 +21,7 @@
       <view class="info-item" bindtap="changeNickname">
         <text class="label">姓名</text>
         <view class="value-wrap">
-          <text class="value">{{userInfo.nickName || '未设置'}}</text>
+          <text class="value">{{userInfo.name || '未设置'}}</text>
           <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
         </view>
       </view>
@@ -28,27 +30,38 @@
     <!-- 绑定信息 -->
     <view class="info-section">
       <!-- 手机号 -->
-      <view class="info-item has-border" bindtap="bindPhone">
-        <text class="label">绑定手机号</text>
-        <view class="value-wrap">
-          <text class="value">{{userInfo.phoneNumber || '未绑定'}}</text>
-          <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
+      <button wx:if="{{showPhoneButton}}" class="phone-wrapper" open-type="getPhoneNumber" bindgetphonenumber="onGetPhoneNumber">
+        <view class="info-item has-border">
+          <text class="label">绑定手机号</text>
+          <view class="value-wrap">
+            <text class="value">{{userInfo.phone || '未绑定'}}</text>
+            <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
+          </view>
         </view>
-      </view>
+      </button>
+      <button wx:else class="phone-wrapper" bindtap="handlePhoneBinding">
+        <view class="info-item has-border">
+          <text class="label">绑定手机号</text>
+          <view class="value-wrap">
+            <text class="value">{{userInfo.phone || '未绑定'}}</text>
+            <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
+          </view>
+        </view>
+      </button>
 
       <!-- 邮箱 -->
-      <view class="info-item" bindtap="bindEmail">
+      <!-- <view class="info-item" bindtap="bindEmail">
         <text class="label">绑定邮箱</text>
         <view class="value-wrap">
           <text class="value">{{userInfo.email || '未绑定'}}</text>
           <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
         </view>
-      </view>
+      </view> -->
     </view>
 
     <!-- 性别 -->
     <view class="info-section gender-section">
-      <view class="info-item" bindtap="changeGender">
+      <view class="info-item">
         <text class="label">性别</text>
         <view class="value-wrap">
           <view class="gender-options">
@@ -56,8 +69,8 @@
               <view class="radio-container {{userInfo.gender === 1 ? 'checked' : ''}}"></view>
               <text class="gender-label">男</text>
             </view>
-            <view class="gender-option" catchtap="selectGender" data-gender="2">
-              <view class="radio-container {{userInfo.gender === 2 ? 'checked' : ''}}"></view>
+            <view class="gender-option" catchtap="selectGender" data-gender="0">
+              <view class="radio-container {{userInfo.gender === 0 ? 'checked' : ''}}"></view>
               <text class="gender-label">女</text>
             </view>
           </view>
@@ -68,13 +81,15 @@
 
     <!-- 生日 -->
     <view class="info-section">
-      <view class="info-item" bindtap="changeBirthday">
-        <text class="label">生日</text>
-        <view class="value-wrap">
-          <text class="value">{{userInfo.birthday || '未设置'}}</text>
-          <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
+      <picker mode="date" value="{{userInfo.birthday}}" start="1900-01-01" end="{{endDate}}" bindchange="onBirthdayChange">
+        <view class="info-item">
+          <text class="label">生日</text>
+          <view class="value-wrap">
+            <text class="value">{{userInfo.birthday || '未设置'}}</text>
+            <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
+          </view>
         </view>
-      </view>
+      </picker>
     </view>
   </view>
 </view> 

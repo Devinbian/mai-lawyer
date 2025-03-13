@@ -15,9 +15,8 @@ Page({
    */
   onLoad(options) {
     this.setImagesByPixelRatio();
-
     const userInfo = wx.getStorageSync("userInfo");
-    if (!!userInfo) {
+    if (userInfo) {
       this.setData({
         userInfo,
         isLogin: true,
@@ -34,7 +33,7 @@ Page({
 
   // 点击登录/注册
   handleLogin() {
-    if (!!this.data.userInfo) {
+    if (!this.data.isLogin) {
       wx.navigateTo({
         url: "/pages/login/login",
       });

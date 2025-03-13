@@ -11,7 +11,7 @@
         <image class="avatar" src="{{userInfo.avatarUrl || imgUrls.avatar}}" />
       </view>
       <view class="login-info">
-        <view class="login-text">{{isLogin ? userInfo.nickName : '登录注册'}}</view>
+        <view class="login-text">{{isLogin ? userInfo.name : '登录注册'}}</view>
         <view class="login-desc">{{isLogin ? '' : '登录体验更多功能'}}</view>
       </view>
     </view>

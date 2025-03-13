@@ -15,17 +15,17 @@ App({
   onLaunch() {
     this.initSDKInstance();
 
-    this.checkLoginStatus();
+    // this.checkLoginStatus();
 
     // 延迟设置TabBar图标
     wx.nextTick(() => {
       this.setTabBarIcons();
     });
 
-    // 异步检查登录状态
-    setTimeout(() => {
-      this.checkLoginStatus();
-    }, 0);
+    // // 异步检查登录状态
+    // setTimeout(() => {
+    //   this.checkLoginStatus();
+    // }, 0);
 
     this.enableShare();
   },
@@ -87,23 +87,23 @@ App({
   },
 
   checkLoginStatus() {
-    const userinfo = wx.getStorageSync("userinfo");
-    if (userinfo) {
+    const userInfo = wx.getStorageSync("userInfo");
+    if (userInfo) {
       wx.checkSession({
         success: () => {
           // 登录态有效
-          this.data.userInfo = userinfo;
+          this.data.userInfo = userInfo;
         },
         fail: () => {
           // 登录态过期，清除存储
-          wx.removeStorageSync("userinfo");
+          wx.removeStorageSync("userInfo");
           wx.navigateTo({
             url: "/pages/login/login",
           });
         },
       });
     } else {
-      wx.removeStorageSync("userinfo");
+      wx.removeStorageSync("userInfo");
     }
   },
 

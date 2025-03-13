@@ -61,7 +61,7 @@ Page({
   onLoad(options) {
     this.setImagesByPixelRatio();
     this.setData({
-      userInfo: wx.getStorageSync("userinfo"),
+      userInfo: wx.getStorageSync("userInfo"),
     });
 
     wx.request({
@@ -72,9 +72,7 @@ Page({
         if (res.data.success) {
           // 创建一个新的数组来存储更新后的数据
           const updatedDocuments = this.data.documents.map((doc) => {
-            const matchingItem = res.data.data.find(
-              (item) => item.name === doc.name,
-            );
+            const matchingItem = res.data.data.find((item) => item.name === doc.name);
             if (matchingItem) {
               return {
                 ...doc,
