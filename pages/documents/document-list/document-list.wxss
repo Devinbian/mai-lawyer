@@ -5,6 +5,11 @@
   display: flex;
   flex-direction: column;
   padding-bottom: env(safe-area-inset-bottom);
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }
 
 .search-box {
@@ -16,7 +21,7 @@
   top: 188rpx;
   left: 0;
   right: 0;
-  z-index: 10;
+  z-index: 100;
 }
 
 .search-input {
@@ -43,20 +48,20 @@
   color: #999999;
 }
 
-.list-container {
-  flex: 1;
-  margin-top: 100rpx;
-  position: relative;
-  height: calc(100vh - 308rpx);
-  overflow: hidden;
-}
-
 .document-list {
   width: 100%;
-  height: 100%;
   box-sizing: border-box;
-  padding: 0 20rpx;
+  padding: 100rpx 20rpx 0;
+  background: transparent;
+}
+
+.list-container {
+  flex: 1;
+  margin-top: 280rpx;
+  position: relative;
+  height: calc(100vh - 280rpx);
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .document-item {

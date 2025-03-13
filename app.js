@@ -22,11 +22,6 @@ App({
       this.setTabBarIcons();
     });
 
-    // 异步检查登录状态
-    setTimeout(() => {
-      this.checkLoginStatus();
-    }, 0);
-
     this.enableShare();
   },
 
@@ -92,7 +87,7 @@ App({
       wx.checkSession({
         success: () => {
           // 登录态有效
-          this.data.userInfo = userinfo;
+          this.globalData.userInfo = userinfo;
         },
         fail: () => {
           // 登录态过期，清除存储
@@ -121,7 +116,7 @@ App({
   onShareAppMessage() {
     return {
       title: "邀请好友加入",
-      imageUrl: this.data.userInfo.avatarUrl,
+      imageUrl: this.globalData.userInfo?.avatarUrl || "",
       path: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
     };
   },
