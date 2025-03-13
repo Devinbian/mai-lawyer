@@ -4,33 +4,33 @@ const util = require("../../utils/util.js");
 
 Page({
   data: {
-    userInfo: null,
-    messages: [],
-    inputValue: "",
-    showSuggestions: true,
+    userInfo: null, // 用户信息，用于登录检查
+    // messages: [], // 已被 messageList 替代，不再使用
+    inputValue: "", // 输入框的值
+    showSuggestions: true, // 是否显示建议问题
     suggestions: [
       "起诉状如何写",
       "恶意拖欠劳动工资，如何申请仲裁处理？",
       "律师费如何计算",
     ],
-    loading: false,
-    navHeight: 0,
-    statusBarHeight: 20,
-    keyboardHeight: 0,
-    isKeyboardShow: false,
-    scrollToView: "",
+    // loading: false, // 已被 isLoading 替代，不再使用
+    navHeight: 0, // 导航栏高度
+    statusBarHeight: 20, // 状态栏高度
+    keyboardHeight: 0, // 键盘高度
+    isKeyboardShow: false, // 键盘是否显示
+    scrollToView: "", // 要滚动到的消息ID
     messageList: [], // 消息列表
-    imgUrls: null,
-    navBarHeight: 44,
-    isAiResponding: false,
-    currentTypingMessage: "", // 当前正在打字的消息
-    isTyping: false, // 是否正在打字
-    typingSpeed: 50, // 打字速度（毫秒）
+    imgUrls: null, // 图片资源URL
+    navBarHeight: 44, // 导航栏高度
+    isAiResponding: false, // AI是否正在响应
+    // currentTypingMessage: "", // 当前正在打字的消息
+    // isTyping: false, // 是否正在打字
+    // typingSpeed: 50, // 打字速度（毫秒）
     userNickname: "", // 用户昵称
-    showScrollBtn: false,
-    scrollTop: 0,
-    isAutoScrolling: false, // 添加标记，用于区分手动滚动和自动滚动
-    buffer: "", // 缓冲区
+    showScrollBtn: false, // 是否显示滚动按钮
+    scrollTop: 0, // 滚动位置
+    isAutoScrolling: false, // 是否正在自动滚动
+    buffer: "", // 数据缓冲区
     documentTypes: [
       {
         id: 1,
@@ -57,8 +57,6 @@ Page({
   },
 
   onLoad: function () {
-    // 根据设备像素比选择合适的图片
-    this.setImagesByPixelRatio();
     console.log("++++++++++++++++index++++++++++++++++");
     const userInfo = wx.getStorageSync("userinfo");
     console.log(userInfo);
@@ -66,6 +64,11 @@ Page({
     this.setData({
       userInfo: userInfo,
       userNickname: userInfo.name || "用户",
+      imgUrls: imageUtils.getCommonImages([
+        "index",
+        "default",
+        "expertsDetail",
+      ]),
     });
 
     // 获取缓存的聊天记录时进行数量限制
@@ -77,21 +80,6 @@ Page({
     //   statusBarHeight: windowInfo.statusBarHeight,
     //   navBarHeight: windowInfo.navigationBarHeight || 44,
     // });
-  },
-
-  onReady: function () {},
-
-  onShow: function () {},
-
-  // 根据设备像素比选择图片
-  setImagesByPixelRatio() {
-    this.setData({
-      imgUrls: imageUtils.getCommonImages([
-        "index",
-        "default",
-        "expertsDetail",
-      ]),
-    });
   },
 
   // 检查登录状态
@@ -113,22 +101,29 @@ Page({
 
   // 加载最新的聊天记录
   loadLatestChatHistory() {
-    const chatHistory = wx.getStorageSync("chatHistory") || [];
-    // 只保留最新的maxMessageCount条消息
-    const recentMessages = chatHistory.slice(-this.data.maxMessageCount);
+    try {
+      const chatHistory = wx.getStorageSync("chatHistory") || [];
+      const recentMessages = chatHistory.slice(-this.data.maxMessageCount);
 
-    this.setData(
-      {
-        messageList: recentMessages,
-      },
-      () => {
-        this.scrollToBottom(false);
-      },
-    );
+      wx.nextTick(() => {
+        this.setData(
+          {
+            messageList: recentMessages,
+          },
+          () => {
+            this.scrollToBottom(false);
+          },
+        );
+      });
 
-    // 如果历史记录超出限制，更新存储
-    if (chatHistory.length > this.data.maxMessageCount) {
-      wx.setStorageSync("chatHistory", recentMessages);
+      // 异步更新存储
+      if (chatHistory.length > this.data.maxMessageCount) {
+        setTimeout(() => {
+          wx.setStorageSync("chatHistory", recentMessages);
+        }, 0);
+      }
+    } catch (error) {
+      console.error("加载历史记录失败:", error);
     }
   },
 
@@ -273,7 +268,7 @@ Page({
         id: messageId,
         type: "user",
         content: userInput,
-        time: this.formatTime(new Date()),
+        time: util.formatTime(new Date()),
         nickname: this.data.userNickname,
       };
 
@@ -288,7 +283,7 @@ Page({
         id: aiMessageId,
         type: "ai",
         content: "",
-        time: this.formatTime(new Date()),
+        time: util.formatTime(new Date()),
         isStreaming: true,
         isThinking: false,
         nickname: "小迈",
@@ -336,29 +331,7 @@ Page({
     });
   },
 
-  // 优化的消息添加方法
-  addMessage(message) {
-    return new Promise((resolve) => {
-      const messageList = [...this.data.messageList];
-      messageList.push(message);
-
-      this.setData({ messageList }, () => {
-        this.saveChatHistory();
-        resolve();
-      });
-    });
-  },
-
-  // 格式化时间
-  formatTime(date) {
-    const hour = date.getHours();
-    const minute = date.getMinutes();
-    return `${hour.toString().padStart(2, "0")}:${minute
-      .toString()
-      .padStart(2, "0")}`;
-  },
-
-  // 模拟AI回复
+  // 获取AI流式响应
   getAIStreamResponse(userInput) {
     return new Promise((resolve, reject) => {
       this.data.buffer = ""; // 重置缓冲区
@@ -366,7 +339,7 @@ Page({
       let isComplete = false;
 
       const requestTask = wx.request({
-        url: "http://218.78.129.237:8081/api/aichat/stream",
+        url: config.baseURL + "/api/aichat/stream",
         method: "POST",
         enableChunked: true,
         header: {
@@ -376,7 +349,6 @@ Page({
           prompt: userInput,
         },
         success: (res) => {
-          console.log("请求完成");
           if (!isComplete) {
             console.warn("请求完成但流未结束");
           }
@@ -398,16 +370,11 @@ Page({
         try {
           // 获取并解码数据块
           let chunk = "";
-          // console.log("res.data类型:", typeof res.data);
-
           if (typeof res.data === "string") {
             chunk = res.data;
           } else if (res.data instanceof ArrayBuffer) {
-            // 直接使用 arrayBufferToString 转换
             chunk = util.arrayBufferToString(res.data);
           }
-
-          // console.log("解析后数据块:", chunk);
 
           // 处理数据块
           const { content, done } = this.processDataChunk(chunk);
@@ -424,88 +391,103 @@ Page({
     });
   },
 
+  // 优化的消息添加方法
+  addMessage(message) {
+    return new Promise((resolve) => {
+      const messageList = [...this.data.messageList];
+      messageList.push(message);
+
+      wx.nextTick(() => {
+        this.setData({ messageList }, () => {
+          // 批量处理存储
+          if (!this._saveTimer) {
+            this._saveTimer = setTimeout(() => {
+              this.saveChatHistory();
+              this._saveTimer = null;
+            }, 1000);
+          }
+          resolve();
+        });
+      });
+    });
+  },
+
   // 处理数据块
   processDataChunk(chunk) {
-    // 确保 chunk 是字符串
     if (typeof chunk !== "string") {
       console.warn("收到非字符串数据块，跳过处理");
-      return {
-        content: "",
-        done: false,
-      };
+      return { content: "", done: false };
     }
 
-    // 添加数据到缓冲区
     this.data.buffer += chunk;
-
-    // 提取并处理完整的JSON对象
     const { content, done } = this.extractJsonObjects();
+
     if (content) {
-      const messageList = this.data.messageList;
-      // 找到最后一条AI消息
-      for (let i = messageList.length - 1; i >= 0; i--) {
-        if (messageList[i].type === "ai" && messageList[i].isStreaming) {
-          // 创建新的消息列表，避免直接修改原数组
-          const updatedMessageList = [...messageList];
-          const currentMessage = {
-            ...updatedMessageList[i],
-          };
-
-          // 更新消息内容和状态
-          currentMessage.content = currentMessage.content + content;
-          currentMessage.isThinking = false;
-
-          updatedMessageList[i] = currentMessage;
-
-          // 只有在显示了下拉按钮的情况下才自动滚动
-          if (!this.data.showScrollBtn) {
-            this.handleScrollToBottom();
+      // 使用缓存找到最后一条AI消息
+      if (!this._lastAiMessageIndex) {
+        const messageList = this.data.messageList;
+        for (let i = messageList.length - 1; i >= 0; i--) {
+          if (messageList[i].type === "ai" && messageList[i].isStreaming) {
+            this._lastAiMessageIndex = i;
+            break;
           }
+        }
+      }
 
-          // 更新消息列表
-          this.setData(
-            {
-              messageList: updatedMessageList,
-            },
-            () => {
-              // 保存到本地存储
-              this.saveChatHistory();
-            },
-          );
-          break;
+      // 使用缓存的索引直接更新消息
+      if (this._lastAiMessageIndex !== undefined) {
+        const messageList = [...this.data.messageList];
+        const currentMessage = messageList[this._lastAiMessageIndex];
+
+        // 使用本地变量累积内容，减少setData调用
+        if (!this._accumulatedContent) {
+          this._accumulatedContent = currentMessage.content || "";
+        }
+        this._accumulatedContent += content;
+
+        // 使用计数器控制更新频率
+        if (!this._updateCounter) this._updateCounter = 0;
+        this._updateCounter++;
+
+        // 每累积3次内容才更新一次界面
+        if (this._updateCounter >= 3) {
+          currentMessage.content = this._accumulatedContent;
+          currentMessage.isThinking = false;
+          messageList[this._lastAiMessageIndex] = currentMessage;
+
+          this.setData({ messageList }, () => {
+            if (!this.data.showScrollBtn) {
+              this.handleScrollToBottom();
+            }
+          });
+
+          this._updateCounter = 0;
         }
       }
     }
 
-    // 如果流结束，更新最后一条AI消息的状态
     if (done) {
-      const messageList = this.data.messageList;
-      const updatedMessageList = [...messageList];
-      for (let i = updatedMessageList.length - 1; i >= 0; i--) {
-        if (updatedMessageList[i].type === "ai") {
-          updatedMessageList[i] = {
-            ...updatedMessageList[i],
-            isThinking: false,
-            isStreaming: false,
-          };
-          this.setData(
-            {
-              messageList: updatedMessageList,
-            },
-            () => {
-              // 消息流结束时保存聊天记录
-              this.saveChatHistory();
-            },
-          );
-          break;
-        }
+      // 清理缓存
+      if (this._accumulatedContent) {
+        const messageList = [...this.data.messageList];
+        const currentMessage = messageList[this._lastAiMessageIndex];
+        currentMessage.content = this._accumulatedContent;
+        currentMessage.isThinking = false;
+        currentMessage.isStreaming = false;
+        messageList[this._lastAiMessageIndex] = currentMessage;
+
+        this.setData({ messageList }, () => {
+          this.saveChatHistory();
+        });
       }
+
+      // 重置所有缓存变量
+      this._lastAiMessageIndex = undefined;
+      this._accumulatedContent = undefined;
+      this._updateCounter = 0;
     }
 
-    return {
-      content,
-      done,
-    };
+    return { content, done };
   },
 
   // 统一的消息滚动处理函数
@@ -761,31 +743,52 @@ Page({
       clearTimeout(this._scrollTimer);
     }
 
-    this._scrollTimer = setTimeout(() => {
-      const query = wx.createSelectorQuery();
-      query
-        .select(".message-list")
-        .boundingClientRect((listRect) => {
-          if (!listRect) return;
+    // 使用防抖优化滚动
+    if (!this._scrollDebounce) {
+      this._scrollDebounce = this.debounce(() => {
+        const query = wx.createSelectorQuery();
+        query
+          .select(".message-list")
+          .boundingClientRect((listRect) => {
+            if (!listRect) return;
 
-          const scrollHeight = listRect.height + 1000; // 增加额外高度确保滚动到底
+            const scrollHeight = listRect.height + 1000;
 
-          this.setData({
-            isAutoScrolling: true,
-            scrollTop: scrollHeight,
-            showScrollBtn: false,
-          });
+            // 使用nextTick确保在下一帧更新
+            wx.nextTick(() => {
+              this.setData({
+                isAutoScrolling: true,
+                scrollTop: scrollHeight,
+                showScrollBtn: false,
+              });
 
-          if (!useAnimation) {
-            this.setData({ isAutoScrolling: false });
-          } else {
-            setTimeout(() => {
-              this.setData({ isAutoScrolling: false });
-            }, 300); // 调整动画时间
-          }
-        })
-        .exec();
-    }, 100); // 增加延迟确保内容已更新
+              if (!useAnimation) {
+                this.setData({ isAutoScrolling: false });
+              } else {
+                setTimeout(() => {
+                  this.setData({ isAutoScrolling: false });
+                }, 300);
+              }
+            });
+          })
+          .exec();
+      }, 100);
+    }
+
+    this._scrollDebounce();
+  },
+
+  // 防抖函数
+  debounce(fn, delay) {
+    let timer;
+    return function () {
+      const context = this;
+      const args = arguments;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        fn.apply(context, args);
+      }, delay);
+    };
   },
 
   // 获取当前时间
@@ -802,7 +805,7 @@ Page({
       id: Date.now().toString(),
       type: "user",
       content: userInput,
-      time: this.formatTime(new Date()),
+      time: util.formatTime(new Date()),
       nickname: this.data.userNickname,
     };
 
@@ -813,7 +816,7 @@ Page({
       id: Date.now().toString(),
       type: "ai",
       content: "",
-      time: this.formatTime(new Date()),
+      time: util.formatTime(new Date()),
       isCard: true,
       nickname: "小迈",
       cardData: {
@@ -836,7 +839,7 @@ Page({
       id: Date.now().toString(),
       type: "user",
       content: userInput,
-      time: this.formatTime(new Date()),
+      time: util.formatTime(new Date()),
       nickname: this.data.userNickname,
     };
 
@@ -847,7 +850,7 @@ Page({
       id: Date.now().toString(),
       type: "ai",
       content: "",
-      time: this.formatTime(new Date()),
+      time: util.formatTime(new Date()),
       isCard: true,
       nickname: "小迈",
       cardData: {
