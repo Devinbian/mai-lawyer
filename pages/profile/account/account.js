@@ -1,5 +1,5 @@
 const imageUtils = require("../../../utils/image.js");
-
+const config = require("../../../utils/config.js");
 Page({
   data: {
     userInfo: null,
@@ -47,7 +47,7 @@ Page({
       success: (res) => {
         // 更新本地数据，包括头像URL和base64
         this.setData({
-          "userInfo.avatarUrl": avatarUrl,
+          "userInfo.avatar": avatarUrl,
           base64: res.data,
         });
 
@@ -56,11 +56,6 @@ Page({
           avatar: avatarUrl,
           base64: res.data,
         });
-
-        // 更新本地存储的用户信息
-        const userInfo = wx.getStorageSync("userInfo") || {};
-        userInfo.avatarUrl = avatarUrl;
-        wx.setStorageSync("userInfo", userInfo);
       },
       fail: (error) => {
         console.error("头像转base64失败:", error);
@@ -80,13 +75,14 @@ Page({
       placeholderText: "请输入姓名",
       success: (res) => {
         if (res.confirm && res.content) {
-          // TODO: 更新姓名到服务器
+          // 更新本地数据
           this.setData({
             "userInfo.name": res.content,
           });
-          wx.showToast({
-            title: "姓名修改成功",
-            icon: "success",
+
+          // 更新到服务器
+          this.updateUserInfo({
+            name: res.content,
           });
         }
       },
@@ -120,16 +116,9 @@ Page({
       "userInfo.birthday": birthday,
     });
 
-    // 更新本地存储
-    const userInfo = wx.getStorageSync("userInfo") || {};
-    userInfo.birthday = birthday;
-    wx.setStorageSync("userInfo", userInfo);
-
-    // TODO: 更新生日到服务器
-
-    wx.showToast({
-      title: "生日修改成功",
-      icon: "success",
+    // 更新到服务器
+    this.updateUserInfo({
+      birthday: birthday,
     });
   },
 
@@ -289,6 +278,60 @@ Page({
     // 处理手机号绑定
     this.processPhoneBinding(code);
   },
+  // 更新用户信息到服务器
+  updateUserInfo(data) {
+    const userInfo = wx.getStorageSync("userInfo") || {};
+    const token = userInfo.token;
+
+    if (!token) {
+      wx.showToast({
+        title: "登录信息已过期",
+        icon: "error",
+      });
+      return;
+    }
+
+    wx.request({
+      url: config.baseURL + `/api/user/update?token=${token}`,
+      method: "POST",
+      header: {
+        "content-type": "application/json",
+      },
+      data: {
+        avatar: data.avatar || this.data.userInfo.avatar,
+        name: data.name || this.data.userInfo.name,
+        gender: data.gender !== undefined ? data.gender : this.data.userInfo.gender,
+        birthday: data.birthday || this.data.userInfo.birthday,
+        base64: data.base64 || this.data.base64,
+      },
+      success: (res) => {
+        if (res.data.success) {
+          // 更新成功，更新本地存储
+          const userInfo = wx.getStorageSync("userInfo") || {};
+          Object.assign(userInfo, data);
+          wx.setStorageSync("userInfo", userInfo);
+
+          wx.showToast({
+            title: "更新成功",
+            icon: "success",
+          });
+        } else {
+          wx.showToast({
+            title: res.data.msg || "更新失败",
+            icon: "error",
+          });
+        }
+      },
+      fail: (error) => {
+        console.error("更新用户信息失败:", error);
+        wx.showToast({
+          title: "网络错误",
+          icon: "error",
+        });
+      },
+    });
+  },
+
   // 选择性别
   selectGender(e) {
     const gender = parseInt(e.currentTarget.dataset.gender);
@@ -302,15 +345,9 @@ Page({
       "userInfo.gender": gender,
     });
 
-    // 更新本地存储
-    const userInfo = wx.getStorageSync("userInfo") || {};
-    userInfo.gender = gender;
-    wx.setStorageSync("userInfo", userInfo);
-
-    // TODO: 更新性别到服务器
-    wx.showToast({
-      title: "性别修改成功",
-      icon: "success",
+    // 更新到服务器
+    this.updateUserInfo({
+      gender: gender,
     });
   },
 

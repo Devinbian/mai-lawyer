@@ -28,7 +28,6 @@ Page({
             if (res.data.success) {
               console.log("==================");
               console.log(res.data.data);
-              console.log(e.detail.code);
               wx.request({
                 url: config.baseURL + "/api/auth/wechat/login",
                 method: "GET",
@@ -46,6 +45,14 @@ Page({
                   console.log("登录失败" + err);
                 },
               });
+              // 获取页面实例栈
+              const pages = getCurrentPages();
+              // 获取上一个页面实例
+              const prevPage = pages[pages.length - 2];
+              // 调用上一个页面的onLoad方法刷新数据
+              if (prevPage) {
+                prevPage.onLoad();
+              }
               wx.navigateBack();
             } else {
               console.log("获取授权失败" + res.data.message);

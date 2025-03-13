@@ -8,7 +8,7 @@
           <text class="label">头像</text>
           <view class="value-wrap">
             <view class="avatar-container">
-              <image class="avatar" src="{{userInfo.avatarUrl || imgUrls.avatar}}" mode="widthFix" />
+              <image class="avatar" src="{{userInfo.avatar || imgUrls.avatar}}" mode="widthFix" />
             </view>
             <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
           </view>

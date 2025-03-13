@@ -8,7 +8,7 @@
     <image class="login-bg" src="{{imgUrls.banner}}" mode="aspectFill" />
     <view class="login-content">
       <view class="avatar-wrap">
-        <image class="avatar" src="{{userInfo.avatarUrl || imgUrls.avatar}}" />
+        <image class="avatar {{isLogin ? 'avatar-login' : ''}}" src="{{userInfo.avatar || imgUrls.avatar}}" />
       </view>
       <view class="login-info">
         <view class="login-text">{{isLogin ? userInfo.name : '登录注册'}}</view>

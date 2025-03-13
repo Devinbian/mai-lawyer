@@ -77,6 +77,12 @@
   height: 48rpx;
 }
 
+.avatar-login {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+}
+
 .login-info {
   flex: 1;
 }
