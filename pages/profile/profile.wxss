@@ -1,7 +1,6 @@
 .container {
   width: 100%;
   min-height: 100vh;
-  height: 100vh;
   background: #F5F7FA;
   box-sizing: border-box;
   position: fixed;
@@ -9,6 +8,8 @@
   right: 0;
   top: 0;
   bottom: 0;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
@@ -20,6 +21,12 @@
   bottom: 0;
   padding: 20rpx;
   box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.content::-webkit-scrollbar {
+  display: none;
 }
 
 /* 登录注册区域 */
@@ -59,9 +66,9 @@
 }
 
 .avatar-wrap {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 40rpx;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 48rpx;
   overflow: hidden;
   margin-right: 24rpx;
   flex-shrink: 0;
@@ -70,11 +77,12 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+  border: 2rpx solid rgba(0, 0, 0, 0.1);
 }
 
 .avatar {
-  width: 48rpx;
-  height: 48rpx;
+  width: 56rpx;
+  height: 56rpx;
 }
 
 .avatar-login {
@@ -85,18 +93,23 @@
 
 .login-info {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .login-text {
   font-size: 32rpx;
   font-weight: 500;
   color: #333;
-  margin-bottom: 4rpx;
+  margin-bottom: 8rpx;
+  line-height: 1.4;
 }
 
 .login-desc {
   font-size: 24rpx;
   color: #999999;
+  line-height: 1.4;
 }
 
 /* 卡片通用样式 */
@@ -130,6 +143,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex: 1;
 }
 
 .order-icon {
@@ -141,6 +155,7 @@
 .order-item text {
   font-size: 26rpx;
   color: #333333;
+  text-align: center;
 }
 
 /* 内容区域 */
@@ -166,85 +181,65 @@
   color: #333333;
 }
 
-/* 底部功能区 */
+/* 底部功能区统一样式 */
 .bottom-section {
   background: #FFFFFF;
   width: 100%;
   border-radius: 16rpx;
   box-sizing: border-box;
   margin-bottom: 20rpx;
+  padding: 0 32rpx;
 }
 
+/* 统一功能项样式 */
 .function-item,
 button.function-item {
+  width: 100%;
+  margin: 0;
+  padding: 32rpx 0;
+  background: #fff;
+  border-radius: 0;
+  border-bottom: 2rpx solid #f5f5f5;
   display: flex;
   align-items: center;
-  padding: 32rpx 0;
-  margin: 0 20rpx;  /* 修改左右间距为20rpx */
-  border-bottom: 1rpx solid #F5F5F5;
+  text-align: left;
+  font-weight: normal;
+  line-height: 1;
+  box-sizing: border-box;
 }
 
-.function-item:last-child {
+.function-item:last-child,
+button.function-item:last-child {
   border-bottom: none;
 }
 
-.function-icon {
-  width: 40rpx;
-  height: 40rpx;
-  margin-right: 24rpx;
-}
-
-.function-item text {
-  flex: 1;
-  font-size: 28rpx;
-  color: #333;
-}
-
-.arrow {
-  width: 32rpx;
-  height: 32rpx;
-}
-
-/* 退出登录按钮特殊样式 */
-.function-item[data-type="logout"] {
-  margin: 20rpx 20rpx;  /* 统一间距 */
-  color: #FF3B30;
-}
-
-.function-item[data-type="logout"] text {
-  color: #FF3B30;
-} button.function-item {
-  width: 100%;
-  text-align: left;
-  border-radius: 0;
-  font-weight: normal;
-  line-height: inherit;
-  margin: 0;
-  padding: 32rpx;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  background: #fff;
-  border-bottom: 2rpx solid #f5f5f5;
-}
-
+/* 移除按钮默认样式 */
 button.function-item::after {
   border: none;
 }
 
+/* 统一图标样式 */
+.function-item .function-icon,
 button.function-item .function-icon {
   width: 40rpx;
   height: 40rpx;
   margin-right: 24rpx;
+  flex-shrink: 0;
 }
 
+/* 统一文本样式 */
+.function-item text,
 button.function-item text {
   flex: 1;
   font-size: 28rpx;
   color: #333;
 }
 
+/* 统一箭头样式 */
+.function-item .arrow,
 button.function-item .arrow {
   width: 32rpx;
   height: 32rpx;
+  flex-shrink: 0;
 }
+

@@ -4,7 +4,6 @@ Page({
   data: {
     isAgree: false,
     appId: config.appId,
-    appSecret: config.appSecret,
   },
 
   wechatAuth(e) {

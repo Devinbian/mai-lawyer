@@ -36,7 +36,6 @@ alwaysApply: true
 
 # Xlight 小程序
 - appId: "wx1a652f95e596a237",
-- appSecret: "199d397867dde3dfc723c7147e35c201",
 
 # 域名
 https://cloud.tencent.com/document/product/269/75285#.E5.B8.B8.E8.A7.81.E9.97.AE.E9.A2.98

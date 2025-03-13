@@ -46,7 +46,7 @@ Page({
 
   // 处理订单状态点击
   handleOrderStatusTap(e) {
-    if (!!this.data.userInfo) {
+    if (!this.data.isLogin) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -62,7 +62,7 @@ Page({
   handleContentTap(e) {
     const { type } = e.currentTarget.dataset;
 
-    if (!!this.data.userInfo) {
+    if (!this.data.isLogin) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -98,6 +98,11 @@ Page({
           url: "/pages/profile/feedback/feedback",
         });
         break;
+      case "about":
+        wx.navigateTo({
+          url: "/pages/profile/about/about",
+        });
+        break;
       case "contact":
         wx.makePhoneCall({
           phoneNumber: "021-50280097",
@@ -107,11 +112,6 @@ Page({
               icon: "none",
             });
           },
-        });
-        break;
-      case "about":
-        wx.navigateTo({
-          url: "/pages/profile/about/about",
         });
         break;
       case "account":
