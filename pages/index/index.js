@@ -34,22 +34,22 @@ Page({
     documentTypes: [
       {
         id: 1,
-        name: "《起诉状》",
+        name: "起诉状",
         icon: "case",
-        type: "lawsuit"
+        type: "lawsuit",
       },
       {
         id: 2,
-        name: "《申请文书》",
+        name: "申请文书",
         icon: "document",
-        type: "application"
+        type: "application",
       },
       {
         id: 3,
-        name: "《通用文书》",
+        name: "通用文书",
         icon: "document",
-        type: "general"
-      }
+        type: "general",
+      },
     ],
     pageSize: 20, // 每页显示的消息数量
     isLoading: false, // 是否正在加载更多
@@ -64,7 +64,7 @@ Page({
 
     this.setData({
       userInfo: userInfo,
-      userNickname: userInfo.name || "用户"
+      userNickname: userInfo.name || "用户",
     });
 
     // 获取缓存的聊天记录
@@ -78,16 +78,18 @@ Page({
     });
   },
 
-  onReady: function () {
-  },
+  onReady: function () {},
 
-  onShow: function () {
-  },
+  onShow: function () {},
 
   // 根据设备像素比选择图片
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtils.getCommonImages(["index", "default", "expertsDetail"]),
+      imgUrls: imageUtils.getCommonImages([
+        "index",
+        "default",
+        "expertsDetail",
+      ]),
     });
   },
 
@@ -95,7 +97,11 @@ Page({
   checkLogin() {
     console.log("++++++++++++++++checkLogin++++++++++++++++");
     console.log(typeof this.data.userInfo);
-    if (this.data.userInfo === null || this.data.userInfo === undefined || this.data.userInfo === "") {
+    if (
+      this.data.userInfo === null ||
+      this.data.userInfo === undefined ||
+      this.data.userInfo === ""
+    ) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -104,18 +110,20 @@ Page({
     return true;
   },
 
-
   // 加载聊天记录
   loadChatHistory() {
     const chatHistory = wx.getStorageSync("chatHistory") || [];
     // 只加载最近的20条消息
     const recentMessages = chatHistory.slice(-this.data.pageSize);
-    
-    this.setData({
-      messageList: recentMessages
-    }, () => {
-      this.scrollToBottom(false); // 不使用动画
-    });
+
+    this.setData(
+      {
+        messageList: recentMessages,
+      },
+      () => {
+        this.scrollToBottom(false); // 不使用动画
+      },
+    );
   },
 
   // 保存聊天记录
@@ -125,16 +133,14 @@ Page({
 
   // 长按消息处理函数
   handleLongPress(e) {
-    const {
-      index
-    } = e.currentTarget.dataset;
+    const { index } = e.currentTarget.dataset;
     // 更新消息列表，显示当前消息的菜单
     const messageList = this.data.messageList.map((msg, i) => ({
       ...msg,
       showMenu: i === index,
     }));
     this.setData({
-      messageList
+      messageList,
     });
 
     // 点击空白处关闭菜单
@@ -150,15 +156,13 @@ Page({
       showMenu: false,
     }));
     this.setData({
-      messageList
+      messageList,
     });
   },
 
   // 复制单条消息
   handleCopy(e) {
-    const {
-      content
-    } = e.currentTarget.dataset;
+    const { content } = e.currentTarget.dataset;
     wx.setClipboardData({
       data: content,
       success: () => {
@@ -169,9 +173,7 @@ Page({
 
   // 删除消息
   handleDelete(e) {
-    const {
-      index
-    } = e.currentTarget.dataset;
+    const { index } = e.currentTarget.dataset;
     wx.showModal({
       title: "提示",
       content: "确定要删除这条消息吗？",
@@ -179,11 +181,14 @@ Page({
         if (res.confirm) {
           const messageList = [...this.data.messageList];
           messageList.splice(index, 1);
-          this.setData({
-            messageList
-          }, () => {
-            this.saveChatHistory();
-          });
+          this.setData(
+            {
+              messageList,
+            },
+            () => {
+              this.saveChatHistory();
+            },
+          );
         }
         this.closeAllMenus();
       },
@@ -200,28 +205,28 @@ Page({
     return new Promise((resolve, reject) => {
       wx.request({
         url: config.baseURL + "/api/aichat/textcheck",
-        method:"POST",
+        method: "POST",
         data: {
           prompt: message,
         },
-        success: (result => {
-          if(result.data.success){
-            resolve(result.data.data)
-          }else{
-            resolve("Normal")
+        success: (result) => {
+          if (result.data.success) {
+            resolve(result.data.data);
+          } else {
+            resolve("Normal");
           }
-        }),
-        fail: (err => {
-          reject(err)
-        })
-      })
-    })
+        },
+        fail: (err) => {
+          reject(err);
+        },
+      });
+    });
   },
 
   // 发送消息
   async sendMessage() {
     if (this.data.isAiResponding) return; // 防止重复发送
-    
+
     const userInput = this.data.inputValue.trim();
     if (!userInput) return;
 
@@ -247,19 +252,25 @@ Page({
         type: "user",
         content: userInput,
         time: this.formatTime(new Date()),
-        nickname: this.data.userNickname
+        nickname: this.data.userNickname,
       };
 
       // 使用一次setData添加用户消息
-      this.setData({
-        messageList: [...this.data.messageList, userMessage]
-      }, () => {
-        this.scrollToBottom();
-        this.saveChatHistory();
-      });
+      this.setData(
+        {
+          messageList: [...this.data.messageList, userMessage],
+        },
+        () => {
+          this.scrollToBottom();
+          this.saveChatHistory();
+        },
+      );
 
       // 检查是否是生成起诉状的请求
-      if (userInput.includes("生成起诉状") || userInput.includes("起诉状生成")) {
+      if (
+        userInput.includes("生成起诉状") ||
+        userInput.includes("起诉状生成")
+      ) {
         this.handleLawsuitResponse(userInput);
         return;
       }
@@ -277,11 +288,14 @@ Page({
       };
 
       // 使用一次setData添加AI消息
-      this.setData({
-        messageList: [...this.data.messageList, aiMessage]
-      }, () => {
-        this.scrollToBottom();
-      });
+      this.setData(
+        {
+          messageList: [...this.data.messageList, aiMessage],
+        },
+        () => {
+          this.scrollToBottom();
+        },
+      );
 
       try {
         const response = await this.getAIStreamResponse(userInput);
@@ -292,9 +306,9 @@ Page({
         console.error("获取AI响应失败:", error);
         this.updateAIMessage(aiMessageId, {
           content: "抱歉，我暂时无法回答您的问题，请稍后再试。",
-          isThinking: false
+          isThinking: false,
         });
-        
+
         wx.showToast({
           title: "网络请求失败",
           icon: "none",
@@ -309,7 +323,7 @@ Page({
 
   // 更新AI消息的辅助方法
   updateAIMessage(messageId, updates) {
-    const messageList = this.data.messageList.map(msg => {
+    const messageList = this.data.messageList.map((msg) => {
       if (msg.id === messageId) {
         return { ...msg, ...updates };
       }
@@ -385,7 +399,7 @@ Page({
         },
         complete: () => {
           this.setData({
-            isAiResponding: false
+            isAiResponding: false,
           });
         },
       });
@@ -407,10 +421,7 @@ Page({
           // console.log("解析后数据块:", chunk);
 
           // 处理数据块
-          const {
-            content,
-            done
-          } = this.processDataChunk(chunk);
+          const { content, done } = this.processDataChunk(chunk);
           if (content) {
             fullResponse += content;
           }
@@ -431,7 +442,7 @@ Page({
       console.warn("收到非字符串数据块，跳过处理");
       return {
         content: "",
-        done: false
+        done: false,
       };
     }
 
@@ -439,10 +450,7 @@ Page({
     this.data.buffer += chunk;
 
     // 提取并处理完整的JSON对象
-    const {
-      content,
-      done
-    } = this.extractJsonObjects();
+    const { content, done } = this.extractJsonObjects();
     if (content) {
       const messageList = this.data.messageList;
       // 找到最后一条AI消息
@@ -451,7 +459,7 @@ Page({
           // 创建新的消息列表，避免直接修改原数组
           const updatedMessageList = [...messageList];
           const currentMessage = {
-            ...updatedMessageList[i]
+            ...updatedMessageList[i],
           };
 
           // 更新消息内容和状态
@@ -466,7 +474,8 @@ Page({
           }
 
           // 更新消息列表
-          this.setData({
+          this.setData(
+            {
               messageList: updatedMessageList,
             },
             () => {
@@ -490,7 +499,8 @@ Page({
             isThinking: false,
             isStreaming: false,
           };
-          this.setData({
+          this.setData(
+            {
               messageList: updatedMessageList,
             },
             () => {
@@ -505,7 +515,7 @@ Page({
 
     return {
       content,
-      done
+      done,
     };
   },
 
@@ -573,7 +583,8 @@ Page({
             isThinking: false,
             isStreaming: false,
           };
-          this.setData({
+          this.setData(
+            {
               messageList: updatedMessageList,
             },
             () => {
@@ -588,7 +599,7 @@ Page({
 
     return {
       content: extractedText,
-      done: isDone
+      done: isDone,
     };
   },
 
@@ -603,10 +614,9 @@ Page({
   handleTapSuggestion(e) {
     if (!this.checkLogin()) return;
 
-    const {
-      text
-    } = e.currentTarget.dataset;
-    this.setData({
+    const { text } = e.currentTarget.dataset;
+    this.setData(
+      {
         inputValue: text,
       },
       () => {
@@ -647,12 +657,11 @@ Page({
 
   // 输入框获得焦点
   onInputFocus(e) {
-    const {
-      height
-    } = e.detail;
+    const { height } = e.detail;
     const adjustedHeight = height - 86;
 
-    this.setData({
+    this.setData(
+      {
         isKeyboardShow: true,
         keyboardHeight: adjustedHeight,
         inputStyle: `position: fixed; left: 0; right: 0; bottom: ${adjustedHeight}px; background: #fff;`,
@@ -674,7 +683,8 @@ Page({
 
   // 输入框失去焦点
   onInputBlur() {
-    this.setData({
+    this.setData(
+      {
         isKeyboardShow: false,
         keyboardHeight: 0,
         inputStyle: "position: fixed; left: 0; right: 0; bottom: 0;",
@@ -702,7 +712,8 @@ Page({
       .boundingClientRect((listRect) => {
         if (!listRect) return;
 
-        this.setData({
+        this.setData(
+          {
             isAutoScrolling: true, // 标记为自动滚动
             scrollTop: listRect.height,
             showScrollBtn: false,
@@ -769,24 +780,27 @@ Page({
   // 滚动到底部的方法
   scrollToBottom(useAnimation = true) {
     const query = wx.createSelectorQuery();
-    query.select(".message-list").boundingClientRect((listRect) => {
-      if (!listRect) return;
-      
-      this.setData({
-        isAutoScrolling: true,
-        scrollTop: listRect.height,
-        showScrollBtn: false,
-      });
+    query
+      .select(".message-list")
+      .boundingClientRect((listRect) => {
+        if (!listRect) return;
 
-      if (!useAnimation) {
-        // 立即取消自动滚动标记
-        this.setData({ isAutoScrolling: false });
-      } else {
-        setTimeout(() => {
+        this.setData({
+          isAutoScrolling: true,
+          scrollTop: listRect.height,
+          showScrollBtn: false,
+        });
+
+        if (!useAnimation) {
+          // 立即取消自动滚动标记
           this.setData({ isAutoScrolling: false });
-        }, 300);
-      }
-    }).exec();
+        } else {
+          setTimeout(() => {
+            this.setData({ isAutoScrolling: false });
+          }, 300);
+        }
+      })
+      .exec();
   },
 
   // 获取当前时间
@@ -799,9 +813,9 @@ Page({
 
   // 处理起诉状文书生成的回复
   handleLawsuitResponse(userInput) {
-    console.log('documentTypes:', this.data.documentTypes);
-    console.log('imgUrls:', this.data.imgUrls);
-    
+    console.log("documentTypes:", this.data.documentTypes);
+    console.log("imgUrls:", this.data.imgUrls);
+
     const cardMessage = {
       type: "ai",
       content: "",
@@ -809,29 +823,34 @@ Page({
       isCard: true,
       cardData: {
         title: "猜您需要以下法律文书模版",
-        items: this.data.documentTypes
-      }
+        items: this.data.documentTypes,
+      },
     };
-    
+
     // 添加到消息列表
     const messageList = [...this.data.messageList, cardMessage];
-    this.setData({
-      messageList,
-      isAiResponding: false
-    }, () => {
-      this.saveChatHistory();
-      this.scrollToBottom();
-    });
+    this.setData(
+      {
+        messageList,
+        isAiResponding: false,
+      },
+      () => {
+        this.saveChatHistory();
+        this.scrollToBottom();
+      },
+    );
   },
 
   // 处理起诉状类型选择
   handleDocumentTypeSelect(e) {
     const { typeId } = e.currentTarget.dataset;
-    const selectedType = this.data.documentTypes.find(type => type.id === typeId);
-    
+    const selectedType = this.data.documentTypes.find(
+      (type) => type.id === typeId,
+    );
+
     if (selectedType) {
       wx.navigateTo({
-        url: `/pages/documents/document-list/document-list?type=${selectedType.name}&id=${typeId}`
+        url: `/pages/documents/document-list/document-list?docType=${selectedType.name}&id=${typeId}`,
       });
     }
   },
@@ -841,18 +860,18 @@ Page({
     if (this.data.isLoading) return;
 
     this.setData({ isLoading: true });
-    
+
     const chatHistory = wx.getStorageSync("chatHistory") || [];
     const currentCount = this.data.messageList.length;
     const moreMessages = chatHistory.slice(
       Math.max(0, chatHistory.length - currentCount - this.data.pageSize),
-      chatHistory.length - currentCount
+      chatHistory.length - currentCount,
     );
 
     if (moreMessages.length > 0) {
       this.setData({
         messageList: [...moreMessages, ...this.data.messageList],
-        isLoading: false
+        isLoading: false,
       });
     } else {
       this.setData({ isLoading: false });

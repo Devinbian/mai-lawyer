@@ -21,6 +21,7 @@ Page({
   },
 
   onLoad(options) {
+    console.log("options", options);
     this.setData({
       docType: options.docType || "",
     });
