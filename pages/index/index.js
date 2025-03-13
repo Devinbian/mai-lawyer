@@ -53,6 +53,7 @@ Page({
     ],
     pageSize: 20, // 每页显示的消息数量
     isLoading: false, // 是否正在加载更多
+    maxMessageCount: 50, // 最大消息数量限制
   },
 
   onLoad: function () {
@@ -67,15 +68,15 @@ Page({
       userNickname: userInfo.name || "用户",
     });
 
-    // 获取缓存的聊天记录
-    this.loadChatHistory();
+    // 获取缓存的聊天记录时进行数量限制
+    this.loadLatestChatHistory();
 
-    // 获取窗口信息
-    const windowInfo = wx.getWindowInfo();
-    this.setData({
-      statusBarHeight: windowInfo.statusBarHeight,
-      navBarHeight: windowInfo.navigationBarHeight || 44,
-    });
+    // // 获取窗口信息
+    // const windowInfo = wx.getWindowInfo();
+    // this.setData({
+    //   statusBarHeight: windowInfo.statusBarHeight,
+    //   navBarHeight: windowInfo.navigationBarHeight || 44,
+    // });
   },
 
   onReady: function () {},
@@ -110,20 +111,25 @@ Page({
     return true;
   },
 
-  // 加载聊天记录
-  loadChatHistory() {
+  // 加载最新的聊天记录
+  loadLatestChatHistory() {
     const chatHistory = wx.getStorageSync("chatHistory") || [];
-    // 只加载最近的20条消息
-    const recentMessages = chatHistory.slice(-this.data.pageSize);
+    // 只保留最新的maxMessageCount条消息
+    const recentMessages = chatHistory.slice(-this.data.maxMessageCount);
 
     this.setData(
       {
         messageList: recentMessages,
       },
       () => {
-        this.scrollToBottom(false); // 不使用动画
+        this.scrollToBottom(false);
       },
     );
+
+    // 如果历史记录超出限制，更新存储
+    if (chatHistory.length > this.data.maxMessageCount) {
+      wx.setStorageSync("chatHistory", recentMessages);
+    }
   },
 
   // 保存聊天记录
@@ -187,10 +193,12 @@ Page({
             },
             () => {
               this.saveChatHistory();
+              this.closeAllMenus();
             },
           );
+        } else {
+          this.closeAllMenus();
         }
-        this.closeAllMenus();
       },
     });
   },
@@ -239,12 +247,26 @@ Page({
       return;
     }
 
-    this.setData({
-      inputValue: "",
-      isAiResponding: true,
-    });
-
     try {
+      // 检查消息类型并分发到不同的处理函数
+      if (userInput.includes("起诉状是什么")) {
+        await this.handleWhatIsLawsuitResponse(userInput); // 传入userInput
+        this.setData({ inputValue: "" }); // 移到这里清空输入框
+        return;
+      } else if (
+        userInput.includes("生成起诉状") ||
+        userInput.includes("起诉状生成")
+      ) {
+        await this.handleLawsuitResponse(userInput);
+        this.setData({ inputValue: "" }); // 移到这里清空输入框
+        return;
+      }
+
+      this.setData({
+        inputValue: "", // 其他情况下的清空输入框
+        isAiResponding: true,
+      });
+
       // 创建用户消息
       const messageId = Date.now().toString();
       const userMessage = {
@@ -256,24 +278,9 @@ Page({
       };
 
       // 使用一次setData添加用户消息
-      this.setData(
-        {
-          messageList: [...this.data.messageList, userMessage],
-        },
-        () => {
-          this.scrollToBottom();
-          this.saveChatHistory();
-        },
-      );
-
-      // 检查是否是生成起诉状的请求
-      if (
-        userInput.includes("生成起诉状") ||
-        userInput.includes("起诉状生成")
-      ) {
-        this.handleLawsuitResponse(userInput);
-        return;
-      }
+      await this.addMessage(userMessage);
+      this.scrollToBottom();
+      this.saveChatHistory();
 
       // 创建AI消息
       const aiMessageId = Date.now().toString();
@@ -288,14 +295,8 @@ Page({
       };
 
       // 使用一次setData添加AI消息
-      this.setData(
-        {
-          messageList: [...this.data.messageList, aiMessage],
-        },
-        () => {
-          this.scrollToBottom();
-        },
-      );
+      await this.addMessage(aiMessage);
+      this.scrollToBottom();
 
       try {
         const response = await this.getAIStreamResponse(userInput);
@@ -335,29 +336,17 @@ Page({
     });
   },
 
-  // 添加消息到列表
+  // 优化的消息添加方法
   addMessage(message) {
-    const messageId = Date.now().toString();
-    const newMessage = {
-      ...message,
-      id: messageId,
-      isThinking: message.type === "ai" && message.isThinking,
-      nickname: message.type === "ai" ? "小迈" : this.data.userNickname,
-      time: message.time || this.formatTime(new Date()),
-    };
+    return new Promise((resolve) => {
+      const messageList = [...this.data.messageList];
+      messageList.push(message);
 
-    // 创建新的消息列表
-    const messageList = [...this.data.messageList, newMessage];
-
-    // 更新状态
-    this.setData({
-      messageList,
+      this.setData({ messageList }, () => {
+        this.saveChatHistory();
+        resolve();
+      });
     });
-
-    // 保存到缓存
-    this.saveChatHistory();
-
-    return messageId; // 返回消息ID供后续使用
   },
 
   // 格式化时间
@@ -655,53 +644,43 @@ Page({
     });
   },
 
-  // 输入框获得焦点
+  // 优化的输入框焦点处理
   onInputFocus(e) {
     const { height } = e.detail;
     const adjustedHeight = height - 86;
 
-    this.setData(
-      {
-        isKeyboardShow: true,
-        keyboardHeight: adjustedHeight,
-        inputStyle: `position: fixed; left: 0; right: 0; bottom: ${adjustedHeight}px; background: #fff;`,
-      },
-      () => {
-        // 延迟执行滚动
-        setTimeout(() => {
-          const messages = this.data.messageList;
-          if (messages.length > 0) {
-            const lastMessage = messages[messages.length - 1];
-            this.setData({
-              scrollToView: `msg${lastMessage.id}`,
-            });
-          }
-        }, 300);
-      },
-    );
+    wx.nextTick(() => {
+      this.setData(
+        {
+          isKeyboardShow: true,
+          keyboardHeight: adjustedHeight,
+          inputStyle: `position: fixed; left: 0; right: 0; bottom: ${adjustedHeight}px; background: #fff;`,
+        },
+        () => {
+          setTimeout(() => {
+            this.scrollToBottom(true);
+          }, 100);
+        },
+      );
+    });
   },
 
-  // 输入框失去焦点
+  // 优化的输入框失焦处理
   onInputBlur() {
-    this.setData(
-      {
-        isKeyboardShow: false,
-        keyboardHeight: 0,
-        inputStyle: "position: fixed; left: 0; right: 0; bottom: 0;",
-      },
-      () => {
-        // 键盘收起后也需要调整滚动位置
-        setTimeout(() => {
-          const messages = this.data.messageList;
-          if (messages.length > 0) {
-            const lastMessage = messages[messages.length - 1];
-            this.setData({
-              scrollToView: `msg${lastMessage.id}`,
-            });
-          }
-        }, 300);
-      },
-    );
+    wx.nextTick(() => {
+      this.setData(
+        {
+          isKeyboardShow: false,
+          keyboardHeight: 0,
+          inputStyle: "position: fixed; left: 0; right: 0; bottom: 0;",
+        },
+        () => {
+          setTimeout(() => {
+            this.scrollToBottom(true);
+          }, 100);
+        },
+      );
+    });
   },
 
   // 处理下拉箭头点击
@@ -714,17 +693,16 @@ Page({
 
         this.setData(
           {
-            isAutoScrolling: true, // 标记为自动滚动
-            scrollTop: listRect.height,
+            isAutoScrolling: true,
+            scrollTop: listRect.height + 1000, // 增加额外高度确保滚动到底
             showScrollBtn: false,
           },
           () => {
-            // 滚动动画完成后，取消自动滚动标记
             setTimeout(() => {
               this.setData({
                 isAutoScrolling: false,
               });
-            }, 300);
+            }, 500); // 增加动画时间
           },
         );
       })
@@ -777,30 +755,37 @@ Page({
     }, 200); // 增加节流时间到200ms
   },
 
-  // 滚动到底部的方法
+  // 优化的滚动方法
   scrollToBottom(useAnimation = true) {
-    const query = wx.createSelectorQuery();
-    query
-      .select(".message-list")
-      .boundingClientRect((listRect) => {
-        if (!listRect) return;
+    if (this._scrollTimer) {
+      clearTimeout(this._scrollTimer);
+    }
 
-        this.setData({
-          isAutoScrolling: true,
-          scrollTop: listRect.height,
-          showScrollBtn: false,
-        });
+    this._scrollTimer = setTimeout(() => {
+      const query = wx.createSelectorQuery();
+      query
+        .select(".message-list")
+        .boundingClientRect((listRect) => {
+          if (!listRect) return;
 
-        if (!useAnimation) {
-          // 立即取消自动滚动标记
-          this.setData({ isAutoScrolling: false });
-        } else {
-          setTimeout(() => {
+          const scrollHeight = listRect.height + 1000; // 增加额外高度确保滚动到底
+
+          this.setData({
+            isAutoScrolling: true,
+            scrollTop: scrollHeight,
+            showScrollBtn: false,
+          });
+
+          if (!useAnimation) {
             this.setData({ isAutoScrolling: false });
-          }, 300);
-        }
-      })
-      .exec();
+          } else {
+            setTimeout(() => {
+              this.setData({ isAutoScrolling: false });
+            }, 300); // 调整动画时间
+          }
+        })
+        .exec();
+    }, 100); // 增加延迟确保内容已更新
   },
 
   // 获取当前时间
@@ -811,34 +796,69 @@ Page({
     return `${hours}:${minutes}`;
   },
 
-  // 处理起诉状文书生成的回复
-  handleLawsuitResponse(userInput) {
-    console.log("documentTypes:", this.data.documentTypes);
-    console.log("imgUrls:", this.data.imgUrls);
+  // 优化的消息处理方法
+  async handleWhatIsLawsuitResponse(userInput) {
+    const userMessage = {
+      id: Date.now().toString(),
+      type: "user",
+      content: userInput,
+      time: this.formatTime(new Date()),
+      nickname: this.data.userNickname,
+    };
+
+    await this.addMessage(userMessage);
+    this.scrollToBottom();
 
     const cardMessage = {
+      id: Date.now().toString(),
       type: "ai",
       content: "",
       time: this.formatTime(new Date()),
       isCard: true,
+      nickname: "小迈",
+      cardData: {
+        type: "explanation",
+        content:
+          "起诉状是启动民事诉讼的重要法律文书，需包含明确的当事人信息、清晰的诉讼请求、准确的事实陈述与理由阐述以及合法的证据支持等内容，以确保诉求得到法院有效受理和审理。",
+        showHelpButton: true,
+        buttonText: "求助人工",
+      },
+    };
+
+    await this.addMessage(cardMessage);
+    this.scrollToBottom(true);
+    this.setData({ isAiResponding: false });
+  },
+
+  // 优化的文书处理方法
+  async handleLawsuitResponse(userInput) {
+    const userMessage = {
+      id: Date.now().toString(),
+      type: "user",
+      content: userInput,
+      time: this.formatTime(new Date()),
+      nickname: this.data.userNickname,
+    };
+
+    await this.addMessage(userMessage);
+    this.scrollToBottom();
+
+    const cardMessage = {
+      id: Date.now().toString(),
+      type: "ai",
+      content: "",
+      time: this.formatTime(new Date()),
+      isCard: true,
+      nickname: "小迈",
       cardData: {
         title: "猜您需要以下法律文书模版",
         items: this.data.documentTypes,
       },
     };
 
-    // 添加到消息列表
-    const messageList = [...this.data.messageList, cardMessage];
-    this.setData(
-      {
-        messageList,
-        isAiResponding: false,
-      },
-      () => {
-        this.saveChatHistory();
-        this.scrollToBottom();
-      },
-    );
+    await this.addMessage(cardMessage);
+    this.scrollToBottom(true);
+    this.setData({ isAiResponding: false });
   },
 
   // 处理起诉状类型选择
@@ -855,7 +875,7 @@ Page({
     }
   },
 
-  // 加载更多历史消息
+  // 优化的历史记录加载
   loadMoreHistory() {
     if (this.data.isLoading) return;
 
@@ -863,15 +883,21 @@ Page({
 
     const chatHistory = wx.getStorageSync("chatHistory") || [];
     const currentCount = this.data.messageList.length;
+    const startIndex = Math.max(
+      0,
+      chatHistory.length - currentCount - this.data.pageSize,
+    );
     const moreMessages = chatHistory.slice(
-      Math.max(0, chatHistory.length - currentCount - this.data.pageSize),
+      startIndex,
       chatHistory.length - currentCount,
     );
 
     if (moreMessages.length > 0) {
-      this.setData({
-        messageList: [...moreMessages, ...this.data.messageList],
-        isLoading: false,
+      wx.nextTick(() => {
+        this.setData({
+          messageList: [...moreMessages, ...this.data.messageList],
+          isLoading: false,
+        });
       });
     } else {
       this.setData({ isLoading: false });

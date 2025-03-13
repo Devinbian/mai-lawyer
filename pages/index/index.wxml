@@ -75,7 +75,8 @@
                     </view>
                   </block>
                   <block wx:elif="{{item.isCard}}">
-                    <view class="card-message">
+                    <!-- 文书模板卡片 -->
+                    <view class="card-message" wx:if="{{!item.cardData.type}}">
                       <view class="card-title">{{item.cardData.title}}</view>
                       <view class="card-items">
                         <view class="card-item" 
@@ -84,19 +85,26 @@
                               wx:key="id"
                               bindtap="handleDocumentTypeSelect"
                               data-type-id="{{docType.id}}">
-                          
                           <view class="item-text-wrapper">
-                          <image class="item-icon" 
-                                 src="{{docType.icon === 'document' ? imgUrls.document : imgUrls.case}}" 
-                                 mode="aspectFit" 
-                                 lazy-load="true">
-                          </image>
+                            <image class="item-icon" 
+                                   src="{{docType.icon === 'document' ? imgUrls.document : imgUrls.case}}" 
+                                   mode="aspectFit" 
+                                   lazy-load="true">
+                            </image>
                             <text>点击进入 </text>
                             <text class="item-text-highlight">《{{docType.name}}》</text>
                             <text> 模版</text>
                             <text class="item-arrow">⇀</text>
                           </view>
                         </view>
+                      </view>
+                    </view>
+
+                    <!-- 说明类卡片 -->
+                    <view class="explanation-card" wx:elif="{{item.cardData.type === 'explanation'}}">
+                      <view class="explanation-content">{{item.cardData.content}}</view>
+                      <view class="help-button" wx:if="{{item.cardData.showHelpButton}}">
+                        <text>{{item.cardData.buttonText}}</text>
                       </view>
                     </view>
                   </block>

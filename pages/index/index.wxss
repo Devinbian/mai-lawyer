@@ -476,3 +476,34 @@
 .menu-item {
   -webkit-tap-highlight-color: transparent;
 }
+
+.explanation-card {
+  background: #FFFFFF;
+  border-radius: 12rpx;
+  padding: 24rpx;
+  margin: 16rpx 0;
+  position: relative;
+}
+
+.explanation-content {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.6;
+  margin-bottom: 40rpx;
+}
+
+.help-button {
+  position: absolute;
+  bottom: 16rpx;
+  right: 16rpx;
+  background: #E5F2FF;
+  padding: 8rpx 24rpx;
+  border-radius: 78rpx;
+  letter-spacing: 1rpx;
+}
+
+.help-button text {
+  color: #3B7FE9;
+  font-size: 24rpx;
+  font-weight: bold;
+}
