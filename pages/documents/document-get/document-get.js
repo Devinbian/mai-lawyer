@@ -12,6 +12,14 @@ Page({
     downloadProgress: 0, // 添加下载进度状态
     isCollected: false,
     userInfo: null,
+    docType: [
+      "contract",
+      "complaint",
+      "defense",
+      "legal_opinion",
+      "application",
+      "general",
+    ],
   },
 
   onLoad(options) {
@@ -119,7 +127,7 @@ Page({
 
   // 确认支付
   onPayTap() {
-    const { totalPrice, selectedService, document } = this.data;
+    const { totalPrice } = this.data;
 
     if (totalPrice > 0) {
       wx.requestPayment({
@@ -135,26 +143,8 @@ Page({
         },
         complete: function (res) {},
       });
-
-      wx.showLoading({
-        title: "正在支付...",
-      });
-
-      // TODO: 调用支付接口
-      setTimeout(() => {
-        wx.hideLoading();
-        wx.showToast({
-          title: "支付成功",
-          icon: "success",
-          duration: 2000,
-          success: () => {
-            // 支付成功后返回文档阅读页
-            setTimeout(() => {
-              wx.navigateBack();
-            }, 2000);
-          },
-        });
-      }, 1500);
+      //需要放在支付成功的回调里面
+      this.addDownloadRecord(this.data.document, this.data.userInfo);
     } else {
       wx.showLoading({
         title: "准备下载...",
@@ -162,118 +152,7 @@ Page({
         duration: 200,
       });
 
-      // 添加下载记录
-      wx.request({
-        url: `${config.baseURL}/api/document-download-history/add`,
-        method: "GET",
-        data: {
-          id: document.id,
-          token: this.data.userInfo.token,
-        },
-        success: (res) => {
-          console.log("添加下载记录成功", res);
-        },
-        fail: (err) => {
-          console.log("添加下载记录失败", err);
-        },
-      });
-
-      // 获取或初始化下载中的文件列表
-      let downloadingFiles = wx.getStorageSync("downloadingFiles") || {};
-
-      const downloadTask = wx.downloadFile({
-        url: document.url,
-        success: (res) => {
-          const tempFilePath = res.tempFilePath;
-          const originalFileName = document.title;
-          console.log("document", document);
-          // 从下载中列表移除
-          delete downloadingFiles[this.data.document.title]; // 使用正确的key
-          wx.setStorageSync("downloadingFiles", downloadingFiles);
-
-          // 保存文件
-          wx.saveFile({
-            tempFilePath: tempFilePath,
-            success: (res) => {
-              console.log("saveFile success", res.savedFilePath);
-
-              // 保存到已下载文件列表
-              const savedFiles = wx.getStorageSync("savedFilesMap") || {};
-              savedFiles[res.savedFilePath] = {
-                originalName: originalFileName,
-                saveTime: new Date().getTime(),
-                status: "completed",
-                docType: document.type, // 保存文书类型
-              };
-              wx.setStorageSync("savedFilesMap", savedFiles);
-
-              console.log("savedFilesMap", savedFiles);
-
-              wx.showToast({
-                title: "文件已保存",
-                icon: "success",
-              });
-            },
-            fail: (res) => {
-              console.error("saveFile fail", res);
-              // 保存失败也要从下载中列表移除
-              delete downloadingFiles[this.data.document.title]; // 使用正确的key
-              wx.setStorageSync("downloadingFiles", downloadingFiles);
-            },
-          });
-        },
-        fail: (res) => {
-          console.error("download fail", res);
-          // 下载失败从下载中列表移除
-          delete downloadingFiles[this.data.document.title]; // 使用正确的key
-          wx.setStorageSync("downloadingFiles", downloadingFiles);
-        },
-      });
-
-      // 添加到下载中列表
-      downloadingFiles[this.data.document.title] = {
-        fileName: this.data.document.title,
-        progress: 0,
-        startTime: new Date().getTime(), // 使用时间戳
-        saveTime: new Date().getTime(), // 使用时间戳
-        status: "downloading",
-        docType: this.data.document.docType || "general", // 添加文书类型
-        fileType: this.data.document.ext || "word", // 添加文件类型
-      };
-      wx.setStorageSync("downloadingFiles", downloadingFiles);
-
-      downloadTask.onProgressUpdate((res) => {
-        if (res.progress < 100) {
-          // 更新下载进度
-          this.setData({
-            downloadProgress: res.progress,
-          });
-
-          // 更新下载中文件的进度
-          downloadingFiles = wx.getStorageSync("downloadingFiles") || {}; // 重新获取最新的状态
-          if (downloadingFiles[this.data.document.title]) {
-            downloadingFiles[this.data.document.title].progress = res.progress;
-            wx.setStorageSync("downloadingFiles", downloadingFiles);
-          }
-
-          wx.showLoading({
-            title: `下载进度：${res.progress}%`,
-            mask: true,
-          });
-          console.log("下载进度", res.progress);
-        } else {
-          wx.hideLoading();
-          // 下载完成时，确保从下载中列表移除
-          downloadingFiles = wx.getStorageSync("downloadingFiles") || {};
-          delete downloadingFiles[this.data.document.title];
-          wx.setStorageSync("downloadingFiles", downloadingFiles);
-
-          wx.showToast({
-            title: "下载完成",
-            icon: "success",
-          });
-        }
-      });
+      this.addDownloadRecord(this.data.document, this.data.userInfo);
     }
   },
 
@@ -316,5 +195,88 @@ Page({
 
     // 保存收藏状态
     this.setData({ isCollected: !isCollected });
+  },
+
+  //添加下载记录
+  addDownloadRecord(document, userInfo) {
+    // 添加下载记录
+    wx.request({
+      url: `${config.baseURL}/api/document-download-history/add`,
+      method: "GET",
+      data: {
+        id: document.id,
+        token: userInfo.token,
+      },
+      success: (res) => {
+        console.log("添加下载记录成功", res);
+      },
+      fail: (err) => {
+        console.log("添加下载记录失败", err);
+      },
+    });
+
+    // 获取或初始化下载中的文件列表
+    let downloadingFiles = wx.getStorageSync("downloadingFiles") || {};
+
+    const downloadTask = wx.downloadFile({
+      url: document.url,
+      success: (res) => {
+        console.log("document", document);
+        // 从下载中列表移除
+        delete downloadingFiles[document.title]; // 使用正确的key
+        wx.setStorageSync("downloadingFiles", downloadingFiles);
+      },
+      fail: (res) => {
+        console.error("download fail", res);
+        // 下载失败从下载中列表移除
+        delete downloadingFiles[document.title]; // 使用正确的key
+        wx.setStorageSync("downloadingFiles", downloadingFiles);
+      },
+    });
+
+    // 添加到下载中列表
+    downloadingFiles[document.title] = {
+      fileName: document.title,
+      progress: 0,
+      startTime: new Date().getTime(), // 使用时间戳
+      saveTime: new Date().getTime(), // 使用时间戳
+      status: "downloading",
+      docType: this.data.docType[document.type], // 添加文书类型
+      fileType: document.ext || "word", // 添加文件类型
+    };
+    wx.setStorageSync("downloadingFiles", downloadingFiles);
+
+    downloadTask.onProgressUpdate((res) => {
+      if (res.progress < 100) {
+        // 更新下载进度
+        this.setData({
+          downloadProgress: res.progress,
+        });
+
+        // 更新下载中文件的进度
+        downloadingFiles = wx.getStorageSync("downloadingFiles") || {}; // 重新获取最新的状态
+        if (downloadingFiles[document.title]) {
+          downloadingFiles[document.title].progress = res.progress;
+          wx.setStorageSync("downloadingFiles", downloadingFiles);
+        }
+
+        wx.showLoading({
+          title: `下载进度：${res.progress}%`,
+          mask: true,
+        });
+        console.log("下载进度", res.progress);
+      } else {
+        wx.hideLoading();
+        // 下载完成时，确保从下载中列表移除
+        downloadingFiles = wx.getStorageSync("downloadingFiles") || {};
+        delete downloadingFiles[document.title];
+        wx.setStorageSync("downloadingFiles", downloadingFiles);
+
+        wx.showToast({
+          title: "下载完成",
+          icon: "success",
+        });
+      }
+    });
   },
 });
