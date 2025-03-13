@@ -175,7 +175,8 @@
   margin-bottom: 20rpx;
 }
 
-.function-item {
+.function-item,
+button.function-item {
   display: flex;
   align-items: center;
   padding: 32rpx 0;
@@ -212,4 +213,38 @@
 
 .function-item[data-type="logout"] text {
   color: #FF3B30;
-} 
+} button.function-item {
+  width: 100%;
+  text-align: left;
+  border-radius: 0;
+  font-weight: normal;
+  line-height: inherit;
+  margin: 0;
+  padding: 32rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-bottom: 2rpx solid #f5f5f5;
+}
+
+button.function-item::after {
+  border: none;
+}
+
+button.function-item .function-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 24rpx;
+}
+
+button.function-item text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+button.function-item .arrow {
+  width: 32rpx;
+  height: 32rpx;
+}
