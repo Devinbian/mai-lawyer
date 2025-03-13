@@ -51,8 +51,11 @@ Page({
         type: "general",
       },
     ],
-    pageSize: 20, // 每页显示的消息数量
+    pageSize: 10, // 每页显示的消息数量，改为10条
+    currentPage: 1, // 当前页码
+    totalPages: 1, // 总页数
     isLoading: false, // 是否正在加载更多
+    hasMoreData: true, // 是否还有更多数据
     maxMessageCount: 50, // 最大消息数量限制
   },
 
@@ -103,25 +106,26 @@ Page({
   loadLatestChatHistory() {
     try {
       const chatHistory = wx.getStorageSync("chatHistory") || [];
-      const recentMessages = chatHistory.slice(-this.data.maxMessageCount);
+      const totalMessages = chatHistory.length;
+      const totalPages = Math.ceil(totalMessages / this.data.pageSize);
+
+      // 从最后一页开始加载
+      const startIndex = Math.max(0, totalMessages - this.data.pageSize);
+      const initialMessages = chatHistory.slice(startIndex);
 
       wx.nextTick(() => {
         this.setData(
           {
-            messageList: recentMessages,
+            messageList: initialMessages,
+            currentPage: 1,
+            totalPages: totalPages,
+            hasMoreData: totalPages > 1,
           },
           () => {
             this.scrollToBottom(false);
           },
         );
       });
-
-      // 异步更新存储
-      if (chatHistory.length > this.data.maxMessageCount) {
-        setTimeout(() => {
-          wx.setStorageSync("chatHistory", recentMessages);
-        }, 0);
-      }
     } catch (error) {
       console.error("加载历史记录失败:", error);
     }
@@ -129,7 +133,25 @@ Page({
 
   // 保存聊天记录
   saveChatHistory() {
-    wx.setStorageSync("chatHistory", this.data.messageList);
+    // 使用防抖优化存储频率
+    if (this._saveHistoryTimer) {
+      clearTimeout(this._saveHistoryTimer);
+    }
+
+    this._saveHistoryTimer = setTimeout(() => {
+      const messageList = this.data.messageList;
+      // 只存储必要的字段
+      const simplifiedList = messageList.map((msg) => ({
+        id: msg.id,
+        type: msg.type,
+        content: msg.content,
+        time: msg.time,
+        nickname: msg.nickname,
+        isCard: msg.isCard,
+        cardData: msg.cardData,
+      }));
+      wx.setStorageSync("chatHistory", simplifiedList);
+    }, 1000);
   },
 
   // 长按消息处理函数
@@ -394,21 +416,50 @@ Page({
   // 优化的消息添加方法
   addMessage(message) {
     return new Promise((resolve) => {
-      const messageList = [...this.data.messageList];
-      messageList.push(message);
+      // 使用数据路径方式更新
+      const index = this.data.messageList.length;
+      const updateData = {};
+      updateData[`messageList[${index}]`] = message;
 
-      wx.nextTick(() => {
-        this.setData({ messageList }, () => {
-          // 批量处理存储
-          if (!this._saveTimer) {
-            this._saveTimer = setTimeout(() => {
-              this.saveChatHistory();
-              this._saveTimer = null;
-            }, 1000);
-          }
-          resolve();
+      // 更新总页数和分页状态
+      const chatHistory = wx.getStorageSync("chatHistory") || [];
+      const totalMessages = chatHistory.length + 1; // 加1是因为要添加新消息
+      const totalPages = Math.ceil(totalMessages / this.data.pageSize);
+
+      updateData.totalPages = totalPages;
+      // 如果在第一页，直接更新消息列表
+      if (this.data.currentPage === 1) {
+        wx.nextTick(() => {
+          this.setData(updateData, () => {
+            // 使用节流进行存储
+            if (!this._saveTimer) {
+              this._saveTimer = setTimeout(() => {
+                this.saveChatHistory();
+                this._saveTimer = null;
+              }, 1000);
+            }
+            resolve();
+          });
         });
-      });
+      } else {
+        // 如果不在第一页，需要重新加载第一页
+        this.setData(
+          {
+            currentPage: 1,
+            messageList: [message],
+            hasMoreData: totalPages > 1,
+          },
+          () => {
+            if (!this._saveTimer) {
+              this._saveTimer = setTimeout(() => {
+                this.saveChatHistory();
+                this._saveTimer = null;
+              }, 1000);
+            }
+            resolve();
+          },
+        );
+      }
     });
   },
 
@@ -436,12 +487,10 @@ Page({
 
       // 使用缓存的索引直接更新消息
       if (this._lastAiMessageIndex !== undefined) {
-        const messageList = [...this.data.messageList];
-        const currentMessage = messageList[this._lastAiMessageIndex];
-
         // 使用本地变量累积内容，减少setData调用
         if (!this._accumulatedContent) {
-          this._accumulatedContent = currentMessage.content || "";
+          this._accumulatedContent =
+            this.data.messageList[this._lastAiMessageIndex].content || "";
         }
         this._accumulatedContent += content;
 
@@ -449,16 +498,30 @@ Page({
         if (!this._updateCounter) this._updateCounter = 0;
         this._updateCounter++;
 
-        // 每累积3次内容才更新一次界面
-        if (this._updateCounter >= 3) {
-          currentMessage.content = this._accumulatedContent;
-          currentMessage.isThinking = false;
-          messageList[this._lastAiMessageIndex] = currentMessage;
+        // 每累积2次内容就更新一次界面，使更新更及时
+        if (this._updateCounter >= 2) {
+          const updateData = {};
+          updateData[`messageList[${this._lastAiMessageIndex}].content`] =
+            this._accumulatedContent;
+          updateData[
+            `messageList[${this._lastAiMessageIndex}].isThinking`
+          ] = false;
 
-          this.setData({ messageList }, () => {
-            if (!this.data.showScrollBtn) {
-              this.handleScrollToBottom();
-            }
+          // 使用Promise确保状态更新完成
+          new Promise((resolve) => {
+            this.setData(updateData, () => {
+              // 只在非显示滚动按钮时执行滚动
+              if (!this.data.showScrollBtn && !this._isScrolling) {
+                this._isScrolling = true;
+                this.handleScrollToBottom();
+                setTimeout(() => {
+                  this._isScrolling = false;
+                  resolve();
+                }, 300);
+              } else {
+                resolve();
+              }
+            });
           });
 
           this._updateCounter = 0;
@@ -469,15 +532,26 @@ Page({
     if (done) {
       // 清理缓存
       if (this._accumulatedContent) {
-        const messageList = [...this.data.messageList];
-        const currentMessage = messageList[this._lastAiMessageIndex];
-        currentMessage.content = this._accumulatedContent;
-        currentMessage.isThinking = false;
-        currentMessage.isStreaming = false;
-        messageList[this._lastAiMessageIndex] = currentMessage;
+        const updateData = {};
+        updateData[`messageList[${this._lastAiMessageIndex}].content`] =
+          this._accumulatedContent;
+        updateData[
+          `messageList[${this._lastAiMessageIndex}].isThinking`
+        ] = false;
+        updateData[
+          `messageList[${this._lastAiMessageIndex}].isStreaming`
+        ] = false;
 
-        this.setData({ messageList }, () => {
-          this.saveChatHistory();
+        // 使用Promise确保状态更新完成
+        new Promise((resolve) => {
+          this.setData(updateData, () => {
+            this.saveChatHistory();
+            // 确保最后一次更新后正确滚动
+            if (!this.data.showScrollBtn) {
+              this.handleScrollToBottom();
+            }
+            resolve();
+          });
         });
       }
 
@@ -485,6 +559,7 @@ Page({
       this._lastAiMessageIndex = undefined;
       this._accumulatedContent = undefined;
       this._updateCounter = 0;
+      this._isScrolling = false;
     }
 
     return { content, done };
@@ -754,21 +829,24 @@ Page({
 
             const scrollHeight = listRect.height + 1000;
 
-            // 使用nextTick确保在下一帧更新
-            wx.nextTick(() => {
-              this.setData({
-                isAutoScrolling: true,
-                scrollTop: scrollHeight,
-                showScrollBtn: false,
-              });
-
-              if (!useAnimation) {
-                this.setData({ isAutoScrolling: false });
-              } else {
-                setTimeout(() => {
-                  this.setData({ isAutoScrolling: false });
-                }, 300);
-              }
+            // 使用Promise确保状态更新完成
+            new Promise((resolve) => {
+              this.setData(
+                {
+                  isAutoScrolling: true,
+                  scrollTop: scrollHeight,
+                  showScrollBtn: false,
+                },
+                () => {
+                  if (!useAnimation) {
+                    this.setData({ isAutoScrolling: false }, resolve);
+                  } else {
+                    setTimeout(() => {
+                      this.setData({ isAutoScrolling: false }, resolve);
+                    }, 300);
+                  }
+                },
+              );
             });
           })
           .exec();
@@ -833,7 +911,7 @@ Page({
     this.setData({ isAiResponding: false });
   },
 
-  // 优化的文书处理方法
+  // 修改模板消息处理方法
   async handleLawsuitResponse(userInput) {
     const userMessage = {
       id: Date.now().toString(),
@@ -844,7 +922,6 @@ Page({
     };
 
     await this.addMessage(userMessage);
-    this.scrollToBottom();
 
     const cardMessage = {
       id: Date.now().toString(),
@@ -860,8 +937,20 @@ Page({
     };
 
     await this.addMessage(cardMessage);
-    this.scrollToBottom(true);
-    this.setData({ isAiResponding: false });
+
+    // 使用Promise确保状态更新和滚动的正确顺序
+    await new Promise((resolve) => {
+      wx.nextTick(() => {
+        this.scrollToBottom(true);
+        this.setData(
+          {
+            isAiResponding: false,
+            isAutoScrolling: false,
+          },
+          resolve,
+        );
+      });
+    });
   },
 
   // 处理起诉状类型选择
@@ -880,30 +969,42 @@ Page({
 
   // 优化的历史记录加载
   loadMoreHistory() {
-    if (this.data.isLoading) return;
+    if (this.data.isLoading || !this.data.hasMoreData) return;
 
     this.setData({ isLoading: true });
 
-    const chatHistory = wx.getStorageSync("chatHistory") || [];
-    const currentCount = this.data.messageList.length;
-    const startIndex = Math.max(
-      0,
-      chatHistory.length - currentCount - this.data.pageSize,
-    );
-    const moreMessages = chatHistory.slice(
-      startIndex,
-      chatHistory.length - currentCount,
-    );
+    try {
+      const chatHistory = wx.getStorageSync("chatHistory") || [];
+      const totalMessages = chatHistory.length;
+      const nextPage = this.data.currentPage + 1;
 
-    if (moreMessages.length > 0) {
-      wx.nextTick(() => {
-        this.setData({
-          messageList: [...moreMessages, ...this.data.messageList],
-          isLoading: false,
+      // 计算下一页的起始和结束索引
+      const endIndex =
+        totalMessages - this.data.currentPage * this.data.pageSize;
+      const startIndex = Math.max(0, endIndex - this.data.pageSize);
+
+      if (startIndex >= 0) {
+        const moreMessages = chatHistory.slice(startIndex, endIndex);
+
+        wx.nextTick(() => {
+          this.setData({
+            messageList: [...moreMessages, ...this.data.messageList],
+            currentPage: nextPage,
+            isLoading: false,
+            hasMoreData: startIndex > 0,
+          });
         });
+      } else {
+        this.setData({
+          isLoading: false,
+          hasMoreData: false,
+        });
+      }
+    } catch (error) {
+      console.error("加载更多历史记录失败:", error);
+      this.setData({
+        isLoading: false,
       });
-    } else {
-      this.setData({ isLoading: false });
     }
   },
 });

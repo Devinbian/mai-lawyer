@@ -5,9 +5,9 @@ Page({
    * 页面的初始数据
    */
   data: {
-    isLogin: false,
     userInfo: null,
     imgUrls: null,
+    isLogin: false,
   },
 
   /**
@@ -15,7 +15,14 @@ Page({
    */
   onLoad(options) {
     this.setImagesByPixelRatio();
-    this.getUserInfo();
+
+    const userInfo = wx.getStorageSync("userInfo");
+    if (!!userInfo) {
+      this.setData({
+        userInfo,
+        isLogin: true,
+      });
+    }
   },
 
   // 根据设备像素比选择图片
@@ -25,31 +32,27 @@ Page({
     });
   },
 
-  getUserInfo() {
-    const app = getApp();
-    const userInfo = app.globalData.userInfo || wx.getStorageSync("userInfo");
-    const isLogin = !!userInfo;
-    this.setData({
-      userInfo: userInfo || {},
-      isLogin,
-    });
-  },
-
   // 点击登录/注册
   handleLogin() {
-    // if (!this.data.isLogin) {
-    //   wx.navigateTo({
-    //     url: "/pages/login/login",
-    //   });
-    // }
+    if (!!this.data.userInfo) {
+      wx.navigateTo({
+        url: "/pages/login/login",
+      });
+    } else {
+      wx.navigateTo({
+        url: "./account/account",
+      });
+    }
   },
 
   // 处理订单状态点击
   handleOrderStatusTap(e) {
-    // if (!this.data.isLogin) {
-    //   this.handleLogin();
-    //   return;
-    // }
+    if (!!this.data.userInfo) {
+      wx.navigateTo({
+        url: "/pages/login/login",
+      });
+      return;
+    }
     const status = e.currentTarget.dataset.status;
     wx.navigateTo({
       url: `/pages/profile/order/order?status=${status}`,
@@ -60,12 +63,12 @@ Page({
   handleContentTap(e) {
     const { type } = e.currentTarget.dataset;
 
-    // if (!this.data.isLogin) {
-    //   wx.navigateTo({
-    //     url: "/pages/login/login",
-    //   });
-    //   return;
-    // }
+    if (!!this.data.userInfo) {
+      wx.navigateTo({
+        url: "/pages/login/login",
+      });
+      return;
+    }
 
     switch (type) {
       case "favorite":
@@ -145,12 +148,10 @@ Page({
         if (res.confirm) {
           // 清除登录信息
           wx.removeStorageSync("userInfo");
-          wx.removeStorageSync("token");
-
           // 更新页面状态
           this.setData({
+            userInfo: null,
             isLogin: false,
-            userInfo: {},
           });
 
           wx.showToast({
@@ -170,16 +171,7 @@ Page({
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {
-    // 每次显示页面时检查登录状态
-    const userInfo = wx.getStorageSync("userInfo");
-    const token = wx.getStorageSync("token");
-
-    this.setData({
-      isLogin: !!token,
-      userInfo: userInfo || {},
-    });
-  },
+  onShow() {},
 
   /**
    * 生命周期函数--监听页面隐藏
