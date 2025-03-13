@@ -68,11 +68,6 @@
       }
     ]
   },
-  "permission": {
-    "scope.userInfo": {
-      "desc": "您的昵称、头像等信息将用于登录和社交分享"
-    }
-  },
   "sitemapLocation": "sitemap.json",
   "useExtendedLib": {
     "weui": true
