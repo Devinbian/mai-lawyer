@@ -40,7 +40,7 @@
             <view wx:else>未读</view>
           </view>
           <view wx:if="{{item.flow === 'out' && item.status === 'fail'}}" class="t-message-error-box">   
-            <image class="t-message-error" src='../../../../static/images/tuikit-msg-error.png' data-value="{{item.ID}}" bindtap="ResendMessage" />
+            <image class="t-message-error" src='http://218.78.129.237:9000/mxl/images/tuikit-msg-error.png' data-value="{{item.ID}}" bindtap="ResendMessage" />
           </view>
           <view  class="{{item.flow === 'out' ? 't-self-message-body':'t-recieve-message-body'}}"  catch:longpress="handleLongPress" data-index='{{index}}'  data-value='{{item}}' id="{{concat.concat(conversation.type,'ID-',item.ID)}}" message-value="{{item}}" >
             <TextMessage wx:if="{{item.type === 'TIMTextElem'}}" message="{{item}}" isMine="{{item.flow === 'out'}}" />

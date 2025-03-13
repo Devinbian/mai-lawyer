@@ -1,5 +1,5 @@
 <view class="container">
-  <image class="bg-image" src="/static/images/login/bg@2x.png" mode="aspectFill" />
+  <image class="bg-image" src="http://218.78.129.237:9000/mxl/images/login/bg@2x.png" mode="aspectFill" />
   <login-nav title="登录"></login-nav>
   <view class="content">
     <view class="login-form">

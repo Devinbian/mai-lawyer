@@ -3,7 +3,7 @@
   <view class="nav-bar" style="height: {{navBarHeight}}px">
     <view class="capsule-btn">
       <view class="capsule-item" bindtap="handleBack">
-        <image class="icon-back" src="/static/images/profile/arrow-right@2x.png" mode="aspectFit"></image>
+        <image class="icon-back" src="http://218.78.129.237:9000/mxl/images/profile/arrow-right@2x.png" mode="aspectFit"></image>
       </view>
     </view>
     <view class="nav-title">
