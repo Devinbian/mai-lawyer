@@ -21,6 +21,7 @@ Page({
         userInfo,
         isLogin: true,
       });
+      console.log("this.data.userInfo", this.data.userInfo);
     }
   },
 
@@ -46,7 +47,7 @@ Page({
 
   // 处理订单状态点击
   handleOrderStatusTap(e) {
-    if (!!this.data.userInfo) {
+    if (!this.data.userInfo) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -61,8 +62,8 @@ Page({
   // 点击内容项
   handleContentTap(e) {
     const { type } = e.currentTarget.dataset;
-
-    if (!!this.data.userInfo) {
+    console.log("!!this.data.userInfo", !!this.data.userInfo);
+    if (!this.data.userInfo) {
       wx.navigateTo({
         url: "/pages/login/login",
       });

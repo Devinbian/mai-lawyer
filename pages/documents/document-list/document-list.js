@@ -104,27 +104,6 @@ Page({
     const document = this.data.list.find((doc) => doc.id === id);
     document.type = this.data.docType;
     if (document) {
-      // console.log("documentInfo", document);
-      // wx.downloadFile({
-      //   url: document.url,
-      //   success: (res) => {
-      //     const filePath = res.tempFilePath;
-      //     console.log("document.ext", document.ext);
-      //     wx.openDocument({
-      //       filePath: filePath,
-      //       fileType: document.ext,
-      //       success: () => {
-      //         console.log("打开文档成功");
-      //       },
-      //       fail: (err) => {
-      //         console.log("打开文档失败", err);
-      //       },
-      //     });
-      //   },
-      // });
-
-      // return;
-
       wx.navigateTo({
         url: `/pages/documents/document-get/document-get?id=${id}&document=${encodeURIComponent(
           JSON.stringify(document),

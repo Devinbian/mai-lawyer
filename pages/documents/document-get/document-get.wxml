@@ -51,7 +51,7 @@
         <text class="price-label">总计：</text>
         <text class="price">¥{{totalPrice}}</text>
       </view>
-      <view class="pay-btn" bindtap="onPayTap">确认支付</view>
+      <view class="pay-btn" bindtap="onPayTap">{{totalPrice>0?'确认支付':'立即下载'}}</view>
     </view>
   </view>
 </view>

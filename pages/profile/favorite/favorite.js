@@ -12,7 +12,7 @@ Page({
     hasMore: true,
     isLoading: false,
     isInitialLoading: true,
-    isRefreshing: false
+    isRefreshing: false,
   },
 
   onLoad() {
@@ -30,8 +30,8 @@ Page({
   loadData(isLoadMore = false) {
     return new Promise((resolve) => {
       const startTime = Date.now();
-      const collectedDocs = wx.getStorageSync('collectedDocuments') || [];
-      
+      const collectedDocs = wx.getStorageSync("collectedDocuments") || [];
+
       // 按收藏时间倒序排序
       collectedDocs.sort((a, b) => b.collectTime - a.collectTime);
 
@@ -50,12 +50,12 @@ Page({
         date: util.formatTime(new Date(doc.collectTime)),
         timestamp: doc.collectTime,
         type: doc.type,
-        docType: doc.docType
+        docType: doc.docType,
       }));
 
-      this.setData({ 
+      this.setData({
         pageNum: currentPageNum,
-        isInitialLoading: false
+        isInitialLoading: false,
       });
 
       const totalCount = collectedDocs.length;
@@ -74,13 +74,7 @@ Page({
   // 点击文档
   handleItemClick(e) {
     const { id } = e.currentTarget.dataset;
-    const collectedDocs = wx.getStorageSync('collectedDocuments') || [];
-    const doc = collectedDocs.find(d => d.id === id);
-    
-    if (doc) {
-      wx.navigateTo({
-        url: `/pages/documents/document-read/document-read?id=${id}&document=${encodeURIComponent(JSON.stringify(doc))}`,
-      });
-    }
-  }
+    const collectedDocs = wx.getStorageSync("collectedDocuments") || [];
+    const doc = collectedDocs.find((d) => d.id === id);
+  },
 });
