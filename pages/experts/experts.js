@@ -94,6 +94,13 @@ Page({
 
   // 跳转到专家详情页
   navigateToDetail(e) {
+    if (!this.data.userInfo) {
+      wx.navigateTo({
+        url: "/pages/login/login",
+      });
+      return;
+    }
+
     const expert = e.currentTarget.dataset.expert;
     // 将专家信息转换为查询字符串
     const expertInfo = encodeURIComponent(JSON.stringify(expert));
@@ -159,7 +166,9 @@ Page({
       const title = this.data.title || "在线咨询";
 
       wx.navigateTo({
-        url: `../../tim-chat/pages/index?conversationID=C2C${expert.phone}&source=experts-live-chat&title=${encodeURIComponent(title)}`,
+        url: `../../tim-chat/pages/index?conversationID=C2C${
+          expert.phone
+        }&source=experts-live-chat&title=${encodeURIComponent(title)}`,
         fail(err) {
           wx.showToast({
             title: "打开聊天失败",
