@@ -5,7 +5,6 @@
     "pages/documents/documents",
     "pages/profile/profile",
     "pages/documents/document-list/document-list",
-    "pages/documents/document-read/document-read",
     "pages/documents/document-get/document-get",
     "pages/experts/expert-detail/expert-detail",
     "pages/login/login",

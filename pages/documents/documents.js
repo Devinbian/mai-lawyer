@@ -135,9 +135,17 @@ Page({
   handleDocTap(e) {
     const docId = e.currentTarget.dataset.id;
     const doc = this.data.documents.find((item) => item.id === docId);
+    const docType = [
+      "合同协议",
+      "起诉状",
+      "答辩状",
+      "法律意见",
+      "申请文书",
+      "通用文书",
+    ].indexOf(doc.name);
     if (doc) {
       wx.navigateTo({
-        url: `/pages/documents/document-list/document-list?docType=${doc.name}`,
+        url: `/pages/documents/document-list/document-list?docType=${docType}`,
         fail(err) {
           wx.showToast({
             title: "打开失败",

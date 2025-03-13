@@ -51,7 +51,7 @@
 .document-list {
   width: 100%;
   box-sizing: border-box;
-  padding: 100rpx 20rpx 0;
+  padding: 84rpx 20rpx 0;
   background: transparent;
 }
 

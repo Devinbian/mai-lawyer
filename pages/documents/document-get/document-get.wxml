@@ -7,11 +7,11 @@
       <view class="section-title">
         <text>文档信息</text>
       </view>
-      <view class="doc-info">
+      <view class="doc-info" bindtap="onDocInfoTap">
         <image class="doc-bg" src="{{imgUrls.titleBg}}" mode="aspectFill"></image>
         <view class="doc-content">
           <image class="doc-type-icon" 
-            src="{{imgUrls[document.type]}}"
+            src="{{imgUrls[document.extImage]}}"
             mode="aspectFit"
           ></image>
           <view class="doc-title">{{document.title}}</view>
@@ -39,10 +39,19 @@
 
   <!-- 底部结算栏 -->
   <view class="bottom-bar">
-    <view class="price-section">
-      <text class="price-label">总计：</text>
-      <text class="price">¥{{totalPrice}}</text>
+    <view class="collect-btn" bindtap="toggleCollect">
+      <image class="collect-icon" 
+        src="{{isCollected ? imgUrls.collectActive : imgUrls.collect}}" 
+        mode="aspectFit"
+      ></image>
+      <text>{{isCollected ? '已收藏' : '收藏'}}</text>
     </view>
-    <view class="pay-btn" bindtap="onPayTap">确认支付</view>
+    <view class="pay-section">
+      <view class="price-section">
+        <text class="price-label">总计：</text>
+        <text class="price">¥{{totalPrice}}</text>
+      </view>
+      <view class="pay-btn" bindtap="onPayTap">确认支付</view>
+    </view>
   </view>
 </view>

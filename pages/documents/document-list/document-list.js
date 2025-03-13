@@ -102,6 +102,7 @@ Page({
   onDocumentTap(e) {
     const { id } = e.currentTarget.dataset;
     const document = this.data.list.find((doc) => doc.id === id);
+    document.type = this.data.docType;
     if (document) {
       // console.log("documentInfo", document);
       // wx.downloadFile({
@@ -125,7 +126,7 @@ Page({
       // return;
 
       wx.navigateTo({
-        url: `/pages/documents/document-read/document-read?id=${id}&document=${encodeURIComponent(
+        url: `/pages/documents/document-get/document-get?id=${id}&document=${encodeURIComponent(
           JSON.stringify(document),
         )}`,
         fail(err) {
@@ -142,7 +143,12 @@ Page({
   async loadData(isLoadMore = false) {
     try {
       const { pageNum, pageSize, docType } = this.data;
-      const doclistObj = await this.getDocuments(pageNum, pageSize, docType);
+      const doclistObj = await this.getDocuments(
+        pageNum,
+        pageSize,
+        docType,
+        this.data.searchKeyword,
+      );
 
       const list = doclistObj.listArray;
       const totalRows = doclistObj.totalRows;
@@ -171,7 +177,7 @@ Page({
     }
   },
 
-  getDocuments(pageNum, pageSize, docType) {
+  getDocuments(pageNum, pageSize, docType, docTitle) {
     return new Promise((resolve, reject) => {
       wx.request({
         url: config.baseURL + "/api/document/list",
@@ -179,7 +185,8 @@ Page({
         data: {
           pageNo: pageNum,
           pageSize: pageSize,
-          title: docType,
+          title: docTitle,
+          type: docType,
         },
         dataType: "json",
         success: (res) => {

@@ -134,22 +134,49 @@
 /* 底部结算栏 */
 .bottom-bar {
   position: fixed;
-  bottom: 40rpx;
   left: 0;
   right: 0;
-  height: 100rpx;
+  bottom: 0;
+  min-height: 100rpx;
   background: #FFFFFF;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.05);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30rpx;
-  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
+  padding: 20rpx 30rpx calc(20rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  z-index: 100;
+}
+
+.collect-btn {
+  display: flex;
+  align-items: center;
+  padding: 0 20rpx;
+}
+
+.collect-icon {
+  width: 44rpx;
+  height: 44rpx;
+  margin-right: 12rpx;
+}
+
+.collect-btn text {
+  font-size: 28rpx;
+  color: #666666;
+}
+
+.pay-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: 30rpx;
 }
 
 .price-section {
   display: flex;
-  align-items: baseline;
-  gap: 8rpx;
+  align-items: center;
+  margin-right: 30rpx;
 }
 
 .price-label {
@@ -158,15 +185,20 @@
 }
 
 .price {
-  font-size: 48rpx;
-  color: #333333;
-  font-weight: bolder;
+  font-size: 36rpx;
+  color: #3B7CFF;
+  font-weight: bold;
 }
 
 .pay-btn {
-  background: #3B7CFF;
-  color: #FFFFFF;
-  font-size: 32rpx;
-  padding: 16rpx 60rpx;
+  min-height: 72rpx;
+  padding: 0 40rpx;
+  background: linear-gradient(135deg, #4768F3 0%, #4768F3 100%);
   border-radius: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: 500;
 }

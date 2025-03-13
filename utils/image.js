@@ -107,12 +107,6 @@ function getCommonImages(types) {
       excel: getImageByPixelRatio(`${baseImagePath}/documents/excel`),
       ring: getImageByPixelRatio(`${baseImagePath}/profile/ring`),
     },
-    documentRead: {
-      collectActive: getImageByPixelRatio(
-        `${baseImagePath}/documents/collectActive`,
-      ),
-      collect: getImageByPixelRatio(`${baseImagePath}/documents/collect`),
-    },
     default: {
       logo: getImageByPixelRatio(`${baseImagePath}/login/logo`),
       offline: getImageByPixelRatio(`${baseImagePath}/offline`),
@@ -122,6 +116,10 @@ function getCommonImages(types) {
       empty: getImageByPixelRatio(`${baseImagePath}/nodata`),
       case: getImageByPixelRatio(`${baseImagePath}/experts/case`),
       document: getImageByPixelRatio(`${baseImagePath}/experts/document`),
+      collectActive: getImageByPixelRatio(
+        `${baseImagePath}/documents/collectActive`,
+      ),
+      collect: getImageByPixelRatio(`${baseImagePath}/documents/collect`),
     },
   };
 
