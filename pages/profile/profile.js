@@ -94,17 +94,6 @@ Page({
   handleFunctionTap(e) {
     const type = e.currentTarget.dataset.type;
     switch (type) {
-      case "service":
-        wx.navigateTo({
-          url: "../../tim-chat/pages/index?conversationID=C2Cservice&source=profile-live-chat",
-          fail(err) {
-            wx.showToast({
-              title: "打开聊天失败",
-              icon: "none",
-            });
-          },
-        });
-        break;
       case "help":
         wx.navigateTo({
           url: "/pages/profile/feedback/feedback",
