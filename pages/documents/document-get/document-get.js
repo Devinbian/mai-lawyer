@@ -1,5 +1,6 @@
 const imageUtil = require("../../../utils/image.js");
 const util = require("../../../utils/util.js");
+const config = require("../../../utils/config.js");
 
 Page({
   data: {
@@ -10,6 +11,7 @@ Page({
     imgUrls: null,
     downloadProgress: 0, // 添加下载进度状态
     isCollected: false,
+    userInfo: null,
   },
 
   onLoad(options) {
@@ -35,6 +37,7 @@ Page({
         this.setData({
           document,
           totalPrice: document.price || 0,
+          userInfo: wx.getStorageSync("userInfo"),
         });
       } catch (error) {
         console.error("解析文档数据失败:", error);
@@ -45,6 +48,42 @@ Page({
       }
     }
     this.setImagesByPixelRatio();
+  },
+
+  onHide() {
+    //在页面隐藏的时候去更新收藏状态
+    const { isCollected, document, userInfo } = this.data;
+    if (isCollected) {
+      wx.request({
+        url: `${config.baseURL}/api/document/collect`,
+        method: "GET",
+        data: {
+          id: document.id,
+          token: this.data.userInfo.token,
+        },
+        success: (res) => {
+          console.log("收藏成功", res);
+        },
+        fail: (err) => {
+          console.log("收藏失败", err);
+        },
+      });
+    } else {
+      wx.request({
+        url: `${config.baseURL}/api/document/uncollect`,
+        method: "GET",
+        data: {
+          id: document.id,
+          token: userInfo.token,
+        },
+        success: (res) => {
+          console.log("取消收藏成功", res);
+        },
+        fail: (err) => {
+          console.log("取消收藏失败", err);
+        },
+      });
+    }
   },
 
   setImagesByPixelRatio() {
@@ -121,6 +160,22 @@ Page({
         title: "准备下载...",
         mask: true,
         duration: 200,
+      });
+
+      // 添加下载记录
+      wx.request({
+        url: `${config.baseURL}/api/document-download-history/add`,
+        method: "GET",
+        data: {
+          id: document.id,
+          token: this.data.userInfo.token,
+        },
+        success: (res) => {
+          console.log("添加下载记录成功", res);
+        },
+        fail: (err) => {
+          console.log("添加下载记录失败", err);
+        },
       });
 
       // 获取或初始化下载中的文件列表
@@ -257,12 +312,7 @@ Page({
 
   // 切换收藏状态
   toggleCollect() {
-    const { document, isCollected } = this.data;
-    if (!document) return;
-
-    if (isCollected) {
-    } else {
-    }
+    const { isCollected } = this.data;
 
     // 保存收藏状态
     this.setData({ isCollected: !isCollected });

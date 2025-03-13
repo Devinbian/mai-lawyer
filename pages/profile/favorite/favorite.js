@@ -76,11 +76,5 @@ Page({
     const { id } = e.currentTarget.dataset;
     const collectedDocs = wx.getStorageSync("collectedDocuments") || [];
     const doc = collectedDocs.find((d) => d.id === id);
-
-    if (doc) {
-      wx.navigateTo({
-        url: `/pages/documents/document-read/document-read?id=${id}&document=${encodeURIComponent(JSON.stringify(doc))}`,
-      });
-    }
   },
 });
