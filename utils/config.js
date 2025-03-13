@@ -13,6 +13,26 @@ module.exports = {
   // 分页配置
   pageSize: 10,
 
+  //法律文书类型
+  docType: [
+    "contract",
+    "complaint",
+    "defense",
+    "legal_opinion",
+    "application",
+    "general",
+  ],
+
+  //支持的文件后缀
+  fileExt: {
+    doc: "word",
+    docx: "word",
+    pdf: "pdf",
+    xls: "excel",
+    xlsx: "excel",
+    ppt: "ppt",
+    pptx: "ppt",
+  },
   // 文件上传配置
   upload: {
     maxSize: 5 * 1024 * 1024, // 5MB
@@ -21,7 +41,8 @@ module.exports = {
   appId: "wx1a652f95e596a237",
   IM: {
     userID: "laywer3", // User ID
-    SECRETKEY: "ba92e763ab7975718da625afa6f60465dee472f0e4524f2028f83e161e5e1f8b", // Your secretKey
+    SECRETKEY:
+      "ba92e763ab7975718da625afa6f60465dee472f0e4524f2028f83e161e5e1f8b", // Your secretKey
     SDKAPPID: 1600075596, // Your SDKAppID
     EXPIRETIME: 604800,
   },

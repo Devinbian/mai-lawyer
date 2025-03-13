@@ -12,14 +12,7 @@ Page({
     downloadProgress: 0, // 添加下载进度状态
     isCollected: false,
     userInfo: null,
-    docType: [
-      "contract",
-      "complaint",
-      "defense",
-      "legal_opinion",
-      "application",
-      "general",
-    ],
+    docType: config.docType, //法律文书类型
   },
 
   onLoad(options) {
@@ -27,20 +20,7 @@ Page({
       try {
         const document = JSON.parse(decodeURIComponent(options.document));
         // 确保document.type有值，默认为word
-        document.ext = document.ext;
-        switch (document.ext) {
-          case "doc":
-          case "docx":
-            document.extImage = "word";
-            break;
-          case "xls":
-          case "xlsx":
-            document.extImage = "excel";
-            break;
-          case "pdf":
-            document.extImage = "pdf";
-            break;
-        }
+        document.ext = config.fileExt[document.ext];
 
         this.setData({
           document,

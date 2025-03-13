@@ -39,9 +39,6 @@ Page({
 
   // 切换主分类（已下载/下载中）
   switchMainTab(e) {
-    // 重置下载记录,临时使用
-    // this.resetDownloadHistory();
-
     const status = e.currentTarget.dataset.status;
     if (status === this.data.downloadStatus) return;
 
@@ -54,24 +51,6 @@ Page({
         this.initList();
       },
     );
-  },
-
-  resetDownloadHistory() {
-    wx.showModal({
-      title: "确认重置",
-      content: "这将清除所有下载记录，但不会删除实际文件。确定继续吗？",
-      success: (res) => {
-        if (res.confirm) {
-          wx.setStorageSync("savedFilesMap", {});
-          wx.showToast({
-            title: "记录已重置",
-            icon: "success",
-          });
-          // 重新加载数据
-          this.loadData();
-        }
-      },
-    });
   },
 
   // 切换二级分类
