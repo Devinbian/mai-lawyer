@@ -24,7 +24,6 @@
         id="TUIKit"
         userID="{{config.userID}}"
         conversationID="{{conversationID}}"
-        customStateObj="{{customStateObj}}"
       ></TUIKit>
     </block>
   </view>

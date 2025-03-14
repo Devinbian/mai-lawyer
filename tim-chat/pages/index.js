@@ -2,7 +2,7 @@
 import TencentCloudChat from "@tencentcloud/chat";
 import TIMUploadPlugin from "tim-upload-plugin";
 import { genTestUserSig } from "../../debug/GenerateTestUserSig";
-
+const config = require("../../utils/config.js");
 const app = getApp();
 
 Page({
@@ -10,69 +10,42 @@ Page({
    * 页面的初始数据
    */
   data: {
+    userInfo: null,
     config: {
-      SDKAppID: 0, // 将在onLoad中设置真实值
+      SDKAPPID: 1600076169, // 将在onLoad中设置真实值
+      SECRETKEY: "3aebef5623822d13d3124b10687cbf1c46cc4928583af930bb74270160b76cc4",
       userID: "",
-      userSig: "",
-      targetUserID: "",
+      EXPIRETIME: 604800,
     },
+    targetUserID: "", // 目标用户ID
+    conversationID: "", // 会话ID
     title: "在线咨询", // 默认标题
     isSDKReady: false, // SDK是否就绪
     isLoggedIn: false, // 是否已登录
-    conversationID: "", // 会话ID
-    customStateObj: {
-      conversationType: "C2C",
-      isReady: false, // TUIKit组件是否准备好
-      initializing: true, // 是否正在初始化
-      userInfo: {}, // 用户信息
-    },
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
-    console.log("页面加载开始，参数:", options);
-
+    // 获取用户信息
+    this.setData({
+      userInfo: wx.getStorageSync("userInfo"),
+    });
     // 根据options设置标题
     if (options.title) {
       // 解码接收到的标题参数
       const decodedTitle = decodeURIComponent(options.title);
       this.setData({ title: decodedTitle });
-      console.log("解码后的标题:", decodedTitle);
-    } else if (options.source) {
-      // 根据source设置标题
-      let title = "在线咨询"; // 默认标题
-      if (options.source === "profile-live-chat") {
-        title = "人工客服";
-      } else if (options.source === "experts-live-chat") {
-        title = "在线咨询";
-      }
-      this.setData({ title: title });
     }
-
-    console.log("页面标题设置为:", this.data.title);
-
+    this.setData({
+      targetUserID: options.targetUserID,
+    });
+    //个人账号导入im系统
+    await this.accountImport();
     // 初始化配置信息
     this.setData({
-      config: {
-        SDKAppID: 1600075596,
-        userID: "laywer1", // 当前登录用户（咨询方）
-        userSig:
-          "eJwtzFELgjAYheH-suuQbfnpEroqLELByCi8G23FRynDxKnRf2*pl*d54XxInpy8VtckItyjZDFuVLpq8I4jv2Rvdc3m9FZPaQwqErGAUhoCrIKp6M5grZ0DAHdp0gbLv4U*41wI5s8v*HDPg03NIUuO2dBIVcSdALOEaz7s7bba3Haq521R4pnHl3RNvj*3zjK6",
-        targetUserID: "laywer2", // 目标用户（专家）
-      },
-    });
-
-    console.log("配置信息初始化完成:", this.data.config);
-
-    // 初始化自定义状态对象
-    this.setData({
-      "customStateObj.userInfo": {
-        userID: this.data.config.userID,
-        nick: "咨询顾问",
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-      },
+      "config.userID": this.data.userInfo.phone,
     });
 
     // 初始化SDK并登录
@@ -87,6 +60,20 @@ Page({
     }
   },
 
+  accountImport() {
+    return new Promise((resolve, reject) => {
+      wx.request({
+        url: config.baseURL + "/api/im/accountImport?token" + this.data.userInfo.token,
+        success: (res) => {
+          resolve(res);
+        },
+        fail: (err) => {
+          reject(err);
+        },
+      });
+    });
+  },
+
   /**
    * 初始化SDK并登录
    */
@@ -97,7 +84,7 @@ Page({
 
         // SDK未初始化，创建SDK实例
         const options = {
-          SDKAppID: this.data.config.SDKAppID,
+          SDKAppID: this.data.config.SDKAPPID,
           logLevel: 0, // 日志级别，0为一般，1为详细
           timeout: 120, // 请求超时时间，单位：秒
           oversea: false, // 是否为境外服务，一般为false
@@ -140,7 +127,7 @@ Page({
       // 使用userSig登录
       await wx.$TUIKit.login({
         userID: this.data.config.userID,
-        userSig: this.data.config.userSig,
+        userSig: genTestUserSig(this.data.config).userSig,
       });
 
       console.log("登录成功");
@@ -239,18 +226,9 @@ Page({
 
     // 尝试先清除可能存在的事件监听器
     try {
-      wx.$TUIKit.off(
-        TencentCloudChat.EVENT.SDK_READY,
-        this.eventHandlers.onSDKReady,
-      );
-      wx.$TUIKit.off(
-        TencentCloudChat.EVENT.SDK_NOT_READY,
-        this.eventHandlers.onSDKNotReady,
-      );
-      wx.$TUIKit.off(
-        TencentCloudChat.EVENT.KICKED_OUT,
-        this.eventHandlers.onKickedOut,
-      );
+      wx.$TUIKit.off(TencentCloudChat.EVENT.SDK_READY, this.eventHandlers.onSDKReady);
+      wx.$TUIKit.off(TencentCloudChat.EVENT.SDK_NOT_READY, this.eventHandlers.onSDKNotReady);
+      wx.$TUIKit.off(TencentCloudChat.EVENT.KICKED_OUT, this.eventHandlers.onKickedOut);
       wx.$TUIKit.off(TencentCloudChat.EVENT.ERROR, this.eventHandlers.onError);
       console.log("已清除现有事件监听器");
     } catch (error) {
@@ -258,18 +236,9 @@ Page({
     }
 
     // 重新注册事件监听器
-    wx.$TUIKit.on(
-      TencentCloudChat.EVENT.SDK_READY,
-      this.eventHandlers.onSDKReady,
-    );
-    wx.$TUIKit.on(
-      TencentCloudChat.EVENT.SDK_NOT_READY,
-      this.eventHandlers.onSDKNotReady,
-    );
-    wx.$TUIKit.on(
-      TencentCloudChat.EVENT.KICKED_OUT,
-      this.eventHandlers.onKickedOut,
-    );
+    wx.$TUIKit.on(TencentCloudChat.EVENT.SDK_READY, this.eventHandlers.onSDKReady);
+    wx.$TUIKit.on(TencentCloudChat.EVENT.SDK_NOT_READY, this.eventHandlers.onSDKNotReady);
+    wx.$TUIKit.on(TencentCloudChat.EVENT.KICKED_OUT, this.eventHandlers.onKickedOut);
     wx.$TUIKit.on(TencentCloudChat.EVENT.ERROR, this.eventHandlers.onError);
 
     console.log("SDK事件注册完成");
@@ -325,8 +294,8 @@ Page({
     }
 
     try {
-      console.log("开始创建与用户", this.data.config.targetUserID, "的会话");
-      const conversationID = `C2C${this.data.config.targetUserID}`;
+      console.log("开始创建与用户", this.data.targetUserID, "的会话");
+      const conversationID = `C2C${this.data.targetUserID}`;
 
       console.log("尝试获取会话资料:", conversationID);
       // 获取会话实例
@@ -348,7 +317,7 @@ Page({
 
       // 更新用户资料
       await wx.$TUIKit.updateMyProfile({
-        avatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
+        avatar: this.data.userInfo.avatar,
       });
 
       // 初始化 TUIKit 组件
@@ -369,11 +338,11 @@ Page({
   async createNewConversation() {
     try {
       console.log("开始创建新会话...");
-      const conversationID = `C2C${this.data.config.targetUserID}`;
+      const conversationID = `C2C${this.data.targetUserID}`;
 
       // 发送一条消息以创建会话
       const message = wx.$TUIKit.createTextMessage({
-        to: this.data.config.targetUserID,
+        to: this.data.targetUserID,
         conversationType: "C2C",
         payload: {
           text: "您好，我想咨询一些问题",
@@ -427,22 +396,10 @@ Page({
     if (wx.$TUIKit && this.eventHandlers) {
       try {
         console.log("移除事件监听器");
-        wx.$TUIKit.off(
-          TencentCloudChat.EVENT.SDK_READY,
-          this.eventHandlers.onSDKReady,
-        );
-        wx.$TUIKit.off(
-          TencentCloudChat.EVENT.SDK_NOT_READY,
-          this.eventHandlers.onSDKNotReady,
-        );
-        wx.$TUIKit.off(
-          TencentCloudChat.EVENT.KICKED_OUT,
-          this.eventHandlers.onKickedOut,
-        );
-        wx.$TUIKit.off(
-          TencentCloudChat.EVENT.ERROR,
-          this.eventHandlers.onError,
-        );
+        wx.$TUIKit.off(TencentCloudChat.EVENT.SDK_READY, this.eventHandlers.onSDKReady);
+        wx.$TUIKit.off(TencentCloudChat.EVENT.SDK_NOT_READY, this.eventHandlers.onSDKNotReady);
+        wx.$TUIKit.off(TencentCloudChat.EVENT.KICKED_OUT, this.eventHandlers.onKickedOut);
+        wx.$TUIKit.off(TencentCloudChat.EVENT.ERROR, this.eventHandlers.onError);
         console.log("事件监听器移除完成");
       } catch (error) {
         console.warn("移除事件监听器失败:", error);

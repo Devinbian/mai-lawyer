@@ -82,7 +82,6 @@ Page({
         break;
       case "history":
         wx.navigateTo({
-          // url: "/pages/profile/history/history",
           url: "../../tim-conversation/pages/index",
         });
         break;

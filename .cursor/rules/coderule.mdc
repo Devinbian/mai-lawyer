@@ -31,8 +31,8 @@ alwaysApply: true
 - 图片的引用地址统一是https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images这个来获取图片资源
 
 # IM 
-- SDKAppID：1600075596
-- SecretKey：ba92e763ab7975718da625afa6f60465dee472f0e4524f2028f83e161e5e1f8b
+- SDKAppID：1600076169
+- SecretKey：3aebef5623822d13d3124b10687cbf1c46cc4928583af930bb74270160b76cc4
 
 # Xlight 小程序
 - appId: "wx1a652f95e596a237",

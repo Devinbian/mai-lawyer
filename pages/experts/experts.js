@@ -175,13 +175,8 @@ Page({
     const expertId = e.currentTarget.dataset.id;
     const expert = this.data.list.find((item) => item.id === expertId);
 
-    // 使用当前页面设置的标题
-    const title = this.data.title || "在线咨询";
-
     wx.navigateTo({
-      url: `../../tim-chat/pages/index?conversationID=C2C${
-        expert.phone
-      }&source=experts-live-chat&title=${encodeURIComponent(title)}`,
+      url: `../../tim-chat/pages/index?targetUserID=${expert.phone}&title=${encodeURIComponent(expert.name)}`,
       fail(err) {
         console.log("打开聊天失败", err);
       },

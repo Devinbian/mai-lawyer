@@ -35,6 +35,7 @@ Page({
             const lawyerInfo = {
               id: res.data.data.id,
               name: res.data.data.name,
+              phone: res.data.data.phone,
               title: res.data.data.title,
               avatar: res.data.data.avatarUrl,
               years: res.data.data.years,
@@ -51,13 +52,8 @@ Page({
 
             // 处理擅长领域数组
             let fieldArray = [];
-            if (
-              typeof res.data.data.brief === "string" &&
-              res.data.data.brief
-            ) {
-              fieldArray = res.data.data.brief
-                .split("、")
-                .filter((field) => field.trim());
+            if (typeof res.data.data.brief === "string" && res.data.data.brief) {
+              fieldArray = res.data.data.brief.split("、").filter((field) => field.trim());
             } else if (Array.isArray(res.data.data.brief)) {
               fieldArray = res.data.data.brief;
             }
@@ -156,13 +152,10 @@ Page({
 
   // 图文咨询
   handleTextConsult() {
+    console.log("this.data.expert.phone:", this.data.expert.phone);
     if (this.data.userInfo) {
       wx.navigateTo({
-        url: `../../../tim-chat/pages/index?conversationID=C2C${
-          this.data.expert.phone
-        }&source=experts-live-chat&title=${encodeURIComponent(
-          this.data.expert.name,
-        )}`,
+        url: `../../../tim-chat/pages/index?targetUserID=${this.data.expert.phone}&title=${encodeURIComponent(this.data.expert.name)}`,
         fail(err) {
           wx.showToast({
             title: "打开聊天失败",
