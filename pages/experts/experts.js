@@ -67,11 +67,6 @@ Page({
       });
     } catch (error) {
       console.error("获取专家列表失败：", error);
-      wx.showToast({
-        title: "获取专家列表失败",
-        icon: "none",
-        duration: 2000,
-      });
       return new Promise((resolve) => {
         resolve({ list: [], hasMore: false });
       });
@@ -176,7 +171,9 @@ Page({
     const expert = this.data.list.find((item) => item.id === expertId);
 
     wx.navigateTo({
-      url: `../../tim-chat/pages/index?targetUserID=${expert.phone}&title=${encodeURIComponent(expert.name)}`,
+      url: `../../tim-chat/pages/index?targetUserID=${
+        expert.phone
+      }&title=${encodeURIComponent(expert.name)}`,
       fail(err) {
         console.log("打开聊天失败", err);
       },

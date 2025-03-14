@@ -47,7 +47,7 @@
           </view>
           <view class="info-item">
             <text class="label">订单编号：</text>
-            <text class="value">{{item.orderId}}</text>
+            <text class="value">{{item.orderNo}}</text>
           </view>
           <view class="info-item">
             <text class="label">订单价格：</text>

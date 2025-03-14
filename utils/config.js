@@ -14,7 +14,14 @@ module.exports = {
   pageSize: 10,
 
   //法律文书类型
-  docType: ["contract", "complaint", "defense", "legal_opinion", "application", "general"],
+  docType: [
+    "contract",
+    "complaint",
+    "defense",
+    "legal_opinion",
+    "application",
+    "general",
+  ],
 
   //支持的文件后缀
   fileExt: {
@@ -26,6 +33,29 @@ module.exports = {
     ppt: "ppt",
     pptx: "ppt",
   },
+  //订单类型
+  orderType: {
+    1: { title: "图文咨询", icon: "text" },
+    2: { title: "下载文档", icon: "text" },
+    3: { title: "电话咨询", icon: "phone" },
+    4: { title: "见面咨询", icon: "text" },
+    5: { title: "代制诉立案", icon: "text" },
+    6: { title: "律师函", icon: "text" },
+  },
+
+  //订单状态
+  orderStatus: {
+    0: { val: "pending", txt: "待支付" },
+    1: { val: "paid", txt: "已支付" },
+    2: { val: "canceled", txt: "已取消" },
+    3: { val: "approving", txt: "退款审核中" },
+    4: { val: "approve_failed", txt: "审核失败" },
+    5: { val: "refunding", txt: "退款中" },
+    6: { val: "refunded", txt: "已退款" },
+    7: { val: "refund_failed", txt: "退款失败" },
+    99: { val: "all", txt: "全部" },
+  },
+
   // 文件上传配置
   upload: {
     maxSize: 5 * 1024 * 1024, // 5MB
@@ -34,7 +64,8 @@ module.exports = {
   appId: "wx1a652f95e596a237",
   IM: {
     userID: "laywer3", // User ID
-    SECRETKEY: "3aebef5623822d13d3124b10687cbf1c46cc4928583af930bb74270160b76cc4", // Your secretKey
+    SECRETKEY:
+      "3aebef5623822d13d3124b10687cbf1c46cc4928583af930bb74270160b76cc4", // Your secretKey
     SDKAPPID: 1600076169, // Your SDKAppID
     EXPIRETIME: 604800,
   },

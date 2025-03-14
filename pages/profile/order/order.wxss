@@ -5,6 +5,10 @@
   box-sizing: border-box;
 }
 
+.order-list{
+  background-color: #F6F7F9;
+}
+
 /* 订单状态标签 */
 .order-tabs {
   display: flex;

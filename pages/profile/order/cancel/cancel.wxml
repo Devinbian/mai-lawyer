@@ -13,17 +13,17 @@
   <view class="service-card">
     <image class="card-bg" src="{{imgUrls.msgbanner}}" mode="aspectFill"></image>
     <view class="service-type">
-      <image class="service-icon" src="{{imgUrls.ordertext}}"></image>
-      <text class="service-title">图文咨询服务</text>
+      <image class="service-icon" src="{{orderType.icon === 'text' ? imgUrls.ordertext : imgUrls.orderphone}}"></image>
+      <text class="service-title">{{orderType.title}}</text>
       <text class="price">¥ {{refundAmount}}</text>
     </view>
 
     <view class="lawyer-info">
-      <image class="avatar" src="https://imgapi.cn/api.php?fl=dongman&gs=images" mode="aspectFill"></image>
+      <image class="avatar" src="{{orderTypeIndex === 1 ? lawyerAvatar : imgUrls[fileExtIcon]}}" mode="aspectFill"></image>
       <view class="lawyer-detail">
         <view class="name-title">
-          <text class="name">{{lawyer}}</text>
-          <text class="title">上海（资深律师事务所）主任</text>
+          <text class="name">{{orderTypeIndex === 1 ? lawyer : documentTitle}}</text>
+          <text class="title">{{orderTypeIndex === 1 ? lawyerTitle : ''}}</text>
         </view>
       </view>
       <view class="service-time">
@@ -51,7 +51,7 @@
     <text class="section-title">订单信息：</text>
     <view class="info-item">
       <text class="label">订单编号：</text>
-      <text class="value">{{orderId}}</text>
+      <text class="value">{{orderNo}}</text>
     </view>
     <view class="info-item">
       <text class="label">下单时间：</text>
@@ -61,7 +61,7 @@
       <text class="label">取消时间：</text>
       <text class="value">{{cancelTime}}</text>
     </view>
-    <view class="info-item">
+    <view class="info-item" wx:if="{{orderTypeIndex === 1}}">
       <text class="label">服务律师：</text>
       <text class="value">{{lawyer}}</text>
     </view>

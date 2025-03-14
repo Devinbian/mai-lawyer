@@ -86,21 +86,9 @@ Page({
     const { totalPrice } = this.data;
 
     if (totalPrice > 0) {
-      wx.requestPayment({
-        timeStamp: "1414561699",
-        nonceStr: "5K8264ILTKCH16CQ2502SI8ZNMTM67VS",
-        package: "prepay_id=wx201410272009395522657a690389285100",
-        signType: "RSA",
-        paySign:
-          "oR9d8PuhnIc+YZ8cBHFCwfgpaK9gd7vaRvkYD7rthRAZ/X+QBhcCYL21N7cHCTUxbQ+EAt6Uy+lwSN22f5YZvI45MLko8Pfso0jm46v5hqcVwrk6uddkGuT+Cdvu4WBqDzaDjnNa5UK3GfE1Wfl2gHxIIY5lLdUgWFts17D4WuolLLkiFZV+JSHMvH7eaLdT9N5GBovBwu5yYKUR7skR8Fu+LozcSqQixnlEZUfyE55feLOQTUYzLmR9pNtPbPsu6WVhbNHMS3Ss2+AehHvz+n64GDmXxbX++IOBvm2olHu3PsOUGRwhudhVf7UcGcunXt8cqNjKNqZLhLw4jq/xDg==",
-        success: function (res) {},
-        fail: function (res) {
-          console.log("支付失败", res);
-        },
-        complete: function (res) {},
-      });
       //需要放在支付成功的回调里面
-      this.addDownloadRecord(this.data.document, this.data.userInfo);
+      // this.addDownloadRecord(this.data.document, this.data.userInfo);
+      this.addOrder(this.data.document, this.data.userInfo);
     } else {
       wx.showLoading({
         title: "准备下载...",
@@ -187,6 +175,7 @@ Page({
 
   //添加下载记录
   addDownloadRecord(document, userInfo) {
+    console.log("添加下载记录", document, userInfo);
     // 添加下载记录
     wx.request({
       url: `${config.baseURL}/api/document-download-history/add`,
@@ -265,6 +254,61 @@ Page({
           icon: "success",
         });
       }
+    });
+  },
+
+  addOrder(document, userInfo) {
+    console.log("添加订单", document, userInfo);
+    //先创建订单
+    wx.request({
+      url: `${config.baseURL}/api/order/add?token=${userInfo.token}`,
+      method: "POST",
+      header: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        documentId: document.id,
+        type: 2, //文档订单类型
+      },
+      success: (res) => {
+        if (res.success) {
+          //调用后台封装的微信下单接口
+          wx.request({
+            url: `${config.baseURL}/api/wxpay/prepay`,
+            method: "GET",
+            data: {
+              orderId: res.data.data,
+              token: userInfo.token,
+            },
+            success: (res) => {
+              wx.requestPayment({
+                timeStamp: res.data.data.jsapiResult.timeStamp,
+                nonceStr: res.data.data.jsapiResult.nonceStr,
+                package: res.data.data.jsapiResult.packageValue,
+                signType: res.data.data.jsapiResult.signType,
+                paySign: res.data.data.jsapiResult.paySign,
+                success: function (res) {
+                  console.log("支付成功", res);
+                  //支付成功后，添加下载记录
+                  this.addDownloadRecord(document, userInfo);
+                },
+                fail: function (res) {
+                  console.log("支付失败", res);
+                },
+                complete: function (res) {},
+              });
+            },
+            fail: (err) => {
+              console.log("支付失败", err);
+            },
+          });
+        }
+
+        console.log("添加订单成功", res);
+      },
+      fail: (err) => {
+        console.log("添加订单失败", err);
+      },
     });
   },
 });
