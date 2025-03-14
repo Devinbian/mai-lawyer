@@ -289,9 +289,6 @@ Page({
     // 获取文件类型
     const fileExt = e.currentTarget.dataset.ext;
 
-    console.log("docUrl", docUrl);
-    console.log("fileExt", fileExt);
-
     wx.downloadFile({
       url: docUrl,
       success: (res) => {
