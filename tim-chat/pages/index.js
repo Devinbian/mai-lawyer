@@ -63,7 +63,7 @@ Page({
   accountImport() {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: config.baseURL + "/api/im/accountImport?token" + this.data.userInfo.token,
+        url: config.baseURL + "/api/im/accountImport?token=" + this.data.userInfo.token,
         success: (res) => {
           resolve(res);
         },
@@ -79,29 +79,7 @@ Page({
    */
   async initSDKAndLogin() {
     try {
-      if (!wx.$TUIKit) {
-        console.log("创建SDK实例");
-
-        // SDK未初始化，创建SDK实例
-        const options = {
-          SDKAppID: this.data.config.SDKAPPID,
-          logLevel: 0, // 日志级别，0为一般，1为详细
-          timeout: 120, // 请求超时时间，单位：秒
-          oversea: false, // 是否为境外服务，一般为false
-          functionConfig: {
-            enableProfanityFilter: false, // 禁用敏感词检测功能
-            enableMessageReadReceipt: true, // 启用消息已读回执
-            enableCloudCustomData: true, // 启用自定义云数据
-          },
-        };
-
-        // 创建TUIKit实例
-        wx.$TUIKit = TencentCloudChat.create(options);
-      } else {
-        console.log("SDK实例已存在，跳过创建步骤");
-      }
-
-      // 无论SDK是否已初始化，都需要注册事件监听器
+      // 注册事件监听器
       this.registerSDKEvents();
 
       // 检查登录状态

@@ -108,9 +108,7 @@
                       </view>
                     </view>
                   </block>
-                  <block wx:else>
-                    {{item.content}}
-                  </block>
+                  <block wx:else>{{item.content}}</block>
                 </view>
               </view>
             </block>

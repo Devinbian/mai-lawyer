@@ -222,6 +222,7 @@
   word-break: break-all;
   will-change: transform;
   transform: translateZ(0);
+  white-space: pre-wrap;
 }
 
 /* 为卡片消息单独设置样式 */

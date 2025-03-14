@@ -304,7 +304,7 @@ Page({
         if (res.data.success) {
           // 更新成功，更新本地存储
           const userInfo = wx.getStorageSync("userInfo") || {};
-          Object.assign(userInfo, data);
+          Object.assign(userInfo, res.data.data);
           wx.setStorageSync("userInfo", userInfo);
 
           wx.showToast({
