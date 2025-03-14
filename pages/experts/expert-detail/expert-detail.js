@@ -16,6 +16,7 @@ Page({
     if (options.expert) {
       try {
         const expertInfo = JSON.parse(decodeURIComponent(options.expert));
+        console.log("初始化专家信息", expertInfo);
         const userInfo = wx.getStorageSync("userInfo");
         this.setData({
           userInfo: userInfo,
@@ -30,6 +31,7 @@ Page({
             token: userInfo.token,
           },
           success: (res) => {
+            console.log("律师信息,从后台获取", res);
             const lawyerInfo = {
               id: res.data.data.id,
               name: res.data.data.name,
@@ -40,16 +42,22 @@ Page({
               brief: res.data.data.brief,
               introduction: res.data.data.description,
               tags: res.data.data.type,
-              isFollowed: res.data.data.isFollowed,
+              isFollowed: res.data.data.follow,
               fans: res.data.data.followCount,
               promised: res.data.data.promised,
               consultationFee: res.data.data.consultationFee,
             };
+            console.log("律师信息,从后台获取", lawyerInfo);
 
             // 处理擅长领域数组
             let fieldArray = [];
-            if (typeof res.data.data.brief === "string" && res.data.data.brief) {
-              fieldArray = res.data.data.brief.split("、").filter((field) => field.trim());
+            if (
+              typeof res.data.data.brief === "string" &&
+              res.data.data.brief
+            ) {
+              fieldArray = res.data.data.brief
+                .split("、")
+                .filter((field) => field.trim());
             } else if (Array.isArray(res.data.data.brief)) {
               fieldArray = res.data.data.brief;
             }
@@ -64,7 +72,7 @@ Page({
               isExpanded: false,
               isFollowed: lawyerInfo.isFollowed,
             });
-
+            console.log("this.data.expert", this.data.expert);
             console.log("处理后的擅长领域:", fieldArray);
           },
         });
@@ -103,12 +111,14 @@ Page({
     this.setData({
       isFollowed: !this.data.isFollowed,
     });
-
-    const userInfo = wx.getStorageSync("userInfo");
-    console.log("专家信息：", this.data.expert);
-    console.log("this.data.expert.id：", this.data.expert.id);
-    console.log("userInfo.token：", userInfo.token);
-
+    this.data.expert.follow = this.data.isFollowed;
+    if (!this.data.userInfo) {
+      console.log("用户未登录");
+      wx.navigateTo({
+        url: "/pages/login/login",
+      });
+      return;
+    }
     if (this.data.isFollowed) {
       wx.request({
         url: config.baseURL + "/api/lawyer/follow",
@@ -148,7 +158,11 @@ Page({
   handleTextConsult() {
     if (this.data.userInfo) {
       wx.navigateTo({
-        url: `../../../tim-chat/pages/index?conversationID=C2C${this.data.expert.phone}&source=experts-live-chat&title=${encodeURIComponent(this.data.expert.name)}`,
+        url: `../../../tim-chat/pages/index?conversationID=C2C${
+          this.data.expert.phone
+        }&source=experts-live-chat&title=${encodeURIComponent(
+          this.data.expert.name,
+        )}`,
         fail(err) {
           wx.showToast({
             title: "打开聊天失败",

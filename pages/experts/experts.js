@@ -21,6 +21,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad() {
+    console.log("&&&&&&&&&&&&&");
     wx.showToast({
       title: "加载中...",
       icon: "loading",
@@ -94,7 +95,13 @@ Page({
 
   // 跳转到专家详情页
   navigateToDetail(e) {
-    if (!this.data.userInfo) {
+    // console.log("navigateToDetail", this.data.userInfo);
+    // console.log("navigateToDetail", wx.getStorageSync("userInfo"));
+    // console.log(
+    //   `!this.data.userInfo || !wx.getStorageSync("userInfo")`,
+    //   !this.data.userInfo && !wx.getStorageSync("userInfo"),
+    // );
+    if (!this.data.userInfo && !wx.getStorageSync("userInfo")) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -136,51 +143,49 @@ Page({
 
   // 电话咨询
   handlePhoneConsult(e) {
-    if (this.data.userInfo) {
-      const phone = e.currentTarget.dataset.phone;
-      // 拨打电话时移除所有非数字字符
-      const cleanedPhone = phone.replace(/\D/g, "");
-      wx.makePhoneCall({
-        phoneNumber: cleanedPhone,
-        fail(err) {
-          wx.showToast({
-            title: "拨打电话失败",
-            icon: "none",
-          });
-        },
-      });
-    } else {
+    if (!this.data.userInfo && !wx.getStorageSync("userInfo")) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
+      return;
     }
+    const phone = e.currentTarget.dataset.phone;
+    // 拨打电话时移除所有非数字字符
+    const cleanedPhone = phone.replace(/\D/g, "");
+    wx.makePhoneCall({
+      phoneNumber: cleanedPhone,
+      success: () => {
+        console.log("拨打电话成功");
+      },
+      fail: (err) => {
+        console.log("拨打电话失败", err);
+      },
+    });
   },
 
   // 在线咨询
   handleOnlineConsult(e) {
-    if (this.data.userInfo) {
-      const expertId = e.currentTarget.dataset.id;
-      const expert = this.data.list.find((item) => item.id === expertId);
-
-      // 使用当前页面设置的标题
-      const title = this.data.title || "在线咨询";
-
-      wx.navigateTo({
-        url: `../../tim-chat/pages/index?conversationID=C2C${
-          expert.phone
-        }&source=experts-live-chat&title=${encodeURIComponent(title)}`,
-        fail(err) {
-          wx.showToast({
-            title: "打开聊天失败",
-            icon: "none",
-          });
-        },
-      });
-    } else {
+    if (!this.data.userInfo && !wx.getStorageSync("userInfo")) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
+      return;
     }
+
+    const expertId = e.currentTarget.dataset.id;
+    const expert = this.data.list.find((item) => item.id === expertId);
+
+    // 使用当前页面设置的标题
+    const title = this.data.title || "在线咨询";
+
+    wx.navigateTo({
+      url: `../../tim-chat/pages/index?conversationID=C2C${
+        expert.phone
+      }&source=experts-live-chat&title=${encodeURIComponent(title)}`,
+      fail(err) {
+        console.log("打开聊天失败", err);
+      },
+    });
   },
 
   getExperts(pageNum, pageSize) {
