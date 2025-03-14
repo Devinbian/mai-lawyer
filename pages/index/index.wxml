@@ -103,7 +103,7 @@
                     <!-- 说明类卡片 -->
                     <view class="explanation-card" wx:elif="{{item.cardData.type === 'explanation'}}">
                       <view class="explanation-content">{{item.cardData.content}}</view>
-                      <view class="help-button" wx:if="{{item.cardData.showHelpButton}}">
+                      <view class="help-button" wx:if="{{item.cardData.showHelpButton}}" bindtap="navigateToExperts">
                         <text>{{item.cardData.buttonText}}</text>
                       </view>
                     </view>
