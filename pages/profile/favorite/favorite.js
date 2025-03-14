@@ -1,6 +1,7 @@
 const imageUtil = require("../../../utils/image.js");
 const refreshLoadingBehavior = require("../../../behaviors/refresh-loading.js");
 const util = require("../../../utils/util.js");
+const config = require("../../../utils/config.js");
 
 Page({
   behaviors: [refreshLoadingBehavior],
@@ -16,6 +17,16 @@ Page({
   },
 
   onLoad() {
+    console.log("onLoad");
+    // 获取用户信息
+    const userInfo = wx.getStorageSync("userInfo");
+    if (!userInfo) {
+      wx.redirectTo({
+        url: "/pages/login/login",
+      });
+      return;
+    }
+
     this.setImagesByPixelRatio();
     this.initList();
   },
@@ -27,54 +38,94 @@ Page({
   },
 
   // 实现 loadData 方法，这是 behavior 中约定的接口
-  loadData(isLoadMore = false) {
-    return new Promise((resolve) => {
-      const startTime = Date.now();
-      const collectedDocs = wx.getStorageSync("collectedDocuments") || [];
+  async loadData(isLoadMore = false) {
+    const { pageNum, pageSize } = this.data;
+    const fileList = [];
 
-      // 按收藏时间倒序排序
-      collectedDocs.sort((a, b) => b.collectTime - a.collectTime);
+    return new Promise((resolve, reject) => {
+      console.log("/api/document/collectList", "请求后台");
+      try {
+        wx.request({
+          url: `${config.baseURL}/api/document/collectList`,
+          method: "GET",
+          data: {
+            token: wx.getStorageSync("userInfo").token,
+            pageNo: pageNum,
+            pageSize: pageSize,
+          },
+          success: (res) => {
+            console.log("接口返回数据：", res);
+            // 检查响应数据结构
+            if (!res || typeof res !== "object") {
+              throw new Error("无效的响应数据");
+            }
 
-      const pageSize = 10;
-      let currentPageNum = isLoadMore ? this.data.pageNum || 1 : 1;
+            if (res.data.success) {
+              const data = res.data.data || {};
+              const rows = Array.isArray(data.rows) ? data.rows : [];
+              const totalRows = data.totalRows || 0;
 
-      if (isLoadMore) {
-        currentPageNum += 1;
-      }
+              rows.forEach((doc, index) => {
+                if (!doc) return;
 
-      const start = 0;
-      const end = currentPageNum * pageSize;
-      const pageData = collectedDocs.slice(start, end).map((doc, index) => ({
-        id: doc.id,
-        title: doc.title,
-        date: util.formatTime(new Date(doc.collectTime)),
-        timestamp: doc.collectTime,
-        type: doc.type,
-        docType: doc.docType,
-      }));
+                const item = {
+                  id: doc.id || index + 1,
+                  title: doc.title || "未命名文档",
+                  url: doc.url || "",
+                  ext: doc.fileExtension || "",
+                };
 
-      this.setData({
-        pageNum: currentPageNum,
-        isInitialLoading: false,
-      });
+                fileList.push(item);
+              });
 
-      const totalCount = collectedDocs.length;
-      const remaining = totalCount - end;
-      const hasMoreData = remaining > 5;
+              console.log("res", res);
 
-      setTimeout(() => {
-        resolve({
-          list: pageData,
-          hasMore: hasMoreData,
+              // 按收藏时间倒序排序
+              fileList.sort((a, b) => b.collectTime - a.collectTime);
+
+              const end = pageNum * pageSize;
+              const hasMoreData = totalRows > end;
+
+              resolve({
+                list: fileList,
+                hasMore: hasMoreData,
+              });
+            }
+          },
+          fail: (err) => {
+            console.error("请求失败：", err);
+            reject(new Error("网络请求失败"));
+          },
         });
-      }, Math.max(0, 1000 - (Date.now() - startTime)));
+      } catch (err) {
+        console.error("获取下载记录失败：", error);
+        return {
+          list: [],
+          hasMore: false,
+        };
+      }
     });
   },
 
   // 点击文档
   handleItemClick(e) {
-    const { id } = e.currentTarget.dataset;
-    const collectedDocs = wx.getStorageSync("collectedDocuments") || [];
-    const doc = collectedDocs.find((d) => d.id === id);
+    const docUrl = e.currentTarget.dataset.url;
+    const fileExt = e.currentTarget.dataset.ext;
+    wx.downloadFile({
+      url: docUrl,
+      success: (res) => {
+        const filePath = res.tempFilePath;
+        wx.openDocument({
+          filePath: filePath,
+          fileType: fileExt,
+          success: () => {
+            console.log("打开文档成功");
+          },
+          fail: (err) => {
+            console.log("打开文档失败", err);
+          },
+        });
+      },
+    });
   },
 });
