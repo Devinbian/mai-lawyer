@@ -13,20 +13,23 @@ Page({
     isCollected: false,
     userInfo: null,
     docType: config.docType, //法律文书类型
+    fileExtIcon: "", //文件类型图标
   },
 
   onLoad(options) {
     if (options.id && options.document) {
       try {
         const document = JSON.parse(decodeURIComponent(options.document));
-        // 确保document.type有值，默认为word
-        document.ext = config.fileExt[document.ext];
-
         this.setData({
           document,
           totalPrice: document.price || 0,
           userInfo: wx.getStorageSync("userInfo"),
+          imgUrls: imageUtil.getCommonImages(["documentGet", "default"]),
+          fileExtIcon: config.fileExt[document.ext],
         });
+
+        console.log("fileExtIcon", this.data.fileExtIcon);
+        console.log("imgUrls", this.data.imgUrls);
       } catch (error) {
         console.error("解析文档数据失败:", error);
         wx.showToast({
@@ -35,7 +38,6 @@ Page({
         });
       }
     }
-    this.setImagesByPixelRatio();
   },
 
   onHide() {
@@ -72,12 +74,6 @@ Page({
         },
       });
     }
-  },
-
-  setImagesByPixelRatio() {
-    this.setData({
-      imgUrls: imageUtil.getCommonImages(["documentGet", "default"]),
-    });
   },
 
   // 切换专家服务
@@ -138,6 +134,7 @@ Page({
 
   // 打开文档
   onDocInfoTap() {
+    console.log("onDocInfoTap", this.data.document);
     wx.downloadFile({
       url: this.data.document.url,
       success: (res) => {

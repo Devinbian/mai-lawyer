@@ -89,7 +89,9 @@ Page({
   checkLogin() {
     console.log("++++++++++++++++checkLogin++++++++++++++++");
     console.log(typeof this.data.userInfo);
-    if (!this.data.userInfo) {
+    console.log(this.data.userInfo);
+    const userInfo = wx.getStorageSync("userInfo");
+    if (!this.data.userInfo || !userInfo) {
       wx.navigateTo({
         url: "/pages/login/login",
       });

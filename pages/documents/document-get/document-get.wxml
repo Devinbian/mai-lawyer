@@ -11,7 +11,7 @@
         <image class="doc-bg" src="{{imgUrls.titleBg}}" mode="aspectFill"></image>
         <view class="doc-content">
           <image class="doc-type-icon" 
-            src="{{imgUrls[document.extImage]}}"
+            src="{{imgUrls[fileExtIcon]}}"
             mode="aspectFit"
           ></image>
           <view class="doc-title">{{document.title}}</view>
