@@ -89,16 +89,6 @@ Page({
       const fileList = [];
       const { pageNum, pageSize } = this.data;
 
-      // 检查用户登录状态
-      if (!this.data.userInfo) {
-        wx.redirectTo({
-          url: "/pages/login/login",
-        });
-        return new Promise((resolve) => {
-          resolve({ list: [], hasMore: false });
-        });
-      }
-
       // 如果是"下载中"状态，获取下载中的文件列表
       if (this.data.downloadStatus === "downloading") {
         const downloadingFiles = wx.getStorageSync("downloadingFiles") || {};
@@ -180,11 +170,8 @@ Page({
           "application",
           "general",
         ].indexOf(this.data.currentTab);
-        console.log("this.data.currentTab", this.data.currentTab);
-        console.log("type", type);
 
         return new Promise((resolve, reject) => {
-          console.log("this.data.userInfo.token", this.data.userInfo.token);
           console.log("/api/document-download-history/page", "请求后台");
 
           wx.request({
@@ -250,7 +237,8 @@ Page({
                       docType: this.data.currentTab || "all",
                       price: Number(doc.price || 0),
                       status: doc.status || "completed",
-                      filePath: doc.url || "",
+                      url: doc.url || "",
+                      ext: doc.fileExtension || "",
                       size: doc.size
                         ? `${(Number(doc.size) / 1024).toFixed(2)}KB`
                         : "未知大小",
@@ -286,11 +274,6 @@ Page({
       }
     } catch (error) {
       console.error("获取下载记录失败：", error);
-      wx.showToast({
-        title: error.message || "获取下载记录失败",
-        icon: "none",
-        duration: 2000,
-      });
       return {
         list: [],
         hasMore: false,
@@ -300,52 +283,29 @@ Page({
 
   // 点击文档
   handleItemClick(e) {
-    const { id } = e.currentTarget.dataset;
-  },
-
-  openSavedFile(e) {
-    // 获取文件路径，假设在列表项的dataset中存有filePath
-    const filePath = e.currentTarget.dataset.filepath;
-    if (!filePath) return;
-
+    // 获取文件路径，在列表项的dataset中存有url
+    const docUrl = e.currentTarget.dataset.url;
+    if (!docUrl) return;
     // 获取文件类型
-    const fileType = e.currentTarget.dataset.type;
-    let docType = "pdf"; // 默认类型
+    const fileExt = e.currentTarget.dataset.ext;
 
-    // 根据UI展示的文件类型确定wx.openDocument需要的fileType
-    switch (fileType) {
-      case "word":
-        docType = "docx";
-        break;
-      case "excel":
-        docType = "xlsx";
-        break;
-      case "ppt":
-        docType = "pptx";
-        break;
-      case "pdf":
-        docType = "pdf";
-        break;
-      default:
-        // 尝试从文件路径中获取扩展名
-        const ext = filePath.split(".").pop().toLowerCase();
-        if (ext) docType = ext;
-    }
-
-    // 打开文档
-    wx.openDocument({
-      filePath: filePath,
-      fileType: docType,
-      showMenu: true,
-      success: () => {
-        console.log("文档打开成功");
+    wx.downloadFile({
+      url: docUrl,
+      success: (res) => {
+        const filePath = res.tempFilePath;
+        wx.openDocument({
+          filePath: filePath,
+          fileType: fileExt,
+          success: () => {
+            console.log("打开文档成功");
+          },
+          fail: (err) => {
+            console.log("打开文档失败", err);
+          },
+        });
       },
       fail: (err) => {
-        console.error("文档打开失败", err);
-        wx.showToast({
-          title: "无法打开此文件",
-          icon: "none",
-        });
+        console.log("下载文档失败", err);
       },
     });
   },

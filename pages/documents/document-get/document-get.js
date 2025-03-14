@@ -20,61 +20,41 @@ Page({
     if (options.id && options.document) {
       try {
         const document = JSON.parse(decodeURIComponent(options.document));
-        this.setData({
-          document,
-          totalPrice: document.price || 0,
-          userInfo: wx.getStorageSync("userInfo"),
-          imgUrls: imageUtil.getCommonImages(["documentGet", "default"]),
-          fileExtIcon: config.fileExt[document.ext],
+        console.log("document", document);
+        wx.request({
+          url: `${config.baseURL}/api/document/detail`,
+          method: "GET",
+          data: {
+            id: document.id,
+            token: wx.getStorageSync("userInfo").token,
+          },
+          success: (res) => {
+            console.log("收藏状态", res);
+            if (res.data.success) {
+              this.setData({
+                isCollected: res.data.data.collect,
+              });
+              document.collect = res.data.data.collect;
+            }
+            this.setData({
+              document,
+              totalPrice: document.price || 0,
+              userInfo: wx.getStorageSync("userInfo"),
+              imgUrls: imageUtil.getCommonImages(["documentGet", "default"]),
+              fileExtIcon: config.fileExt[document.ext],
+            });
+          },
+          fail: (err) => {
+            console.log("收藏状态失败", err);
+          },
         });
-
-        console.log("fileExtIcon", this.data.fileExtIcon);
-        console.log("imgUrls", this.data.imgUrls);
       } catch (error) {
         console.error("解析文档数据失败:", error);
-        wx.showToast({
-          title: "加载文档失败",
-          icon: "none",
-        });
       }
     }
   },
 
-  onHide() {
-    //在页面隐藏的时候去更新收藏状态
-    const { isCollected, document, userInfo } = this.data;
-    if (isCollected) {
-      wx.request({
-        url: `${config.baseURL}/api/document/collect`,
-        method: "GET",
-        data: {
-          id: document.id,
-          token: this.data.userInfo.token,
-        },
-        success: (res) => {
-          console.log("收藏成功", res);
-        },
-        fail: (err) => {
-          console.log("收藏失败", err);
-        },
-      });
-    } else {
-      wx.request({
-        url: `${config.baseURL}/api/document/uncollect`,
-        method: "GET",
-        data: {
-          id: document.id,
-          token: userInfo.token,
-        },
-        success: (res) => {
-          console.log("取消收藏成功", res);
-        },
-        fail: (err) => {
-          console.log("取消收藏失败", err);
-        },
-      });
-    }
-  },
+  onHide() {},
 
   // 切换专家服务
   toggleService() {
@@ -168,10 +148,41 @@ Page({
 
   // 切换收藏状态
   toggleCollect() {
-    const { isCollected } = this.data;
-
+    const { isCollected, document, userInfo } = this.data;
     // 保存收藏状态
     this.setData({ isCollected: !isCollected });
+    console.log("isCollected", this.data.isCollected);
+    if (this.data.isCollected) {
+      wx.request({
+        url: `${config.baseURL}/api/document/collect`,
+        method: "GET",
+        data: {
+          id: document.id,
+          token: this.data.userInfo.token,
+        },
+        success: (res) => {
+          console.log("收藏成功", res);
+        },
+        fail: (err) => {
+          console.log("收藏失败", err);
+        },
+      });
+    } else {
+      wx.request({
+        url: `${config.baseURL}/api/document/uncollect`,
+        method: "GET",
+        data: {
+          id: document.id,
+          token: userInfo.token,
+        },
+        success: (res) => {
+          console.log("取消收藏成功", res);
+        },
+        fail: (err) => {
+          console.log("取消收藏失败", err);
+        },
+      });
+    }
   },
 
   //添加下载记录
@@ -181,7 +192,7 @@ Page({
       url: `${config.baseURL}/api/document-download-history/add`,
       method: "GET",
       data: {
-        id: document.id,
+        documentId: document.id,
         token: userInfo.token,
       },
       success: (res) => {

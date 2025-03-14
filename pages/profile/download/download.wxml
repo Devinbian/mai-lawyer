@@ -28,19 +28,19 @@
       data-tab="contract"
     >合同协议</view>
     <view 
-      class="tag-item {{currentTab === 'statement' ? 'active' : ''}}" 
+      class="tag-item {{currentTab === 'complaint' ? 'active' : ''}}" 
       bindtap="switchTab" 
-      data-tab="statement"
+      data-tab="complaint"
     >起诉状</view>
     <view 
-      class="tag-item {{currentTab === 'reply' ? 'active' : ''}}" 
+      class="tag-item {{currentTab === 'defense' ? 'active' : ''}}" 
       bindtap="switchTab" 
-      data-tab="reply"
+      data-tab="defense"
     >答辩状</view>
     <view 
-      class="tag-item {{currentTab === 'legal' ? 'active' : ''}}" 
+      class="tag-item {{currentTab === 'legal_opinion' ? 'active' : ''}}" 
       bindtap="switchTab" 
-      data-tab="legal"
+      data-tab="legal_opinion"
     >法律意见</view>
     <view 
       class="tag-item {{currentTab === 'application' ? 'active' : ''}}" 
@@ -48,9 +48,9 @@
       data-tab="application"
     >申请文书</view>
     <view 
-      class="tag-item {{currentTab === 'common' ? 'active' : ''}}" 
+      class="tag-item {{currentTab === 'general' ? 'active' : ''}}" 
       bindtap="switchTab" 
-      data-tab="common"
+      data-tab="general"
     >通用文书</view>
   </view>
 
@@ -73,7 +73,7 @@
     </view>
 
     <view class="download-list" wx:if="{{list.length > 0}}">
-      <view class="download-item" wx:for="{{list}}" wx:key="id" bindtap="openSavedFile" data-id="{{item.id}}" data-filepath="{{item.filePath}}" 
+      <view class="download-item" wx:for="{{list}}" wx:key="id" bindtap="handleItemClick" data-id="{{item.id}}" data-url="{{item.url}}"  data-ext="{{item.ext}}"
       data-type="{{item.type}}">
         <view class="doc-icon-wrap">
           <image class="doc-icon" src="{{imgUrls[item.type]}}" mode="aspectFit"/>

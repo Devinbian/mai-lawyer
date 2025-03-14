@@ -27,8 +27,10 @@
         wx:key="id"
         bindtap="handleItemClick"
         data-id="{{item.id}}"
+        data-url="{{item.url}}" 
+        data-ext="{{item.ext}}"
       >
-        <view class="doc-title">{{item.title}}</view>
+        <view class="doc-title" >{{item.title}}</view>
       </view>
     </view>
 

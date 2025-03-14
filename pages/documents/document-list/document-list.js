@@ -10,7 +10,6 @@ Page({
     imgUrls: null,
     scrollTop: 0,
     canRefresh: true,
-    documents: [],
     filteredDocuments: [],
     pageSize: 10,
     currentPage: 1,
@@ -100,8 +99,10 @@ Page({
 
   // 点击文档
   onDocumentTap(e) {
+    console.log("onDocumentTap", e.currentTarget.dataset);
     const { id } = e.currentTarget.dataset;
     const document = this.data.list.find((doc) => doc.id === id);
+    console.log("this.data.list", this.data.list);
     document.type = this.data.docType;
     if (document) {
       wx.navigateTo({
@@ -181,6 +182,7 @@ Page({
                 price: doc.price,
                 url: doc.url,
                 ext: doc.fileExtension,
+                collect: doc.collect,
               };
             });
             resolve({
