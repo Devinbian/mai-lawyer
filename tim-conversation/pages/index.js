@@ -202,7 +202,7 @@ Page({
     // 重新注册事件监听器
     wx.$TUIKit.on(TencentCloudChat.EVENT.SDK_READY, this.eventHandlers.onSDKReady);
     wx.$TUIKit.on(TencentCloudChat.EVENT.SDK_NOT_READY, this.eventHandlers.onSDKNotReady);
-    // wx.$TUIKit.on(TencentCloudChat.EVENT.KICKED_OUT, this.eventHandlers.onKickedOut);
+    wx.$TUIKit.on(TencentCloudChat.EVENT.KICKED_OUT, this.eventHandlers.onKickedOut);
     wx.$TUIKit.on(TencentCloudChat.EVENT.ERROR, this.eventHandlers.onError);
 
     console.log("SDK事件注册完成");
