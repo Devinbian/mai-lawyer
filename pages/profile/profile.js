@@ -159,7 +159,14 @@ Page({
   /**
    * 生命周期函数--监听页面显示
    */
-  onShow() {},
+  onShow() {
+    const userInfo = wx.getStorageSync("userInfo");
+    if (userInfo) {
+      this.setData({
+        userInfo,
+      });
+    }
+  },
 
   /**
    * 生命周期函数--监听页面隐藏
