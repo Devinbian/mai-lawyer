@@ -6,7 +6,6 @@ Page({
     navHeight: 0,
     imgUrls: null,
     showPhoneButton: false,
-    base64: null,
   },
 
   onLoad() {
@@ -48,13 +47,11 @@ Page({
         // 更新本地数据，包括头像URL和base64
         this.setData({
           "userInfo.avatar": avatarUrl,
-          base64: res.data,
         });
 
         // 更新到服务器
         this.updateUserInfo({
-          avatar: avatarUrl,
-          base64: res.data,
+          avatar: "data:image/png;base64," + res.data,
         });
       },
       fail: (error) => {
@@ -298,11 +295,10 @@ Page({
         "content-type": "application/json",
       },
       data: {
-        avatar: data.avatar || this.data.userInfo.avatar,
-        name: data.name || this.data.userInfo.name,
-        gender: data.gender !== undefined ? data.gender : this.data.userInfo.gender,
-        birthday: data.birthday || this.data.userInfo.birthday,
-        base64: data.base64 || this.data.base64,
+        avatar: data.avatar,
+        name: data.name,
+        gender: data.gender,
+        birthday: data.birthday,
       },
       success: (res) => {
         if (res.data.success) {
