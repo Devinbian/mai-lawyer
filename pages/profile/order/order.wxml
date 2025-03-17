@@ -80,7 +80,7 @@
           <block wx:elif="{{item.status === 'paid'}}">
             <view class="action-btn refund" bindtap="applyRefund" data-id="{{item.orderId}}">申请退款</view>
           </block>
-          <block wx:elif="{{item.status === 'refunding'}}">
+          <block wx:elif="{{item.status === 'refunding'||item.status==='refund_failed'||item.status === 'approving'||item.status === 'approve_failed'}}">
             <view class="action-btn refund-detail" bindtap="showRefundDetail" data-id="{{item.orderId}}">退款详情</view>
           </block>
           <block wx:elif="{{item.status === 'refunded'}}">
