@@ -63,7 +63,7 @@ Page({
                 ...lawyerInfo,
                 fieldArray: fieldArray,
                 tags: ["资深专家", "平台保证"],
-                introduction: `${lawyerInfo.name}，从业${lawyerInfo.years}年，专注于${lawyerInfo.brief}等领域。累计服务咨询人数${lawyerInfo.consultCount}人，具有丰富的实践经验，${lawyerInfo.introduction}`,
+                introduction: lawyerInfo.introduction,
               },
               isExpanded: false,
               isFollowed: lawyerInfo.isFollowed,

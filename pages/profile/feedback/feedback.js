@@ -1,4 +1,5 @@
 const imageUtil = require("../../../utils/image.js");
+const config = require("../../../utils/config.js");
 Page({
   data: {
     currentTab: "suggest",
@@ -80,8 +81,18 @@ Page({
     this.setData({ canSubmit });
   },
 
+  uploadFile(options) {
+    return new Promise((resolve, reject) => {
+      wx.uploadFile({
+        ...options,
+        success: (res) => resolve(res),
+        fail: (err) => reject(err),
+      });
+    });
+  },
+
   // 提交反馈
-  handleSubmit() {
+  async handleSubmit() {
     if (!this.data.canSubmit) return;
 
     wx.showLoading({
@@ -89,21 +100,64 @@ Page({
       mask: true,
     });
 
-    // 这里应该调用后端API提交反馈
-    // 模拟API调用
-    setTimeout(() => {
-      wx.hideLoading();
-      wx.showToast({
-        title: "提交成功",
-        icon: "success",
-        duration: 2000,
-        success: () => {
-          setTimeout(() => {
-            wx.navigateBack();
-          }, 2000);
+    try {
+      // 先上传图片（如果有的话）
+      const uploadedImages = [];
+      if (this.data.uploadImages.length > 0) {
+        for (const imagePath of this.data.uploadImages) {
+          const res = await this.uploadFile({
+            filePath: imagePath,
+            name: "file",
+            url: config.baseURL + "/api/file/upload?secretFlag=N",
+          });
+          uploadedImages.push(JSON.parse(res.data).data.fileObjectName);
+        }
+      }
+
+      // 提交反馈信息
+      const feedbackData = {
+        type: this.data.currentTab == "suggest" ? 0 : this.data.currentTab == "bug" ? 1 : 2,
+        content: this.data.content.trim(),
+        contact: this.data.contact.trim(),
+        voucher: uploadedImages.join(";"),
+      };
+
+      wx.request({
+        url: config.baseURL + "/api/feedback/add?token=" + wx.getStorageSync("userInfo").token,
+        method: "POST",
+        data: feedbackData,
+        success: (res) => {
+          if (res.data.success) {
+            wx.hideLoading();
+            wx.showToast({
+              title: "提交成功",
+              icon: "success",
+              duration: 2000,
+            });
+            // 延迟返回上一页
+            setTimeout(() => {
+              wx.navigateBack();
+            }, 1000);
+          }
+        },
+        error: (error) => {
+          wx.hideLoading();
+          wx.showToast({
+            title: "提交失败，请重试",
+            icon: "error",
+            duration: 2000,
+          });
         },
       });
-    }, 1500);
+    } catch (error) {
+      console.error("提交反馈失败:", error);
+      wx.hideLoading();
+      wx.showToast({
+        title: "提交失败，请重试",
+        icon: "error",
+        duration: 2000,
+      });
+    }
   },
 
   setImagesByPixelRatio() {
