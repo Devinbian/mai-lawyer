@@ -494,7 +494,7 @@
 }
 
 .help-button {
-  margin-top: 40rpx;
+  margin-top: 30rpx;
   background: #E5F2FF;
   padding: 8rpx 24rpx;
   border-radius: 78rpx;

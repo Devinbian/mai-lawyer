@@ -111,7 +111,7 @@
                   <block wx:else>
                     <view style="display: flex; flex-direction: column;">
                       <view>{{item.content}}</view>
-                      <view class="help-button" bindtap="navigateToExperts" wx:if="{{item.type === 'ai'}}">
+                      <view class="help-button" bindtap="navigateToExperts" wx:if="{{item.type === 'ai' && !item.isStreaming}}">
                         <text>求助人工</text>
                       </view>
                     </view>
