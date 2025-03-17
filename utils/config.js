@@ -56,6 +56,17 @@ module.exports = {
     99: { val: "all", txt: "全部" },
   },
 
+  //tips图标
+  tipsIcon: {
+    1: { txt: "successNotice" },
+    2: { txt: "errorNotice" },
+    3: { txt: "couponNotice" },
+    4: { txt: "defaultNotice" },
+    5: { txt: "alertNotice" },
+    6: { txt: "alertInfo" },
+    7: { txt: "successInfo" },
+  },
+
   // 文件上传配置
   upload: {
     maxSize: 5 * 1024 * 1024, // 5MB

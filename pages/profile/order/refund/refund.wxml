@@ -4,7 +4,7 @@
   <!-- 订单信息 -->
   <view class="order-info">
     <view class="service-type">
-      <image class="type-icon" src="{{imgUrls.ordertext}}" mode="aspectFit"></image>
+      <image class="type-icon" src="{{orderInfo.orderType === 1 ? imgUrls.ordertext : imgUrls.orderphone}}" mode="aspectFit"></image>
       <text>{{orderInfo.typeName}}</text>
     </view>
     <view class="lawyer-info">
@@ -19,7 +19,7 @@
     <view class="order-detail">
       <view class="detail-item">
         <text class="label">订单编号：</text>
-        <text class="value">{{orderInfo.orderId}}</text>
+        <text class="value">{{orderInfo.orderNo}}</text>
       </view>
       <view class="detail-item">
         <text class="label">下单时间：</text>

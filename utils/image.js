@@ -121,6 +121,25 @@ function getCommonImages(types) {
       word: getImageByPixelRatio(`${baseImagePath}/documents/word`),
       pdf: getImageByPixelRatio(`${baseImagePath}/documents/pdf`),
       excel: getImageByPixelRatio(`${baseImagePath}/documents/excel`),
+      successNotice: getImageByPixelRatio(
+        `${baseImagePath}/profile/success-notice`,
+      ),
+      errorNotice: getImageByPixelRatio(
+        `${baseImagePath}/profile/error-notice`,
+      ),
+      couponNotice: getImageByPixelRatio(
+        `${baseImagePath}/profile/coupon-notice`,
+      ),
+      defaultNotice: getImageByPixelRatio(
+        `${baseImagePath}/profile/default-notice`,
+      ),
+      alertNotice: getImageByPixelRatio(
+        `${baseImagePath}/profile/alert-notice`,
+      ),
+      alertInfo: getImageByPixelRatio(`${baseImagePath}/profile/alert-info`),
+      successInfo: getImageByPixelRatio(
+        `${baseImagePath}/profile/success-info`,
+      ),
     },
   };
 

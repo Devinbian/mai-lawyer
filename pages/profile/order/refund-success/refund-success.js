@@ -1,10 +1,13 @@
 const imageUtil = require("../../../../utils/image.js");
+const config = require("../../../../utils/config.js");
 
 Page({
   data: {
     orderId: "",
+    orderNo: "",
     orderTime: "",
     cancelTime: "",
+    orderType: 1,
     lawyer: "",
     refundDesc: "",
     refundAmount: "",
@@ -16,17 +19,33 @@ Page({
   onLoad(options) {
     this.setImagesByPixelRatio();
 
+    const userInfo = wx.getStorageSync("userInfo");
+
     if (options.id) {
-      // 模拟获取订单数据
-      this.setData({
-        orderId: "202502000714000300000",
-        orderTime: "2025-02-07 14:00:03",
-        cancelTime: "2025-02-07 14:00:03",
-        lawyer: "雷军",
-        refundDesc: "这是一条退款说明，最多显示两行",
-        refundAmount: "64",
-        refundTime: "2025-02-07 14:00:03",
-        refundStatus: options.status ? parseInt(options.status) : 2,
+      wx.request({
+        url: `${config.baseURL}/api/order/refund-progress`,
+        method: "GET",
+        data: {
+          orderId: options.id,
+          token: userInfo.token,
+        },
+        success: (res) => {
+          console.log("/api/order/refund-progress", res.data);
+          this.setData({
+            orderId: options.id,
+            orderNo: res.data.data.orderNo,
+            orderTime: res.data.data.createTime,
+            cancelTime: res.data.data.refundRequestTime,
+            orderType: res.data.data.orderType,
+            lawyer: res.data.data.lawyer,
+            refundDesc: res.data.data.orderContent,
+            refundAmount: res.data.data.refundPrice,
+            refundTime: res.data.data.refundProgressTime,
+            refundStatus: options.refundProgress
+              ? parseInt(options.refundProgress)
+              : 2,
+          });
+        },
       });
     }
   },

@@ -10,6 +10,12 @@
     <view class="tab-item {{currentTab === 'refunded' ? 'active' : ''}}" bindtap="switchTab" data-type="refunded">已退款</view>
   </view>
 
+  <!-- 消息提示条 -->
+  <view class="order-tips {{tip.icon}}" wx:if="{{tip}}">
+    <image class="tips-icon" src="{{imgUrls[tip.icon]}}" mode="aspectFit"></image>
+    <text class="tips-text">{{tip.text}}</text>
+  </view>
+
   <!-- 订单列表 -->
   <scroll-view
     scroll-y
