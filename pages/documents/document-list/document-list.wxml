@@ -1,5 +1,5 @@
 <view class="container">
-  <bg-titlecenter-nav title="合同协议"></bg-titlecenter-nav>
+  <bg-titlecenter-nav title="{{title}}"></bg-titlecenter-nav>
   
   <!-- 搜索框 -->
   <view class="search-box">

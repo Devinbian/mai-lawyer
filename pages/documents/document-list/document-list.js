@@ -6,6 +6,7 @@ Page({
   behaviors: [refreshLoadingBehavior],
 
   data: {
+    title: "",
     searchKeyword: "",
     imgUrls: null,
     scrollTop: 0,
@@ -24,6 +25,7 @@ Page({
     console.log("options", options);
     this.setData({
       docType: options.docType || "",
+      title: options.title || "合同协议",
     });
 
     wx.showToast({
@@ -67,8 +69,7 @@ Page({
         const safeAreaTop = wx.getSystemInfoSync().safeArea.top;
 
         // 计算实际需要减去的高度（包括安全区域）
-        const totalFixedHeight =
-          searchBoxHeight + navHeight + (safeAreaTop || 0);
+        const totalFixedHeight = searchBoxHeight + navHeight + (safeAreaTop || 0);
 
         // 转换为rpx（px 转 rpx 需要乘以2）
         const heightInRpx = Math.ceil(totalFixedHeight * 2);
@@ -106,9 +107,7 @@ Page({
     document.type = this.data.docType;
     if (document) {
       wx.navigateTo({
-        url: `/pages/documents/document-get/document-get?id=${id}&document=${encodeURIComponent(
-          JSON.stringify(document),
-        )}`,
+        url: `/pages/documents/document-get/document-get?id=${id}&document=${encodeURIComponent(JSON.stringify(document))}`,
         fail(err) {
           wx.showToast({
             title: "打开文档失败",
@@ -123,12 +122,7 @@ Page({
   async loadData(isLoadMore = false) {
     try {
       const { pageNum, pageSize, docType } = this.data;
-      const doclistObj = await this.getDocuments(
-        pageNum,
-        pageSize,
-        docType,
-        this.data.searchKeyword,
-      );
+      const doclistObj = await this.getDocuments(pageNum, pageSize, docType, this.data.searchKeyword);
 
       const list = doclistObj.listArray;
       const totalRows = doclistObj.totalRows;

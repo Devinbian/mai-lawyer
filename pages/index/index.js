@@ -32,19 +32,19 @@ Page({
         id: 1,
         name: "起诉状",
         icon: "case",
-        type: "lawsuit",
+        type: "1",
       },
       {
         id: 2,
         name: "申请文书",
         icon: "document",
-        type: "application",
+        type: "4",
       },
       {
         id: 3,
         name: "通用文书",
         icon: "document",
-        type: "general",
+        type: "5",
       },
     ],
     pageSize: 10, // 每页显示的消息数量，改为10条
@@ -938,7 +938,7 @@ Page({
 
     if (selectedType) {
       wx.navigateTo({
-        url: `/pages/documents/document-list/document-list?docType=${selectedType.name}&id=${typeId}`,
+        url: `/pages/documents/document-list/document-list?docType=${selectedType.type}&title=${selectedType.name}`,
       });
     }
   },
