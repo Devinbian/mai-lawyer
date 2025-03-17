@@ -215,7 +215,7 @@
 }
 
 .message-content {
-  max-width: 80%;  /* 恢复普通消息的最大宽度 */
+  max-width: 100%;  /* 恢复普通消息的最大宽度 */
   padding: 20rpx 24rpx;  /* 恢复普通消息的内边距 */
   font-size: 28rpx;
   border-radius: 12rpx;
@@ -494,13 +494,14 @@
 }
 
 .help-button {
-  position: absolute;
-  bottom: 16rpx;
-  right: 16rpx;
+  margin-top: 40rpx;
   background: #E5F2FF;
   padding: 8rpx 24rpx;
   border-radius: 78rpx;
   letter-spacing: 1rpx;
+  width: fit-content;
+  align-self: flex-end;
+  margin-left: auto;
 }
 
 .help-button text {
@@ -508,3 +509,5 @@
   font-size: 24rpx;
   font-weight: bold;
 }
+
+

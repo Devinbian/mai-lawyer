@@ -257,11 +257,12 @@ Page({
 
     try {
       // 检查消息类型并分发到不同的处理函数
-      if (userInput.includes("起诉状是什么")) {
-        await this.handleWhatIsLawsuitResponse(userInput); // 传入userInput
-        this.setData({ inputValue: "" }); // 移到这里清空输入框
-        return;
-      } else if (userInput.includes("生成")) {
+      // if (userInput.includes("起诉状是什么")) {
+      //   await this.handleWhatIsLawsuitResponse(userInput); // 传入userInput
+      //   this.setData({ inputValue: "" }); // 移到这里清空输入框
+      //   return;
+      // } else
+      if (userInput.includes("生成")) {
         await this.handleLawsuitResponse(userInput);
         this.setData({ inputValue: "" }); // 移到这里清空输入框
         return;

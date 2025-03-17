@@ -101,14 +101,21 @@
                     </view>
 
                     <!-- 说明类卡片 -->
-                    <view class="explanation-card" wx:elif="{{item.cardData.type === 'explanation'}}">
+                    <!-- <view class="explanation-card" wx:elif="{{item.cardData.type === 'explanation'}}">
                       <view class="explanation-content">{{item.cardData.content}}</view>
                       <view class="help-button" wx:if="{{item.cardData.showHelpButton}}" bindtap="navigateToExperts">
                         <text>{{item.cardData.buttonText}}</text>
                       </view>
+                    </view> -->
+                  </block>
+                  <block wx:else>
+                    <view style="display: flex; flex-direction: column;">
+                      <view>{{item.content}}</view>
+                      <view class="help-button" bindtap="navigateToExperts" wx:if="{{item.type === 'ai'}}">
+                        <text>求助人工</text>
+                      </view>
                     </view>
                   </block>
-                  <block wx:else>{{item.content}}</block>
                 </view>
               </view>
             </block>
