@@ -39,20 +39,21 @@ Page({
                   wx.setStorageSync("userInfo", res.data.data);
                   console.log("登录成功");
                   console.log(res.data.data);
+                  // 获取页面实例栈
+                  const pages = getCurrentPages();
+                  // 获取上一个页面实例
+                  const prevPage = pages[pages.length - 2];
+                  // 调用上一个页面的onLoad方法刷新数据
+                  if (prevPage) {
+                    prevPage.onLoad();
+                  }
+                  wx.navigateBack();
                 },
                 fail: (err) => {
                   console.log("登录失败" + err);
+                  wx.navigateBack();
                 },
               });
-              // 获取页面实例栈
-              const pages = getCurrentPages();
-              // 获取上一个页面实例
-              const prevPage = pages[pages.length - 2];
-              // 调用上一个页面的onLoad方法刷新数据
-              if (prevPage) {
-                prevPage.onLoad();
-              }
-              wx.navigateBack();
             } else {
               console.log("获取授权失败" + res.data.message);
             }
