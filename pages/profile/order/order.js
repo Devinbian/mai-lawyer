@@ -149,9 +149,12 @@ Page({
         let filteredOrders = listArray;
         if (this.data.currentTab !== "all") {
           console.log("过滤订单，当前标签:", this.data.currentTab);
-          filteredOrders = listArray.filter(
-            (order) => order.status === this.data.currentTab,
-          );
+          if (this.data.currentTab !== "refunding") {
+            //退款中包含：退款审核中、审核失败、退款中、退款失败，此处不需要再过滤了，因为在获取数据源的时候已经过滤过了
+            filteredOrders = listArray.filter(
+              (order) => order.status === this.data.currentTab,
+            );
+          }
         }
         console.log("过滤后的订单:", filteredOrders);
         const end = this.data.pageNum * this.data.pageSize;
@@ -324,8 +327,13 @@ Page({
   },
 
   getOrders(pageNum, pageSize) {
-    const orderStatusIndex = parseInt(this.findKeyByVal(this.data.currentTab));
+    let orderStatusIndex = parseInt(this.findKeyByVal(this.data.currentTab));
     console.log("orderStatusIndex", orderStatusIndex);
+
+    if (orderStatusIndex === 5) {
+      //退款中的状态：包括退款审核中、审核失败、退款中、退款失败
+      orderStatusIndex = 2;
+    }
 
     return new Promise((resolve, reject) => {
       const token = wx.getStorageSync("userInfo").token;
