@@ -23,7 +23,7 @@ Page({
   },
 
   loadOrderInfo(orderId) {
-    // 模拟加载订单信息
+    模拟加载订单信息;
     const mockOrderInfo = {
       typeName: "图文咨询服务",
       lawyerAvatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",

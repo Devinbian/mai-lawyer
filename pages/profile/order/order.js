@@ -14,20 +14,59 @@ Page({
     hasMore: true, // 是否还有更多数据
     list: [], // 订单列表数据
     isInitialLoading: true, // 是否为首次加载
+    isConnected: true, // 默认有网络连接
+    networkType: "unknown", // 默认网络类型
   },
 
   onLoad(options) {
     console.log("=== onLoad 开始执行 ===");
+    const app = getApp();
 
     // 先设置图片资源
     this.setData({
-      imgUrls: imageUtil.getCommonImages(["profile", "default", "noorder"]),
+      imgUrls: {
+        ...imageUtil.getCommonImages(["profile", "default", "noorder"]),
+        nonetwork: imageUtil.getCommonImages([
+          "common",
+          "default",
+          "nonetwork",
+        ]),
+      },
       isInitialLoading: true,
       isLoading: false,
       isRefreshing: false,
       pageNum: 1,
       pageSize: 20,
+      isConnected: app.globalData.isConnected,
+      networkType: app.globalData.networkType,
     });
+
+    console.log("order.js 当前网络状态:", {
+      isConnected: app.globalData.isConnected,
+      networkType: app.globalData.networkType,
+    });
+
+    // 监听网络状态变化
+    this.networkStatusCallback = (isConnected, networkType) => {
+      console.log("order.js 收到网络状态变化:", { isConnected, networkType });
+      this.setData({ isConnected, networkType });
+
+      // 根据网络状态处理页面逻辑
+      if (isConnected) {
+        console.log("order.js 网络已连接，尝试重新加载数据");
+        this.initList();
+      } else {
+        console.log("order.js 网络已断开，显示提示");
+        wx.showToast({
+          title: "网络已断开",
+          icon: "none",
+          duration: 2000,
+        });
+      }
+    };
+
+    console.log("order.js 注册网络状态监听器");
+    app.addNetworkStatusListener(this.networkStatusCallback);
 
     console.log("options", options);
     // 如果从个人中心跳转时带有状态参数
@@ -46,6 +85,21 @@ Page({
     });
 
     console.log("调用 initList");
+    this.initList();
+  },
+
+  onUnload() {
+    console.log("order.js 页面卸载，移除网络状态监听器");
+    // 移除网络状态监听
+    const app = getApp();
+    if (this.networkStatusCallback) {
+      app.removeNetworkStatusListener(this.networkStatusCallback);
+      console.log("order.js 网络状态监听器已移除");
+    }
+  },
+
+  onShow() {
+    console.log("onShow");
     this.initList();
   },
 
@@ -161,6 +215,7 @@ Page({
   // 显示删除确认框
   showDeleteConfirm(e) {
     const orderId = e.currentTarget.dataset.id;
+    const userInfo = wx.getStorageSync("userInfo");
     this.closeDropdown();
     wx.showModal({
       title: "提示",
@@ -168,7 +223,23 @@ Page({
       success: (res) => {
         if (res.confirm) {
           // TODO: 调用删除订单接口
-          this.initList();
+          wx.request({
+            url: `${config.baseURL}/api/order/delete?token=${userInfo.token}`,
+            method: "POST",
+            header: {
+              "Content-Type": "application/json",
+            },
+            data: {
+              orderId: orderId,
+            },
+            success: (res) => {
+              console.log("删除订单成功", res);
+              this.initList();
+            },
+            fail: (err) => {
+              console.error("删除订单失败", err);
+            },
+          });
         }
       },
     });

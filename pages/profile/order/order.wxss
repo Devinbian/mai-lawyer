@@ -254,7 +254,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding-top: 360rpx;
+  padding: 120rpx 0;
 }
 
 .empty-state image {
@@ -264,8 +264,14 @@
 }
 
 .empty-state text {
+  font-size: 32rpx;
+  color: #666666;
+}
+
+.empty-state .sub-text {
   font-size: 28rpx;
-  color: #999;
+  color: #999999;
+  margin-top: 16rpx;
 }
 
 .safe-area-inset-bottom {

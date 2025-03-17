@@ -34,21 +34,35 @@ Page({
           console.log("取消订单详情", res);
           if (res.data.success) {
             console.log("++++++++++++++++++++++++++", res.data.data);
-            this.setData({
-              orderId: res.data.data.orderId,
-              orderNo: res.data.data.orderNo,
-              orderTime: res.data.data.createTime,
-              cancelTime: res.data.data.cancelTime,
-              lawyer: res.data.data.lawyerName,
-              lawyerAvatar: res.data.data.lawyerAvatarUrl,
-              lawyerTitle: res.data.data.lawyerTitle,
-              documentTitle: res.data.data.documentTitle,
-              cancelReason: res.data.data.cancelReason,
-              refundAmount: res.data.data.totalFee,
-              orderType: config.orderType[res.data.data.orderType],
-              orderTypeIndex: res.data.data.orderType,
-              fileExtIcon: config.fileExt[res.data.data.fileExtension],
-            });
+            if (res.data.data.orderType === 1) {
+              this.setData({
+                orderId: res.data.data.orderId,
+                orderNo: res.data.data.orderNo,
+                orderTime: res.data.data.createTime,
+                cancelTime: res.data.data.cancelTime,
+                lawyer: res.data.data.lawyerName,
+                lawyerAvatar: res.data.data.lawyerAvatarUrl,
+                lawyerTitle: res.data.data.lawyerTitle,
+                cancelReason: res.data.data.cancelReason,
+                refundAmount: res.data.data.totalFee,
+                orderType: config.orderType[res.data.data.orderType],
+                orderTypeIndex: res.data.data.orderType,
+                fileExtIcon: config.fileExt[res.data.data.fileExtension],
+              });
+            } else {
+              this.setData({
+                orderId: res.data.data.orderId,
+                orderNo: res.data.data.orderNo,
+                orderTime: res.data.data.createTime,
+                cancelTime: res.data.data.cancelTime,
+                documentTitle: res.data.data.documentTitle,
+                cancelReason: res.data.data.cancelReason,
+                refundAmount: res.data.data.totalFee,
+                orderType: config.orderType[res.data.data.orderType],
+                orderTypeIndex: res.data.data.orderType,
+                fileExtIcon: config.fileExt[res.data.data.fileExtension],
+              });
+            }
           }
         },
       });
@@ -77,6 +91,7 @@ Page({
 
   // 删除订单
   deleteOrder() {
+    const userInfo = wx.getStorageSync("userInfo");
     wx.showModal({
       title: "提示",
       content: "确定要删除该订单吗？",
@@ -92,11 +107,11 @@ Page({
               orderId: this.data.orderId,
             },
             success: (res) => {
-              if (res.data.success) {
-                wx.navigateBack({
-                  delta: 1,
-                });
-              }
+              console.log("删除订单", res.data, this.data.orderId);
+              wx.navigateBack({
+                delta: 1,
+                success: () => {},
+              });
             },
           });
         }
@@ -117,9 +132,11 @@ Page({
         orderId: this.data.orderId,
       },
       success: (res) => {
+        console.log("再次购买", res.data);
         if (res.data.success) {
           wx.navigateBack({
             delta: 1,
+            success: () => {},
           });
         }
       },

@@ -10,10 +10,19 @@ App({
   globalData: {
     userInfo: null,
     config: config.IM,
+    isConnected: true,
+    networkType: "wifi",
   },
 
   onLaunch() {
+    console.log("=== App onLaunch ===");
     this.initSDKInstance();
+
+    // 初始化网络状态监听
+    console.log("初始化网络状态监听");
+    this.networkStatusListeners = new Set(); // 初始化监听器集合
+    this.checkNetworkStatus(); // 检查当前网络状态
+    this.listenNetworkChange(); // 开始监听网络变化
 
     // this.checkLoginStatus();
 
@@ -134,5 +143,67 @@ App({
       title: "分享成功！",
       icon: "success",
     });
+  },
+
+  // 检查当前网络状态
+  checkNetworkStatus() {
+    console.log("app.js 检查当前网络状态");
+    wx.getNetworkType({
+      success: (res) => {
+        console.log("app.js 检查当前网络状态成功:", res);
+        const networkType = res.networkType;
+        const isConnected = networkType !== "none";
+        console.log("app.js 当前网络状态:", { isConnected, networkType });
+        this.setGlobalNetworkStatus(isConnected, networkType);
+      },
+      fail: (error) => {
+        console.error("app.js 获取网络状态失败:", error);
+      },
+    });
+  },
+
+  // 监听网络状态变化
+  listenNetworkChange() {
+    console.log("app.js 开始监听网络状态变化");
+    wx.onNetworkStatusChange((res) => {
+      const isConnected = res.isConnected;
+      const networkType = res.networkType;
+      console.log("app.js 网络状态发生变化:", { isConnected, networkType });
+      this.setGlobalNetworkStatus(isConnected, networkType);
+    });
+  },
+
+  // 更新全局网络状态
+  setGlobalNetworkStatus(isConnected, networkType) {
+    console.log("app.js 更新全局网络状态:", { isConnected, networkType });
+    this.globalData.isConnected = isConnected;
+    this.globalData.networkType = networkType;
+
+    // 触发所有注册的监听器
+    if (this.networkStatusListeners) {
+      console.log(`执行 ${this.networkStatusListeners.size} 个网络状态监听器`);
+      this.networkStatusListeners.forEach((listener) => {
+        try {
+          listener(isConnected, networkType);
+        } catch (error) {
+          console.error("app.js 执行网络状态监听器出错：", error);
+        }
+      });
+    }
+  },
+
+  // 添加网络状态监听器
+  addNetworkStatusListener(callback) {
+    if (!this.networkStatusListeners) {
+      this.networkStatusListeners = new Set();
+    }
+    this.networkStatusListeners.add(callback);
+  },
+
+  // 移除网络状态监听器
+  removeNetworkStatusListener(callback) {
+    if (this.networkStatusListeners) {
+      this.networkStatusListeners.delete(callback);
+    }
   },
 });
