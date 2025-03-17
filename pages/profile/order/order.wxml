@@ -90,8 +90,15 @@
       </view>
     </block>
 
-    <!-- 空状态 -->
-    <view class="empty-state" wx:if="{{!isInitialLoading && list.length === 0}}">
+    <!-- 网络离线状态 -->
+    <view class="empty-state" wx:if="{{!isConnected}}">
+      <image src="{{imgUrls.offline}}" mode="aspectFit"></image>
+      <text>网络连接已断开</text>
+      <text class="sub-text">请检查网络设置后重试</text>
+    </view>
+
+    <!-- 空数据状态 -->
+    <view class="empty-state" wx:elif="{{!isInitialLoading && list.length === 0}}">
       <image src="{{imgUrls.noorder}}" mode="aspectFit"></image>
       <text>暂无订单</text>
     </view>

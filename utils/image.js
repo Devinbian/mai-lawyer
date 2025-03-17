@@ -47,17 +47,25 @@ function getCommonImages(types) {
       plus: getImageByPixelRatio(`${baseImagePath}/experts/add`),
       orderphone: getImageByPixelRatio(`${baseImagePath}/profile/order-phone`),
       ordertext: getImageByPixelRatio(`${baseImagePath}/profile/order-text`),
-      refundbanner: getImageByPixelRatio(`${baseImagePath}/profile/refund-banner`),
-      ordercancelbanner: getImageByPixelRatio(`${baseImagePath}/profile/ordercancel-banner`),
+      refundbanner: getImageByPixelRatio(
+        `${baseImagePath}/profile/refund-banner`,
+      ),
+      ordercancelbanner: getImageByPixelRatio(
+        `${baseImagePath}/profile/ordercancel-banner`,
+      ),
       msgbanner: getImageByPixelRatio(`${baseImagePath}/profile/msgbanner`),
       support: getImageByPixelRatio(`${baseImagePath}/profile/support`),
       shield: getImageByPixelRatio(`${baseImagePath}/profile/shield`),
-      ordercanceltitle: getImageByPixelRatio(`${baseImagePath}/profile/ordercanceltitle`),
+      ordercanceltitle: getImageByPixelRatio(
+        `${baseImagePath}/profile/ordercanceltitle`,
+      ),
     },
     index: {
       containerBg: getImageByPixelRatio(`${baseImagePath}/index/container-bg`),
       bannerTitle: getImageByPixelRatio(`${baseImagePath}/index/banner-title`),
-      chatContentBg: getImageByPixelRatio(`${baseImagePath}/index/chat-content-bg`),
+      chatContentBg: getImageByPixelRatio(
+        `${baseImagePath}/index/chat-content-bg`,
+      ),
     },
     experts: {
       titleName: getImageByPixelRatio(`${baseImagePath}/experts/title-name`),
@@ -79,8 +87,12 @@ function getCommonImages(types) {
       contract: getImageByPixelRatio(`${baseImagePath}/documents/contract`),
       lawsuit: getImageByPixelRatio(`${baseImagePath}/documents/lawsuit`),
       defense: getImageByPixelRatio(`${baseImagePath}/documents/defense`),
-      legalOpinion: getImageByPixelRatio(`${baseImagePath}/documents/legal-opinion`),
-      application: getImageByPixelRatio(`${baseImagePath}/documents/application`),
+      legalOpinion: getImageByPixelRatio(
+        `${baseImagePath}/documents/legal-opinion`,
+      ),
+      application: getImageByPixelRatio(
+        `${baseImagePath}/documents/application`,
+      ),
       general: getImageByPixelRatio(`${baseImagePath}/documents/general`),
     },
     documentList: {
@@ -90,9 +102,7 @@ function getCommonImages(types) {
     documentGet: {
       arrow: getImageByPixelRatio(`${baseImagePath}/documents/arrow`),
       service: getImageByPixelRatio(`${baseImagePath}/documents/service`),
-      word: getImageByPixelRatio(`${baseImagePath}/documents/word`),
-      pdf: getImageByPixelRatio(`${baseImagePath}/documents/pdf`),
-      excel: getImageByPixelRatio(`${baseImagePath}/documents/excel`),
+
       ring: getImageByPixelRatio(`${baseImagePath}/profile/ring`),
     },
     default: {
@@ -104,8 +114,13 @@ function getCommonImages(types) {
       empty: getImageByPixelRatio(`${baseImagePath}/nodata`),
       case: getImageByPixelRatio(`${baseImagePath}/experts/case`),
       document: getImageByPixelRatio(`${baseImagePath}/experts/document`),
-      collectActive: getImageByPixelRatio(`${baseImagePath}/documents/collectActive`),
+      collectActive: getImageByPixelRatio(
+        `${baseImagePath}/documents/collectActive`,
+      ),
       collect: getImageByPixelRatio(`${baseImagePath}/documents/collect`),
+      word: getImageByPixelRatio(`${baseImagePath}/documents/word`),
+      pdf: getImageByPixelRatio(`${baseImagePath}/documents/pdf`),
+      excel: getImageByPixelRatio(`${baseImagePath}/documents/excel`),
     },
   };
 
