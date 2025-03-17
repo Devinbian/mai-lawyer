@@ -47,15 +47,84 @@
   border-radius: 2rpx;
 }
 
+/* 消息提示条 */
+.order-tips {
+  position: fixed;
+  top: 280rpx;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+}
+
+/* 警告类型 */
+.order-tips.alertNotice {
+  background: rgba(254, 243, 230, 1);
+}
+.order-tips.alertNotice .tips-text {
+  color: rgba(237, 123, 47, 1);
+}
+
+/* 成功类型 */
+.order-tips.successNotice {
+  background: rgba(232, 248, 242, 1);
+}
+.order-tips.successNotice .tips-text {
+  color: rgba(0, 168, 112, 1);
+}
+
+/* 信息类型 */
+.order-tips.defaultNotice {
+  background: rgba(236, 242, 254, 1);
+}
+.order-tips.defaultNotice .tips-text {
+  color: rgba(0, 82, 217, 1);
+}
+
+/* 优惠类型 */
+.order-tips.couponNotice {
+  background: rgba(255, 242, 222, 1);
+}
+.order-tips.couponNotice .tips-text {
+  color: rgba(255, 136, 0, 1);
+}
+
+/* 错误类型 */
+.order-tips.errorNotice {
+  background: rgba(253, 236, 238, 1)
+}
+.order-tips.errorNotice .tips-text {
+  color: rgba(227, 77, 89, 1);
+}
+
+.tips-icon {
+  width: 32rpx;
+  height: 32rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.tips-text {
+  font-size: 24rpx;
+  flex: 1;
+}
+
 /* 订单列表 */
 .order-list {
   position: fixed;
-  top: 300rpx;
+  top: 320rpx;  /* 增加了提示条的高度 */
   left: 0;
   right: 0;
   bottom: 0;
   padding: 0 20rpx;
   box-sizing: border-box;
+}
+
+/* 当没有提示条时的列表位置 */
+.order-list.no-tips {
+  top: 280rpx;
 }
 
 .order-list-content {

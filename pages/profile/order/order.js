@@ -16,6 +16,10 @@ Page({
     isInitialLoading: true, // 是否为首次加载
     isConnected: true, // 默认有网络连接
     networkType: "unknown", // 默认网络类型
+    tip: {
+      icon: config.tipsIcon[1].txt,
+      text: "专业上线代写服务认证律师",
+    }, // 订单消息提示
   },
 
   onLoad(options) {
@@ -25,12 +29,11 @@ Page({
     // 先设置图片资源
     this.setData({
       imgUrls: {
-        ...imageUtil.getCommonImages(["profile", "default", "noorder"]),
-        nonetwork: imageUtil.getCommonImages([
-          "common",
-          "default",
-          "nonetwork",
-        ]),
+        ...imageUtil.getCommonImages(["profile", "default"]),
+      },
+      tip: {
+        icon: config.tipsIcon[4].txt,
+        text: "这是一条专业上线代写服务认证律师",
       },
       isInitialLoading: true,
       isLoading: false,
@@ -40,6 +43,8 @@ Page({
       isConnected: app.globalData.isConnected,
       networkType: app.globalData.networkType,
     });
+
+    console.log("tip:", this.data.tip, this.data.imgUrls[this.data.tip.icon]);
 
     console.log("order.js 当前网络状态:", {
       isConnected: app.globalData.isConnected,
@@ -312,13 +317,15 @@ Page({
   // 查看退款详情
   showRefundDetail(e) {
     const orderId = e.currentTarget.dataset.id;
+    console.log("showRefundDetail", orderId);
     wx.navigateTo({
-      url: `/pages/profile/order/refund-detail/refund-detail?id=${orderId}`,
+      url: `/pages/profile/order/refund-success/refund-success?id=${orderId}`,
     });
   },
 
   getOrders(pageNum, pageSize) {
     const orderStatusIndex = parseInt(this.findKeyByVal(this.data.currentTab));
+    console.log("orderStatusIndex", orderStatusIndex);
 
     return new Promise((resolve, reject) => {
       const token = wx.getStorageSync("userInfo").token;

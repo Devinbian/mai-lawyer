@@ -40,7 +40,7 @@
      <view class="order-title">订单信息：</view>
       <view class="info-item">
         <text class="info-label">订单编号：</text>
-        <text class="info-value">{{orderId}}</text>
+        <text class="info-value">{{orderNo}}</text>
       </view>
       <view class="info-item">
         <text class="info-label">下单时间：</text>
@@ -50,7 +50,7 @@
         <text class="info-label">取消时间：</text>
         <text class="info-value">{{cancelTime}}</text>
       </view>
-      <view class="info-item">
+      <view class="info-item" wx:if="{{orderType === 1}}">
         <text class="info-label">服务律师：</text>
         <text class="info-value">{{lawyer}}</text>
       </view>

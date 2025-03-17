@@ -1,4 +1,5 @@
 const imageUtil = require("../../../../utils/image.js");
+const config = require("../../../../utils/config.js");
 
 Page({
   data: {
@@ -11,31 +12,52 @@ Page({
 
   onLoad(options) {
     this.setImagesByPixelRatio();
+    const userInfo = wx.getStorageSync("userInfo");
+
+    console.log("options", options);
+
     if (options.id) {
-      this.loadOrderInfo(options.id);
+      wx.request({
+        url: `${config.baseURL}/api/order/detail`,
+        method: "GET",
+        data: {
+          orderId: options.id,
+          token: userInfo.token,
+        },
+        success: (res) => {
+          console.log("/api/order/detail", res.data.data);
+          if (res.data.success) {
+            this.setData({
+              orderInfo: {
+                typeName:
+                  res.data.data.orderType === 1 ? "图文咨询服务" : "下载文档",
+                lawyerAvatar:
+                  res.data.data.orderType === 1
+                    ? res.data.data.lawyerAvatar
+                    : this.data.imgUrls[
+                        config.fileExt[res.data.data.documentFileExtension]
+                      ],
+                lawyerName:
+                  res.data.data.orderType === 1
+                    ? res.data.data.lawyerName
+                    : res.data.data.documentTitle,
+                lawyerTitle: res.data.data.lawyerTitle,
+                orderNo: res.data.data.orderNo,
+                orderId: options.id,
+                orderTime: res.data.data.createTime,
+                price: res.data.data.totalFee,
+                orderType: res.data.data.orderType,
+              },
+            });
+          }
+        },
+      });
     }
   },
 
   setImagesByPixelRatio() {
     this.setData({
       imgUrls: imageUtil.getCommonImages(["profile", "default"]),
-    });
-  },
-
-  loadOrderInfo(orderId) {
-    模拟加载订单信息;
-    const mockOrderInfo = {
-      typeName: "图文咨询服务",
-      lawyerAvatar: "https://imgapi.cn/api.php?zd=mobile&fl=meizi&gs=images",
-      lawyerName: "俞律师",
-      lawyerTitle: "上海（黄浦律师事务所）主任",
-      orderId: orderId,
-      orderTime: "2025-02-07 14:00:03",
-      price: 64,
-    };
-
-    this.setData({
-      orderInfo: mockOrderInfo,
     });
   },
 
@@ -75,7 +97,8 @@ Page({
     });
   },
 
-  submitRefund() {
+  async submitRefund() {
+    const userInfo = wx.getStorageSync("userInfo");
     if (!this.data.canSubmit) {
       return;
     }
@@ -88,23 +111,55 @@ Page({
       return;
     }
 
-    wx.showLoading({
-      title: "提交中...",
-    });
+    console.log("this.data.uploadImages", this.data.uploadImages);
 
-    // 模拟提交
-    setTimeout(() => {
-      wx.hideLoading();
-      wx.showToast({
-        title: "提交成功",
-        icon: "success",
-        duration: 2000,
-        success: () => {
-          setTimeout(() => {
-            wx.navigateBack();
-          }, 2000);
-        },
+    const uploadedImages = [];
+    // 先上传图片（如果有的话）
+    if (this.data.uploadImages.length > 0) {
+      console.log(
+        "this.data.uploadImages.length",
+        this.data.uploadImages.length,
+      );
+      for (const imagePath of this.data.uploadImages) {
+        console.log("imagePath", imagePath);
+        const res = await this.uploadFile({
+          filePath: imagePath,
+          name: "file",
+          url: config.baseURL + "/api/file/upload?secretFlag=N",
+        });
+        uploadedImages.push(JSON.parse(res.data).data.fileObjectName);
+      }
+      console.log("uploadedImages", uploadedImages);
+    }
+
+    wx.request({
+      url: `${config.baseURL}/api/order/refund-request?token=${userInfo.token}`,
+      method: "POST",
+      header: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        orderId: this.data.orderInfo.orderId,
+        refundReason: this.data.refundReason,
+        refundVoucher: uploadedImages.join(";"),
+      },
+      success: (res) => {
+        console.log("/api/order/refund-request", res.data);
+        wx.navigateBack({
+          delta: 1,
+          success: () => {},
+        });
+      },
+    });
+  },
+
+  uploadFile(options) {
+    return new Promise((resolve, reject) => {
+      wx.uploadFile({
+        ...options,
+        success: (res) => resolve(res),
+        fail: (err) => reject(err),
       });
-    }, 1500);
+    });
   },
 });
