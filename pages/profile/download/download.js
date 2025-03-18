@@ -49,7 +49,7 @@ Page({
       },
       () => {
         this.initList();
-      },
+      }
     );
   },
 
@@ -64,7 +64,7 @@ Page({
       },
       () => {
         this.initList();
-      },
+      }
     );
   },
 
@@ -111,10 +111,7 @@ Page({
           }
 
           // 根据二级分类过滤（使用文书类型过滤）
-          if (
-            this.data.currentTab !== "all" &&
-            docType !== this.data.currentTab
-          ) {
+          if (this.data.currentTab !== "all" && docType !== this.data.currentTab) {
             return;
           }
 
@@ -155,21 +152,17 @@ Page({
         const hasMoreData = remaining > 5;
 
         setTimeout(() => {
-          resolve({
+          return {
             list: pageData,
             hasMore: hasMoreData,
-          });
+          };
         }, Math.max(0, 1000 - (Date.now() - startTime)));
-        return;
+        return {
+          list: [],
+          hasMore: false,
+        };
       } else {
-        const type = [
-          "contract",
-          "complaint",
-          "defense",
-          "legal_opinion",
-          "application",
-          "general",
-        ].indexOf(this.data.currentTab);
+        const type = ["contract", "complaint", "defense", "legal_opinion", "application", "general"].indexOf(this.data.currentTab);
 
         return new Promise((resolve, reject) => {
           console.log("/api/document-download-history/page", "请求后台");
@@ -227,21 +220,15 @@ Page({
                     const item = {
                       id: doc.id || index + 1,
                       title: doc.title || "未命名文档",
-                      date: doc.createTime
-                        ? util.formatTime(new Date(doc.createTime))
-                        : "未知时间",
-                      timestamp: doc.createTime
-                        ? new Date(doc.createTime).getTime()
-                        : Date.now(),
+                      date: doc.createTime ? util.formatTime(new Date(doc.createTime)) : "未知时间",
+                      timestamp: doc.createTime ? new Date(doc.createTime).getTime() : Date.now(),
                       type: fileType,
                       docType: this.data.currentTab || "all",
                       price: Number(doc.price || 0),
                       status: doc.status || "completed",
                       url: doc.url || "",
                       ext: doc.fileExtension || "",
-                      size: doc.size
-                        ? `${(Number(doc.size) / 1024).toFixed(2)}KB`
-                        : "未知大小",
+                      size: doc.size ? `${(Number(doc.size) / 1024).toFixed(2)}KB` : "未知大小",
                     };
 
                     fileList.push(item);

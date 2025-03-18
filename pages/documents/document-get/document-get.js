@@ -60,9 +60,7 @@ Page({
   toggleService() {
     const selectedService = !this.data.selectedService;
     const documentPrice = this.data.document?.price || 0;
-    const totalPrice = selectedService
-      ? documentPrice + this.data.servicePrice
-      : documentPrice;
+    const totalPrice = selectedService ? documentPrice + this.data.servicePrice : documentPrice;
 
     this.setData({
       selectedService,
@@ -74,8 +72,7 @@ Page({
   showServiceDetail() {
     wx.showModal({
       title: "专家核稿服务说明",
-      content:
-        "由专业律师团队为您审核文件内容，确保合同条款完整、合规，避免潜在风险，保障您的合法权益。",
+      content: "由专业律师团队为您审核文件内容，确保合同条款完整、合规，避免潜在风险，保障您的合法权益。",
       showCancel: false,
       confirmText: "我知道了",
     });
@@ -108,11 +105,7 @@ Page({
       success: (res) => {
         const filePath = res.tempFilePath;
         console.log("document.ext", this.data.document.ext);
-        console.log(
-          "document.price",
-          this.data.document.price,
-          this.data.document.price > 0,
-        );
+        console.log("document.price", this.data.document.price, this.data.document.price > 0);
         let showMenu = false;
         if (this.data.document.price === 0) {
           showMenu = true;
@@ -258,6 +251,7 @@ Page({
   },
 
   addOrder(document, userInfo) {
+    const that = this;
     console.log("添加订单", document, userInfo);
     //先创建订单
     wx.request({
@@ -271,7 +265,7 @@ Page({
         type: 2, //文档订单类型
       },
       success: (res) => {
-        if (res.success) {
+        if (res.data.success) {
           //调用后台封装的微信下单接口
           wx.request({
             url: `${config.baseURL}/api/wxpay/prepay`,
@@ -282,15 +276,15 @@ Page({
             },
             success: (res) => {
               wx.requestPayment({
-                timeStamp: res.data.data.jsapiResult.timeStamp,
-                nonceStr: res.data.data.jsapiResult.nonceStr,
-                package: res.data.data.jsapiResult.packageValue,
-                signType: res.data.data.jsapiResult.signType,
-                paySign: res.data.data.jsapiResult.paySign,
+                timeStamp: res.data.data.timeStamp,
+                nonceStr: res.data.data.nonceStr,
+                package: res.data.data.packageValue,
+                signType: res.data.data.signType,
+                paySign: res.data.data.paySign,
                 success: function (res) {
                   console.log("支付成功", res);
                   //支付成功后，添加下载记录
-                  this.addDownloadRecord(document, userInfo);
+                  that.addDownloadRecord(document, userInfo);
                 },
                 fail: function (res) {
                   console.log("支付失败", res);
