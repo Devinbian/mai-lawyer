@@ -152,22 +152,77 @@ Page({
 
   // 图文咨询
   handleTextConsult() {
+    const token = this.data.userInfo.token;
     console.log("this.data.expert.phone:", this.data.expert.phone);
-    if (this.data.userInfo) {
-      wx.navigateTo({
-        url: `../../../tim-chat/pages/index?targetUserID=${this.data.expert.phone}&title=${encodeURIComponent(this.data.expert.name)}`,
-        fail(err) {
-          wx.showToast({
-            title: "打开聊天失败",
-            icon: "none",
-          });
-        },
-      });
-    } else {
+    if (!this.data.userInfo) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
+      return;
     }
+
+    // 调用支付接口
+    wx.request({
+      url: `${config.baseURL}/api/order/add?token=${token}`,
+      method: "POST",
+      data: {
+        lawyerId: this.data.expert.id,
+        type: 1, //图文咨询
+      },
+      success: (res) => {
+        if (res.data.success) {
+          wx.request({
+            url: `${config.baseURL}/api/wxpay/prepay`,
+            method: "GET",
+            data: {
+              orderId: res.data.data,
+              token: token,
+            },
+            success: (res) => {
+              wx.requestPayment({
+                timeStamp: res.data.data.timeStamp,
+                nonceStr: res.data.data.nonceStr,
+                package: res.data.data.packageValue,
+                signType: res.data.data.signType,
+                paySign: res.data.data.paySign,
+                success: function (res) {
+                  console.log("支付成功", res);
+                  //支付成功后，添加下载记录
+                  wx.navigateTo({
+                    url: `../../../tim-chat/pages/index?targetUserID=${this.data.expert.phone}&title=${encodeURIComponent(this.data.expert.name)}`,
+                    fail(err) {
+                      wx.showToast({
+                        title: "打开聊天失败",
+                        icon: "none",
+                      });
+                    },
+                  });
+                },
+                fail: function (res) {
+                  console.log("支付失败", res);
+                },
+                complete: function (res) {},
+              });
+            },
+            fail: (err) => {
+              console.log("支付失败", err);
+            },
+          });
+        } else {
+          wx.showToast({
+            title: res.data.msg || "创建支付订单失败",
+            icon: "none",
+          });
+        }
+      },
+      fail: (err) => {
+        console.error("请求支付失败：", err);
+        wx.showToast({
+          title: "创建支付订单失败",
+          icon: "none",
+        });
+      },
+    });
   },
 
   // 处理展开/收起
