@@ -65,7 +65,8 @@
   width: 20rpx;
   height: 20rpx;
   border-radius: 50%;
-  background: #CCCCCC;
+  border: 2rpx solid #CCCCCC;
+  background: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,35 +76,45 @@
 
 .progress-dot.active {
   background: #007BFF;
+  border-color: #007BFF;
 }
 
 .progress-dot.finished {
-  background: #FFFFFF;
-  border: 2rpx solid #007BFF;
+  background: #007BFF;
+  border-color: #007BFF;
 }
 
 .progress-dot.check {
   background: #007BFF;
-  width: 40rpx;
-  height: 40rpx;
+  width: 32rpx;
+  height: 32rpx;
   border: none;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .progress-dot.failed {
   background: #F34E4E;
-  width: 40rpx;
-  height: 40rpx;
+  width: 32rpx;
+  height: 32rpx;
   border: none;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .check-icon {
-  width: 14rpx;
+  width: 16rpx;
   height: 10rpx;
   border: 2rpx solid #fff;
   border-top: none;
   border-right: none;
   transform: rotate(-45deg);
-  margin-top: -4rpx;
+  position: relative;
+  top: -1rpx;
 }
 
 .cross-icon {
@@ -116,11 +127,12 @@
 .cross-icon::after {
   content: '';
   position: absolute;
-  width: 16rpx;
-  height: 2rpx;
+  width: 20rpx;
+  height: 3rpx;
   background: #fff;
   top: 50%;
   left: 0;
+  border-radius: 2rpx;
 }
 
 .cross-icon::before {
@@ -129,6 +141,36 @@
 
 .cross-icon::after {
   transform: rotate(-45deg);
+}
+
+.progress-section {
+  position: absolute;
+  top: 175rpx;
+  left: 0;
+  width: 100%;
+  height: 160rpx;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.success-content {
+  position: absolute;
+  top: 332rpx;
+  left: 0;
+  width: 100%;
+  padding: 32rpx;
+  box-sizing: border-box;
+}
+
+.success-status {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.03);
 }
 
 .progress-label {
@@ -195,13 +237,14 @@
 }
 
 .status-desc {
-  font-size: 24rpx;
-  color: rgba(51, 51, 51, 1);
-  margin-bottom: 8rpx;
-  padding-left: 20rpx;
+  font-size: 28rpx;
+  color: rgba(51, 51, 51, 0.8);
+  margin-bottom: 16rpx;
+  padding-left: 24rpx;
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
+  line-height: 1.5;
 }
 
 .status-desc.failed {
@@ -210,10 +253,19 @@
 }
 
 .amount {
-  font-size: 24rpx;
-  color: rgba(44, 145, 255, 1);
+  font-size: 32rpx;
+  color: #007BFF;
   font-weight: bold;
-  margin: 0 4rpx;
+  margin: 0 8rpx;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.status-text {
+  margin-bottom: 24rpx;
+}
+
+.status-time {
+  margin-top: 8rpx;
 }
 
 .status-time {
@@ -257,3 +309,32 @@
   padding-left: 20rpx;
 }
 
+
+.status-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #007BFF;
+  position: relative;
+}
+
+.status-dot::after {
+  content: '';
+  position: absolute;
+  top: -6rpx;
+  left: -6rpx;
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  background: rgba(0, 123, 255, 0.15);
+  box-shadow: 0 0 8rpx rgba(0, 123, 255, 0.3);
+}
+
+.status-dot.failed {
+  background: #F34E4E;
+}
+
+.status-dot.failed::after {
+  background: rgba(243, 78, 78, 0.15);
+  box-shadow: 0 0 8rpx rgba(243, 78, 78, 0.3);
+}

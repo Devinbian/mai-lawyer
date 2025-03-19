@@ -285,6 +285,11 @@ Page({
                   console.log("支付成功", res);
                   //支付成功后，添加下载记录
                   that.addDownloadRecord(document, userInfo);
+
+                  // 支付成功后跳转到下载记录页面
+                  wx.redirectTo({
+                    url: "/pages/profile/download/download",
+                  });
                 },
                 fail: function (res) {
                   console.log("支付失败", res);

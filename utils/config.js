@@ -44,7 +44,7 @@ module.exports = {
     1: { val: "paid", txt: "已支付" },
     2: { val: "canceled", txt: "已取消" },
     3: { val: "approving", txt: "退款审核中" },
-    4: { val: "approve_failed", txt: "审核失败" },
+    4: { val: "approve_failed", txt: "审核未通过" },
     5: { val: "refunding", txt: "退款中" },
     6: { val: "refunded", txt: "已退款" },
     7: { val: "refund_failed", txt: "退款失败" },

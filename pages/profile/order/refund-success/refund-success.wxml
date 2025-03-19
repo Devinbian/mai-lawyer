@@ -5,18 +5,19 @@
     <image class="banner-img" src="{{imgUrls.refundbanner}}" mode="widthFix"></image>
     <view class="progress-bar">
       <view class="progress-item">
-        <view class="progress-dot {{refundStatus >= 2 || refundStatus === 4 ? 'finished' : (refundStatus === 1 ? 'active' : '')}}"></view>
+        <view class="progress-dot {{refundStatus >= 3 || refundStatus === 4 || refundStatus === 6 ? 'finished' : ''}}"></view>
         <text class="progress-label">提交申请</text>
       </view>
-      <view class="progress-line {{refundStatus >= 2 || refundStatus === 4 ? 'finished' : (refundStatus === 1 ? 'active' : '')}}"></view>
+      <view class="progress-line {{refundStatus >= 3 || refundStatus === 4 || refundStatus === 6 ? 'finished' : ''}}"></view>
       <view class="progress-item">
-        <view class="progress-dot {{refundStatus === 2 ? 'active' : ((refundStatus === 3 || refundStatus === 4) ? 'finished' : '')}}"></view>
+        <view class="progress-dot {{refundStatus === 3 ? 'active' : ((refundStatus === 4 || refundStatus === 6) ? 'finished' : '')}}"></view>
         <text class="progress-label">正在处理</text>
       </view>
-      <view class="progress-line {{refundStatus === 2 ? 'active' : ((refundStatus === 3 || refundStatus === 4) ? 'finished' : '')}}"></view>
+      <view class="progress-line {{refundStatus === 3 ? 'active' : ((refundStatus === 4 || refundStatus === 6) ? 'finished' : '')}}"></view>
       <view class="progress-item">
-        <view class="progress-dot {{refundStatus === 3 ? 'active check' : ''}}">
-          <view class="check-icon" wx:if="{{refundStatus === 3}}"></view>
+        <view class="progress-dot {{refundStatus === 6 ? 'active check' : (refundStatus === 4 ? 'failed' : '')}}">
+          <view class="check-icon" wx:if="{{refundStatus === 6}}"></view>
+          <view class="cross-icon" wx:if="{{refundStatus === 4}}"></view>
         </view>
         <text class="progress-label">{{refundStatus === 4 ? '未通过' : '退款成功'}}</text>
       </view>
@@ -27,15 +28,19 @@
     <view class="success-status">
       <view class="status-text">
         <view class="status-dot {{refundStatus === 4 ? 'failed' : ''}}"></view>
-        <text>{{refundStatus === 1 ? '您已成功发起退款申请' : 
-               refundStatus === 2 ? '您已成功发起退款申请，请耐心等待商家处理' : 
-               refundStatus === 3 ? '退款成功' :
-               '退款申请未通过'}}</text>
+        <text>{{refundStatus === 3 ? '退款审核中' : 
+               refundStatus === 4 ? '退款审核未通过' : 
+               refundStatus === 5 ? '退款处理中' :
+               refundStatus === 6 ? '退款成功' :
+               refundStatus === 7 ? '退款失败' : '退款处理中'}}</text>
       </view>
-      <view class="status-desc" wx:if="{{refundStatus === 1}}">请耐心等待商家处理</view>
-      <view class="status-desc" wx:elif="{{refundStatus === 2}}">如果商家拒绝，您可以修改退款申请后再次发起，商家会重新处理</view>
-      <view class="status-desc" wx:elif="{{refundStatus === 3}}">成功退款 <text class="amount">{{refundAmount}}</text> 元，已原路退还至您的支付账户</view>
-      <view class="status-desc failed" wx:elif="{{refundStatus === 4}}">未通过原因：{{refundAuditMessage}}</view>
+      <view class="status-desc" wx:if="{{refundStatus === 3}}">您已成功发起退款申请，请耐心等待审核</view>
+      <view class="status-desc" wx:elif="{{refundStatus === 4}}">
+        <text class="failed">未通过原因：{{refundAuditMessage}}</text>
+      </view>
+      <view class="status-desc" wx:elif="{{refundStatus === 5}}">退款正在处理中，预计1-3个工作日到账</view>
+      <view class="status-desc" wx:elif="{{refundStatus === 6}}">成功退款 <text class="amount">{{refundAmount}}</text> 元，已原路退还至您的支付账户</view>
+      <view class="status-desc failed" wx:elif="{{refundStatus === 7}}">退款失败，请联系客服处理</view>
       <text class="status-time">{{refundTime}}</text>
     </view>
 
