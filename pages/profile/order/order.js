@@ -404,11 +404,13 @@ Page({
                 orderNo: order.orderNo,
                 typeName: config.orderType[order.orderType]?.title || "未知类型",
                 type: config.orderType[order.orderType]?.icon || "text",
+                orderType: order.orderType, // 保存原始订单类型
                 status: config.orderStatus[order.orderStatus]?.val || "pending",
                 statusText: config.orderStatus[order.orderStatus]?.txt || "未知状态",
                 consultTime: order.createTime,
                 price: order.totalFee,
                 lawyer: order.lawyerName,
+                documentName: order.documentName || "未知文档", // 添加文档名称字段
               };
             });
             console.log("数据处理完成:", {

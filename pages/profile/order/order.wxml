@@ -41,14 +41,14 @@
         <!-- 订单类型 -->
         <view class="order-type">
           <image class="type-icon" src="{{item.type === 'phone' ? imgUrls.orderphone : imgUrls.ordertext}}" mode="aspectFit"></image>
-          <text class="order-type-text">{{item.typeName}}</text>
+          <text class="order-type-text">{{item.orderType === 2 ? '文档下载' : item.typeName}}</text>
           <text class="order-status {{item.status === 'pending' ? 'pending' : item.status === 'paid' ? 'paid' : item.status === 'refunding' ? 'refunding' : 'refunded'}}">{{item.statusText}}</text>
         </view>
 
         <!-- 订单信息 -->
         <view class="order-info">
           <view class="info-item">
-            <text class="label">咨询时间：</text>
+            <text class="label">{{item.orderType === 2 ? '下载时间' : '咨询时间'}}：</text>
             <text class="value">{{item.consultTime}}</text>
           </view>
           <view class="info-item">
@@ -60,8 +60,8 @@
             <text class="value price">¥ {{item.price}}</text>
           </view>
           <view class="info-item">
-            <text class="label">服务律师：</text>
-            <text class="value">{{item.lawyer}}</text>
+            <text class="label">{{item.orderType === 2 ? '文档名称' : '服务律师'}}：</text>
+            <text class="value">{{item.orderType === 2 ? item.documentName : item.lawyer}}</text>
           </view>
         </view>
 

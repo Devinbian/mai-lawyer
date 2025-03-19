@@ -14,14 +14,7 @@ module.exports = {
   pageSize: 10,
 
   //法律文书类型
-  docType: [
-    "contract",
-    "complaint",
-    "defense",
-    "legal_opinion",
-    "application",
-    "general",
-  ],
+  docType: ["contract", "complaint", "defense", "legal_opinion", "application", "general"],
 
   //支持的文件后缀
   fileExt: {
@@ -77,8 +70,7 @@ module.exports = {
   appId: "wx1a652f95e596a237",
   IM: {
     userID: "laywer3", // User ID
-    SECRETKEY:
-      "3aebef5623822d13d3124b10687cbf1c46cc4928583af930bb74270160b76cc4", // Your secretKey
+    SECRETKEY: "3aebef5623822d13d3124b10687cbf1c46cc4928583af930bb74270160b76cc4", // Your secretKey
     SDKAPPID: 1600076169, // Your SDKAppID
     EXPIRETIME: 604800,
   },
