@@ -187,7 +187,7 @@ Page({
                 paySign: res.data.data.paySign,
                 success: function (res) {
                   console.log("支付成功", res);
-                  //支付成功后，添加下载记录
+                  //支付成功后，跳转聊天
                   wx.navigateTo({
                     url: `../../../tim-chat/pages/index?targetUserID=${this.data.expert.phone}&title=${encodeURIComponent(this.data.expert.name)}`,
                     fail(err) {

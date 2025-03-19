@@ -21,7 +21,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad() {
-    console.log("&&&&&&&&&&&&&");
     wx.showToast({
       title: "加载中...",
       icon: "loading",
@@ -171,9 +170,7 @@ Page({
     const expert = this.data.list.find((item) => item.id === expertId);
 
     wx.navigateTo({
-      url: `../../tim-chat/pages/index?targetUserID=${
-        expert.phone
-      }&title=${encodeURIComponent(expert.name)}`,
+      url: `../../tim-chat/pages/index?targetUserID=${expert.phone}&title=${encodeURIComponent(expert.name)}`,
       fail(err) {
         console.log("打开聊天失败", err);
       },

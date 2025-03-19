@@ -11,7 +11,7 @@
   </view>
 
   <!-- 消息提示条 -->
-  <view class="order-tips {{tip.icon}}" wx:if="{{tip}}">
+  <view class="order-tips {{tip?tip.icon:''}}" wx:if="{{tip}}">
     <image class="tips-icon" src="{{imgUrls[tip.icon]}}" mode="aspectFit"></image>
     <text class="tips-text">{{tip.text}}</text>
   </view>

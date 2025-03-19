@@ -17,8 +17,8 @@ Page({
     isConnected: true, // 默认有网络连接
     networkType: "unknown", // 默认网络类型
     tip: {
-      icon: config.tipsIcon[1].txt,
-      text: "专业上线代写服务认证律师",
+      // icon: config.tipsIcon[1].txt,
+      // text: "专业上线代写服务认证律师",
     }, // 订单消息提示
   },
 
@@ -31,10 +31,10 @@ Page({
       imgUrls: {
         ...imageUtil.getCommonImages(["profile", "default"]),
       },
-      tip: {
-        icon: config.tipsIcon[4].txt,
-        text: "这是一条专业上线代写服务认证律师",
-      },
+      // tip: {
+      //   icon: config.tipsIcon[4].txt,
+      //   text: "这是一条专业上线代写服务认证律师",
+      // },
       isInitialLoading: true,
       isLoading: false,
       isRefreshing: false,
@@ -126,7 +126,7 @@ Page({
       },
       () => {
         this.initList();
-      },
+      }
     );
   },
 
@@ -139,10 +139,7 @@ Page({
     });
     try {
       console.log("开始调用 getOrders");
-      const { listArray, totalRows } = await this.getOrders(
-        this.data.pageNum,
-        this.data.pageSize,
-      );
+      const { listArray, totalRows } = await this.getOrders(this.data.pageNum, this.data.pageSize);
       console.log("getOrders 返回数据:", { listArray, totalRows });
 
       return new Promise((resolve) => {
@@ -151,9 +148,7 @@ Page({
           console.log("过滤订单，当前标签:", this.data.currentTab);
           if (this.data.currentTab !== "refunding") {
             //退款中包含：退款审核中、审核失败、退款中、退款失败，此处不需要再过滤了，因为在获取数据源的时候已经过滤过了
-            filteredOrders = listArray.filter(
-              (order) => order.status === this.data.currentTab,
-            );
+            filteredOrders = listArray.filter((order) => order.status === this.data.currentTab);
           }
         }
         console.log("过滤后的订单:", filteredOrders);
@@ -163,9 +158,7 @@ Page({
         // 更新加载状态
         this.setData({
           isInitialLoading: false,
-          list: isLoadMore
-            ? [...this.data.list, ...filteredOrders]
-            : filteredOrders,
+          list: isLoadMore ? [...this.data.list, ...filteredOrders] : filteredOrders,
         });
 
         resolve({
@@ -275,20 +268,14 @@ Page({
             },
             success: (res) => {
               if (res.data.success) {
-                console.log(
-                  "取消订单成功，并跳转/pages/profile/order/cancel/cancel?id=${orderId}",
-                  res,
-                );
+                console.log("取消订单成功，并跳转/pages/profile/order/cancel/cancel?id=${orderId}", res);
                 wx.navigateTo({
                   url: `/pages/profile/order/cancel/cancel?id=${orderId}`,
                 });
               }
             },
             fail: (err) => {
-              console.error(
-                "取消订单失败/pages/profile/order/cancel/cancel?id=${orderId}:",
-                err,
-              );
+              console.error("取消订单失败/pages/profile/order/cancel/cancel?id=${orderId}:", err);
             },
           });
         } else {
@@ -304,8 +291,44 @@ Page({
   // 去支付
   payOrder(e) {
     const orderId = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: `/pages/profile/order/pay/pay?id=${orderId}`,
+    const userInfo = wx.getStorageSync("userInfo");
+    const token = userInfo.token;
+    wx.request({
+      url: `${config.baseURL}/api/wxpay/prepay`,
+      method: "GET",
+      data: {
+        orderId: orderId,
+        token: token,
+      },
+      success: (res) => {
+        wx.requestPayment({
+          timeStamp: res.data.data.timeStamp,
+          nonceStr: res.data.data.nonceStr,
+          package: res.data.data.packageValue,
+          signType: res.data.data.signType,
+          paySign: res.data.data.paySign,
+          success: function (res) {
+            console.log("支付成功", res);
+            //支付成功后，添加下载记录
+            // wx.navigateTo({
+            //   url: `../../../tim-chat/pages/index?targetUserID=${this.data.expert.phone}&title=${encodeURIComponent(this.data.expert.name)}`,
+            //   fail(err) {
+            //     wx.showToast({
+            //       title: "打开聊天失败",
+            //       icon: "none",
+            //     });
+            //   },
+            // });
+          },
+          fail: function (res) {
+            console.log("支付失败", res);
+          },
+          complete: function (res) {},
+        });
+      },
+      fail: (err) => {
+        console.log("支付失败", err);
+      },
     });
   },
 
@@ -379,12 +402,10 @@ Page({
               return {
                 orderId: order.orderId,
                 orderNo: order.orderNo,
-                typeName:
-                  config.orderType[order.orderType]?.title || "未知类型",
+                typeName: config.orderType[order.orderType]?.title || "未知类型",
                 type: config.orderType[order.orderType]?.icon || "text",
                 status: config.orderStatus[order.orderStatus]?.val || "pending",
-                statusText:
-                  config.orderStatus[order.orderStatus]?.txt || "未知状态",
+                statusText: config.orderStatus[order.orderStatus]?.txt || "未知状态",
                 consultTime: order.createTime,
                 price: order.totalFee,
                 lawyer: order.lawyerName,
