@@ -409,7 +409,7 @@ Page({
                 statusText: config.orderStatus[order.orderStatus]?.txt || "未知状态",
                 consultTime: order.createTime,
                 price: order.totalFee,
-                lawyer: order.lawyerName,
+                orderContent: order.orderContent,
                 documentName: order.documentName || "未知文档", // 添加文档名称字段
               };
             });
