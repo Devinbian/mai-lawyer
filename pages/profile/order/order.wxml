@@ -20,7 +20,6 @@
   <scroll-view
     scroll-y
     class="order-list"
-    bindscroll="onScroll"
     bindscrolltolower="loadMore"
     refresher-enabled="{{true}}"
     refresher-triggered="{{isRefreshing}}"
@@ -40,9 +39,9 @@
       <view class="order-item" wx:for="{{list}}" wx:key="orderId">
         <!-- 订单类型 -->
         <view class="order-type">
-          <image class="type-icon" src="{{item.type === 'phone' ? imgUrls.orderphone : imgUrls.ordertext}}" mode="aspectFit"></image>
+          <image class="type-icon" src="{{item.orderType === 3 ? imgUrls.orderphone : imgUrls.ordertext}}" mode="aspectFit"></image>
           <text class="order-type-text">{{item.orderType === 2 ? '文档下载' : item.typeName}}</text>
-          <text class="order-status {{item.status === 'pending' ? 'pending' : item.status === 'paid' ? 'paid' : item.status === 'refunding' ? 'refunding' : 'refunded'}}">{{item.statusText}}</text>
+          <text class="order-status {{item.status}}">{{item.statusText}}</text>
         </view>
 
         <!-- 订单信息 -->

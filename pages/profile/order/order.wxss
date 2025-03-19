@@ -167,19 +167,35 @@
 }
 
 .order-status.pending {
-  color: #4768F3;
+  color: #4768F3;  /* 待支付 */
 }
 
 .order-status.paid {
-  color: #999;
+  color: #999;  /* 已支付 */
+}
+
+.order-status.canceled {
+  color: #999;  /* 已取消 */
+}
+
+.order-status.approving {
+  color: #FF8800;  /* 退款审核中 */
+}
+
+.order-status.approve_failed {
+  color: rgba(243, 78, 78, 1);  /* 审核失败 */
 }
 
 .order-status.refunding {
-  color: rgba(243, 78, 78, 1);
+  color: #FF8800;  /* 退款中 */
+}
+
+.order-status.refund_failed {
+  color: rgba(243, 78, 78, 1);  /* 退款失败 */
 }
 
 .order-status.refunded {
-  color: #999;
+  color: #999;  /* 已退款 */
 }
 
 /* 订单信息 */
