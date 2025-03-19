@@ -142,64 +142,40 @@ Page({
     }
   },
 
-  // 获取手机号
-  onGetPhoneNumber(e) {
-    const { code } = e.detail;
-    if (!code) {
-      wx.showToast({
-        title: "获取手机号失败",
-        icon: "error",
-      });
-      return;
-    }
-
-    // 隐藏获取手机号按钮
-    this.setData({
-      showPhoneButton: false,
-    });
-
-    // 处理手机号绑定
-    this.processPhoneBinding(code);
-  },
-
   // 处理手机号绑定
   processPhoneBinding(code) {
-    // TODO: 调用后端接口解密手机号
-    // 这里模拟更新手机号
-    this.setData({
-      "userInfo.phone": "138****8888", // 实际应该使用后端解密后的手机号
-    });
-
-    // 更新本地存储
-    const userInfo = wx.getStorageSync("userInfo") || {};
-    userInfo.phone = this.data.userInfo.phone;
-    wx.setStorageSync("userInfo", userInfo);
-
-    wx.showToast({
-      title: "手机号绑定成功",
-      icon: "success",
-    });
-  },
-
-  // 绑定邮箱
-  bindEmail() {
-    wx.showModal({
-      title: "绑定邮箱",
-      editable: true,
-      placeholderText: "请输入邮箱",
+    wx.request({
+      url: config.baseURL + "/api/auth/getphone",
+      data: {
+        code: code,
+      },
       success: (res) => {
-        if (res.confirm && res.content) {
-          // TODO: 验证邮箱格式
-          // TODO: 发送验证邮件
-          // TODO: 验证并绑定邮箱
+        if (res.data.success) {
+          const phone = res.data.data;
+          // 更新本地数据
           this.setData({
-            "userInfo.email": res.content,
+            "userInfo.phone": phone,
+          });
+          this.updateUserInfo({
+            phone: phone,
           });
           wx.showToast({
-            title: "邮箱绑定成功",
+            title: "手机号绑定成功",
             icon: "success",
           });
+        } else {
+          wx.showToast({
+            title: res.data.message || "绑定失败",
+            icon: "error",
+          });
         }
+      },
+      fail: (err) => {
+        console.error("手机号绑定失败:", err);
+        wx.showToast({
+          title: "网络错误",
+          icon: "error",
+        });
       },
     });
   },
@@ -254,27 +230,6 @@ Page({
     });
   },
 
-  // 获取手机号
-  onGetPhoneNumber(e) {
-    const { code, errMsg } = e.detail;
-
-    // 隐藏获取手机号按钮
-    this.setData({
-      showPhoneButton: false,
-    });
-
-    // 用户取消授权或失败
-    if (errMsg.includes("deny") || errMsg.includes("fail") || !code) {
-      wx.showToast({
-        title: "获取手机号失败",
-        icon: "error",
-      });
-      return;
-    }
-
-    // 处理手机号绑定
-    this.processPhoneBinding(code);
-  },
   // 更新用户信息到服务器
   updateUserInfo(data) {
     const userInfo = wx.getStorageSync("userInfo") || {};

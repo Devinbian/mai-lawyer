@@ -36,9 +36,9 @@ Page({
                 },
                 dataType: "json",
                 success: (res) => {
-                  wx.setStorageSync("userInfo", res.data.data);
-                  console.log("登录成功");
-                  console.log(res.data.data);
+                  const userInfo = res.data.data;
+                  wx.setStorageSync("userInfo", userInfo);
+                  getApp().globalData.userInfo = userInfo;
                   // 获取页面实例栈
                   const pages = getCurrentPages();
                   // 获取上一个页面实例

@@ -49,14 +49,6 @@
         </view>
       </button>
 
-      <!-- 邮箱 -->
-      <!-- <view class="info-item" bindtap="bindEmail">
-        <text class="label">绑定邮箱</text>
-        <view class="value-wrap">
-          <text class="value">{{userInfo.email || '未绑定'}}</text>
-          <image class="arrow" src="{{imgUrls.arrow}}" mode="aspectFit" />
-        </view>
-      </view> -->
     </view>
 
     <!-- 性别 -->
