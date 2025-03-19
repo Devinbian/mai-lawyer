@@ -290,14 +290,20 @@ Page({
 
   // 去支付
   payOrder(e) {
-    const orderId = e.currentTarget.dataset.id;
+    const item = this.data.list.find((order) => order.orderId === e.currentTarget.dataset.id);
+    if (!item) {
+      console.error("未找到订单信息");
+      return;
+    }
+
     const userInfo = wx.getStorageSync("userInfo");
     const token = userInfo.token;
+
     wx.request({
       url: `${config.baseURL}/api/wxpay/prepay`,
       method: "GET",
       data: {
-        orderId: orderId,
+        orderId: item.orderId,
         token: token,
       },
       success: (res) => {
@@ -307,27 +313,71 @@ Page({
           package: res.data.data.packageValue,
           signType: res.data.data.signType,
           paySign: res.data.data.paySign,
-          success: function (res) {
+          success: (res) => {
             console.log("支付成功", res);
-            //支付成功后，添加下载记录
-            // wx.navigateTo({
-            //   url: `../../../tim-chat/pages/index?targetUserID=${this.data.expert.phone}&title=${encodeURIComponent(this.data.expert.name)}`,
-            //   fail(err) {
-            //     wx.showToast({
-            //       title: "打开聊天失败",
-            //       icon: "none",
-            //     });
-            //   },
-            // });
+
+            // 根据订单类型执行不同的后续操作
+            if (item.orderType === 1) {
+              // 图文咨询，打开聊天
+              wx.navigateTo({
+                url: `../../../tim-chat/pages/index?targetUserID=${item.orderContent}&title=${encodeURIComponent(item.typeName)}`,
+                fail(err) {
+                  wx.showToast({
+                    title: "打开聊天失败",
+                    icon: "none",
+                  });
+                },
+              });
+            } else if (item.orderType === 2) {
+              // 文档下载，开始下载
+              wx.downloadFile({
+                url: item.documentUrl,
+                success: (res) => {
+                  const filePath = res.tempFilePath;
+                  wx.openDocument({
+                    filePath: filePath,
+                    showMenu: true,
+                    success: () => {
+                      console.log("打开文档成功");
+                      wx.showToast({
+                        title: "下载成功",
+                        icon: "success",
+                      });
+                    },
+                    fail: (err) => {
+                      console.log("打开文档失败", err);
+                      wx.showToast({
+                        title: "打开文档失败",
+                        icon: "none",
+                      });
+                    },
+                  });
+                },
+                fail: (err) => {
+                  console.log("下载文档失败", err);
+                  wx.showToast({
+                    title: "下载文档失败",
+                    icon: "none",
+                  });
+                },
+              });
+            }
           },
           fail: function (res) {
             console.log("支付失败", res);
+            wx.showToast({
+              title: "支付失败",
+              icon: "none",
+            });
           },
-          complete: function (res) {},
         });
       },
       fail: (err) => {
         console.log("支付失败", err);
+        wx.showToast({
+          title: "支付失败",
+          icon: "none",
+        });
       },
     });
   },
@@ -409,8 +459,10 @@ Page({
                 statusText: config.orderStatus[order.orderStatus]?.txt || "未知状态",
                 consultTime: order.createTime,
                 price: order.totalFee,
-                orderContent: order.orderContent,
-                documentName: order.documentName || "未知文档", // 添加文档名称字段
+                orderContent: order.orderContent, // 图文咨询时为律师手机号，文档下载时为文档名称
+                documentName: order.documentName || "未知文档",
+                documentUrl: order.documentUrl, // 添加文档下载链接
+                lawyerName: order.lawyerName, // 添加律师姓名
               };
             });
             console.log("数据处理完成:", {
