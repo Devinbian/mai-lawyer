@@ -89,6 +89,13 @@
   border: none;
 }
 
+.progress-dot.failed {
+  background: #F34E4E;
+  width: 40rpx;
+  height: 40rpx;
+  border: none;
+}
+
 .check-icon {
   width: 14rpx;
   height: 10rpx;
@@ -97,6 +104,31 @@
   border-right: none;
   transform: rotate(-45deg);
   margin-top: -4rpx;
+}
+
+.cross-icon {
+  width: 16rpx;
+  height: 16rpx;
+  position: relative;
+}
+
+.cross-icon::before,
+.cross-icon::after {
+  content: '';
+  position: absolute;
+  width: 16rpx;
+  height: 2rpx;
+  background: #fff;
+  top: 50%;
+  left: 0;
+}
+
+.cross-icon::before {
+  transform: rotate(45deg);
+}
+
+.cross-icon::after {
+  transform: rotate(-45deg);
 }
 
 .progress-label {
@@ -172,6 +204,11 @@
   flex-wrap: nowrap;
 }
 
+.status-desc.failed {
+  color: #F34E4E;
+  font-weight: 500;
+}
+
 .amount {
   font-size: 24rpx;
   color: rgba(44, 145, 255, 1);
@@ -219,3 +256,4 @@
   color: rgba(51, 51, 51, 1);
   padding-left: 20rpx;
 }
+

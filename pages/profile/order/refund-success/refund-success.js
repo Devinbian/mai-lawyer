@@ -13,7 +13,7 @@ Page({
     refundAmount: "",
     refundTime: "",
     imgUrls: null,
-    refundStatus: 2, // 1: 提交申请, 2: 正在处理, 3: 退款成功
+    refundStatus: 2, // 1: 提交申请, 2: 正在处理, 3: 退款成功 4: 退款审核不通过
   },
 
   onLoad(options) {
@@ -38,12 +38,11 @@ Page({
             cancelTime: res.data.data.refundRequestTime,
             orderType: res.data.data.orderType,
             lawyer: res.data.data.lawyer,
-            refundDesc: res.data.data.orderContent,
+            refundDesc: res.data.data.refundReason,
             refundAmount: res.data.data.refundPrice,
             refundTime: res.data.data.refundProgressTime,
-            refundStatus: options.refundProgress
-              ? parseInt(options.refundProgress)
-              : 2,
+            refundStatus: res.data.data.refundProgress,
+            refundAuditMessage: res.data.data.refundAuditMessage,
           });
         },
       });
