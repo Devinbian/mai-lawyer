@@ -6,7 +6,7 @@ Component({
   properties: {
     title: {
       type: String,
-      value: "麦小律",
+      value: "迈小律",
     },
     showBack: {
       type: Boolean,

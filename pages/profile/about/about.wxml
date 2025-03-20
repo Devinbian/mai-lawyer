@@ -6,7 +6,7 @@
       <!-- Logo区域 -->
       <view class="logo-section">
         <image class="logo" src="{{imgUrls.logo}}" mode="aspectFit"/>
-        <view class="version">麦小律V1.0.0版本</view>
+        <view class="version">迈小律V1.0.0版本</view>
       </view>
 
       <!-- 公司介绍 -->

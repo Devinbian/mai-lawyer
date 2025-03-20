@@ -6,7 +6,7 @@ Component({
   properties: {
     title: {
       type: String,
-      value: "麦小律",
+      value: "迈小律",
     },
   },
   data: {
@@ -62,11 +62,11 @@ Component({
       const pages = getCurrentPages();
       if (pages.length > 1) {
         wx.navigateBack({
-          delta: 1
+          delta: 1,
         });
       } else {
         wx.switchTab({
-          url: '/pages/index/index'
+          url: "/pages/index/index",
         });
       }
     },
@@ -74,16 +74,16 @@ Component({
     handleHome() {
       const currentPages = getCurrentPages();
       const currentPage = currentPages[currentPages.length - 1];
-      
+
       // 如果当前已经在首页，不做任何操作
-      if (currentPage.route === 'pages/index/index') {
+      if (currentPage.route === "pages/index/index") {
         return;
       }
 
       // 跳转到首页tab
       wx.switchTab({
-        url: '/pages/index/index'
+        url: "/pages/index/index",
       });
-    }
+    },
   },
 });
