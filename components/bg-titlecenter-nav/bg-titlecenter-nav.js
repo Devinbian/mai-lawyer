@@ -18,22 +18,9 @@ Component({
     navBarHeight: 0,
   },
   lifetimes: {
-    created() {
-      // wx.showToast({
-      //   title: "导航组件created",
-      //   icon: "none",
-      // });
-      // console.warn("导航组件created - 测试日志");
-    },
+    created() {},
     attached() {
-      // wx.showToast({
-      //   title: "导航组件attached",
-      //   icon: "none",
-      // });
-      // console.warn("导航组件attached - 测试日志");
-
       const windowInfo = wx.getWindowInfo();
-      console.warn("系统信息:", windowInfo);
 
       this.setData({
         statusBarHeight: windowInfo.statusBarHeight,
@@ -44,18 +31,10 @@ Component({
       this.triggerEvent("navheight", {
         height: windowInfo.statusBarHeight + this.data.navBarHeight,
       });
-
-      // wx.showToast({
-      //   title: `状态栏高度:${wx.getSystemInfoSync().statusBarHeight}`,
-      //   icon: "none",
-      //   duration: 2000,
-      // });
     },
   },
   pageLifetimes: {
-    show() {
-      // console.log("页面显示");
-    },
+    show() {},
   },
   methods: {
     // 添加一个测试方法

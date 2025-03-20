@@ -54,8 +54,10 @@ Page({
   },
 
   onLoad: function () {
+    const userInfo = getApp().globalData.userInfo;
+    const userNickname = userInfo ? userInfo.name : "用户";
     this.setData({
-      userNickname: getApp().globalData.userInfo.name || "用户",
+      userNickname: userNickname,
       imgUrls: imageUtils.getCommonImages(["index", "default", "expertsDetail"]),
     });
 

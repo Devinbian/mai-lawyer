@@ -96,10 +96,6 @@ Page({
 
   // 处理关注/取消关注
   handleFollow() {
-    this.setData({
-      isFollowed: !this.data.isFollowed,
-    });
-    this.data.expert.follow = this.data.isFollowed;
     if (!getApp().globalData.userInfo) {
       console.log("用户未登录");
       wx.navigateTo({
@@ -107,35 +103,55 @@ Page({
       });
       return;
     }
-    if (this.data.isFollowed) {
-      wx.request({
-        url: config.baseURL + "/api/lawyer/follow",
-        data: {
-          id: this.data.expert.id, // 律师ID
-          token: getApp().globalData.userInfo.token, // 用户token
-        },
-        success: (res) => {
-          console.log("关注成功：", res);
-        },
-        fail: (err) => {
-          console.log("关注失败：", err);
-        },
-      });
-    } else {
-      wx.request({
-        url: config.baseURL + "/api/lawyer/unfollow",
-        data: {
-          id: this.data.expert.id, // 律师ID
-          token: getApp().globalData.userInfo.token, // 用户token
-        },
-        success: (res) => {
-          console.log("取消关注成功：", res);
-        },
-        fail: (err) => {
-          console.log("取消关注失败：", err);
-        },
-      });
-    }
+
+    const newIsFollowed = !this.data.isFollowed;
+    const currentFans = parseInt(this.data.expert.fans) || 0;
+    const currentIsFollowed = this.data.isFollowed;
+
+    this.setData({
+      isFollowed: newIsFollowed,
+      "expert.fans": newIsFollowed ? currentFans + 1 : currentFans - 1,
+    });
+    this.data.expert.follow = newIsFollowed;
+
+    // 发送关注/取消关注请求
+    wx.request({
+      url: config.baseURL + (newIsFollowed ? "/api/lawyer/follow" : "/api/lawyer/unfollow"),
+      data: {
+        id: this.data.expert.id,
+        token: getApp().globalData.userInfo.token,
+      },
+      success: (res) => {
+        if (res.data.success) {
+          wx.showToast({
+            title: newIsFollowed ? "关注成功" : "已取消关注",
+            icon: "success",
+          });
+        } else {
+          // 如果请求失败，恢复原状态
+          this.setData({
+            isFollowed: currentIsFollowed,
+            "expert.fans": currentFans,
+          });
+          wx.showToast({
+            title: res.data.message || (newIsFollowed ? "关注失败" : "取消关注失败"),
+            icon: "error",
+          });
+        }
+      },
+      fail: (err) => {
+        console.log(newIsFollowed ? "关注失败：" : "取消关注失败：", err);
+        // 网络请求失败，恢复原状态
+        this.setData({
+          isFollowed: currentIsFollowed,
+          "expert.fans": currentFans,
+        });
+        wx.showToast({
+          title: "网络错误",
+          icon: "error",
+        });
+      },
+    });
   },
 
   // 图文咨询

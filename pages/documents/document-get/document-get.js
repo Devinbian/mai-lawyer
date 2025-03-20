@@ -164,7 +164,7 @@ Page({
   //添加下载记录
   addDownloadRecord(document) {
     console.log("添加下载记录", document);
-    const token=getApp().globalData.userInfo.token;
+    const token = getApp().globalData.userInfo.token;
     // 添加下载记录
     wx.request({
       url: `${config.baseURL}/api/document-download-history/add`,
@@ -247,7 +247,7 @@ Page({
 
   addOrder(document) {
     const that = this;
-    console token =getApp().globalData.userInfo.token;
+    const token = getApp().globalData.userInfo.token;
     console.log("添加订单", document);
     //先创建订单
     wx.request({

@@ -158,10 +158,66 @@ Page({
     const expertId = e.currentTarget.dataset.id;
     const expert = this.data.list.find((item) => item.id === expertId);
 
-    wx.navigateTo({
-      url: `../../tim-chat/pages/index?targetUserID=${expert.phone}&title=${encodeURIComponent(expert.name)}`,
-      fail(err) {
-        console.log("打开聊天失败", err);
+    // 调用支付接口
+    const token = getApp().globalData.userInfo.token;
+    wx.request({
+      url: `${config.baseURL}/api/order/add?token=${token}`,
+      method: "POST",
+      data: {
+        lawyerId: expertId,
+        type: 1, //图文咨询
+      },
+      success: (res) => {
+        if (res.data.success) {
+          wx.request({
+            url: `${config.baseURL}/api/wxpay/prepay`,
+            data: {
+              orderId: res.data.data,
+              token: token,
+            },
+            success: (res) => {
+              wx.requestPayment({
+                timeStamp: res.data.data.timeStamp,
+                nonceStr: res.data.data.nonceStr,
+                package: res.data.data.packageValue,
+                signType: res.data.data.signType,
+                paySign: res.data.data.paySign,
+                success: function (res) {
+                  console.log("支付成功", res);
+                  //支付成功后，跳转聊天
+                  wx.navigateTo({
+                    url: `../../../tim-chat/pages/index?targetUserID=${expert.phone}&title=${encodeURIComponent(expert.name)}`,
+                    fail(err) {
+                      wx.showToast({
+                        title: "打开聊天失败",
+                        icon: "none",
+                      });
+                    },
+                  });
+                },
+                fail: function (res) {
+                  console.log("支付失败", res);
+                },
+                complete: function (res) {},
+              });
+            },
+            fail: (err) => {
+              console.log("支付失败", err);
+            },
+          });
+        } else {
+          wx.showToast({
+            title: res.data.msg || "创建支付订单失败",
+            icon: "none",
+          });
+        }
+      },
+      fail: (err) => {
+        console.error("请求支付失败：", err);
+        wx.showToast({
+          title: "创建支付订单失败",
+          icon: "none",
+        });
       },
     });
   },
