@@ -19,15 +19,13 @@ Page({
   onLoad(options) {
     this.setImagesByPixelRatio();
 
-    const userInfo = wx.getStorageSync("userInfo");
-
     if (options.id) {
       wx.request({
         url: `${config.baseURL}/api/order/refund-progress`,
         method: "GET",
         data: {
           orderId: options.id,
-          token: userInfo.token,
+          token: getApp().globalData.userInfo.token,
         },
         success: (res) => {
           console.log("/api/order/refund-progress", res.data);

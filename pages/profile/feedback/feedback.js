@@ -123,7 +123,7 @@ Page({
       };
 
       wx.request({
-        url: config.baseURL + "/api/feedback/add?token=" + wx.getStorageSync("userInfo").token,
+        url: config.baseURL + "/api/feedback/add?token=" + getApp().globalData.userInfo.token,
         method: "POST",
         data: feedbackData,
         success: (res) => {

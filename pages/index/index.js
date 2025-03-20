@@ -4,8 +4,6 @@ const util = require("../../utils/util.js");
 
 Page({
   data: {
-    userInfo: null, // 用户信息，用于登录检查
-    // messages: [], // 已被 messageList 替代，不再使用
     inputValue: "", // 输入框的值
     showSuggestions: true, // 是否显示建议问题
     suggestions: ["起诉状如何写", "恶意拖欠劳动工资，如何申请仲裁处理？", "律师费如何计算"],
@@ -56,34 +54,18 @@ Page({
   },
 
   onLoad: function () {
-    console.log("++++++++++++++++index++++++++++++++++");
-    const userInfo = wx.getStorageSync("userInfo");
-    console.log(userInfo);
-
     this.setData({
-      userInfo: userInfo,
-      userNickname: userInfo.name || "用户",
+      userNickname: getApp().globalData.userInfo.name || "用户",
       imgUrls: imageUtils.getCommonImages(["index", "default", "expertsDetail"]),
     });
 
     // 获取缓存的聊天记录时进行数量限制
     this.loadLatestChatHistory();
-
-    // // 获取窗口信息
-    // const windowInfo = wx.getWindowInfo();
-    // this.setData({
-    //   statusBarHeight: windowInfo.statusBarHeight,
-    //   navBarHeight: windowInfo.navigationBarHeight || 44,
-    // });
   },
 
   // 检查登录状态
   checkLogin() {
-    console.log("++++++++++++++++checkLogin++++++++++++++++");
-    console.log(typeof this.data.userInfo);
-    console.log(this.data.userInfo);
-    const userInfo = wx.getStorageSync("userInfo");
-    if (!this.data.userInfo || !userInfo) {
+    if (!getApp().globalData.userInfo) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -656,20 +638,6 @@ Page({
   bindViewTap() {
     wx.navigateTo({
       url: "../logs/logs",
-    });
-  },
-
-  getUserProfile(e) {
-    // 推荐使用wx.getUserProfile获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认，开发者妥善保管用户快速填写的头像昵称，避免重复弹窗
-    wx.getUserProfile({
-      desc: "展示用户信息", // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-      success: (res) => {
-        console.log(res);
-        this.setData({
-          userInfo: res.userInfo,
-          hasUserInfo: true,
-        });
-      },
     });
   },
 

@@ -8,7 +8,6 @@ Page({
     isIntroExpanded: false,
     isExpanded: false,
     isFollowed: false,
-    userInfo: null,
   },
   imgUrls: null,
   onLoad(options) {
@@ -17,18 +16,11 @@ Page({
       try {
         const expertInfo = JSON.parse(decodeURIComponent(options.expert));
         console.log("初始化专家信息", expertInfo);
-        const userInfo = wx.getStorageSync("userInfo");
-        this.setData({
-          userInfo: userInfo,
-        });
-
         wx.request({
           url: config.baseURL + "/api/lawyer/detail",
-          method: "GET",
-          dataType: "json",
           data: {
             id: expertInfo.id,
-            token: userInfo.token,
+            token: getApp().globalData.userInfo.token,
           },
           success: (res) => {
             console.log("律师信息,从后台获取", res);
@@ -108,7 +100,7 @@ Page({
       isFollowed: !this.data.isFollowed,
     });
     this.data.expert.follow = this.data.isFollowed;
-    if (!this.data.userInfo) {
+    if (!getApp().globalData.userInfo) {
       console.log("用户未登录");
       wx.navigateTo({
         url: "/pages/login/login",
@@ -118,11 +110,9 @@ Page({
     if (this.data.isFollowed) {
       wx.request({
         url: config.baseURL + "/api/lawyer/follow",
-        method: "GET",
-        dataType: "json",
         data: {
           id: this.data.expert.id, // 律师ID
-          token: this.data.userInfo.token, // 用户token
+          token: getApp().globalData.userInfo.token, // 用户token
         },
         success: (res) => {
           console.log("关注成功：", res);
@@ -134,11 +124,9 @@ Page({
     } else {
       wx.request({
         url: config.baseURL + "/api/lawyer/unfollow",
-        method: "GET",
-        dataType: "json",
         data: {
           id: this.data.expert.id, // 律师ID
-          token: this.data.userInfo.token, // 用户token
+          token: getApp().globalData.userInfo.token, // 用户token
         },
         success: (res) => {
           console.log("取消关注成功：", res);
@@ -152,9 +140,7 @@ Page({
 
   // 图文咨询
   handleTextConsult() {
-    const token = this.data.userInfo.token;
-    console.log("this.data.expert.phone:", this.data.expert.phone);
-    if (!this.data.userInfo) {
+    if (!getApp().globalData.userInfo) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -162,6 +148,7 @@ Page({
     }
 
     // 调用支付接口
+    const token = getApp().globalData.userInfo.token;
     wx.request({
       url: `${config.baseURL}/api/order/add?token=${token}`,
       method: "POST",
@@ -173,7 +160,6 @@ Page({
         if (res.data.success) {
           wx.request({
             url: `${config.baseURL}/api/wxpay/prepay`,
-            method: "GET",
             data: {
               orderId: res.data.data,
               token: token,

@@ -11,7 +11,6 @@ Page({
     imgUrls: null,
     downloadProgress: 0, // 添加下载进度状态
     isCollected: false,
-    userInfo: null,
     docType: config.docType, //法律文书类型
     fileExtIcon: "", //文件类型图标
   },
@@ -23,10 +22,9 @@ Page({
         console.log("document", document);
         wx.request({
           url: `${config.baseURL}/api/document/detail`,
-          method: "GET",
           data: {
             id: document.id,
-            token: wx.getStorageSync("userInfo").token,
+            token: getApp().globalData.userInfo.token,
           },
           success: (res) => {
             console.log("收藏状态", res);
@@ -39,7 +37,6 @@ Page({
             this.setData({
               document,
               totalPrice: document.price || 0,
-              userInfo: wx.getStorageSync("userInfo"),
               imgUrls: imageUtil.getCommonImages(["documentGet", "default"]),
               fileExtIcon: config.fileExt[document.ext],
             });
@@ -84,8 +81,7 @@ Page({
 
     if (totalPrice > 0) {
       //需要放在支付成功的回调里面
-      // this.addDownloadRecord(this.data.document, this.data.userInfo);
-      this.addOrder(this.data.document, this.data.userInfo);
+      this.addOrder(this.data.document);
     } else {
       wx.showLoading({
         title: "准备下载...",
@@ -93,7 +89,7 @@ Page({
         duration: 200,
       });
 
-      this.addDownloadRecord(this.data.document, this.data.userInfo);
+      this.addDownloadRecord(this.data.document);
     }
   },
 
@@ -129,17 +125,17 @@ Page({
 
   // 切换收藏状态
   toggleCollect() {
-    const { isCollected, document, userInfo } = this.data;
+    const { isCollected, document } = this.data;
+    const token = getApp().globalData.userInfo.token;
     // 保存收藏状态
     this.setData({ isCollected: !isCollected });
     console.log("isCollected", this.data.isCollected);
     if (this.data.isCollected) {
       wx.request({
         url: `${config.baseURL}/api/document/collect`,
-        method: "GET",
         data: {
           id: document.id,
-          token: this.data.userInfo.token,
+          token: token,
         },
         success: (res) => {
           console.log("收藏成功", res);
@@ -151,10 +147,9 @@ Page({
     } else {
       wx.request({
         url: `${config.baseURL}/api/document/uncollect`,
-        method: "GET",
         data: {
           id: document.id,
-          token: userInfo.token,
+          token: token,
         },
         success: (res) => {
           console.log("取消收藏成功", res);
@@ -167,15 +162,15 @@ Page({
   },
 
   //添加下载记录
-  addDownloadRecord(document, userInfo) {
-    console.log("添加下载记录", document, userInfo);
+  addDownloadRecord(document) {
+    console.log("添加下载记录", document);
+    const token=getApp().globalData.userInfo.token;
     // 添加下载记录
     wx.request({
       url: `${config.baseURL}/api/document-download-history/add`,
-      method: "GET",
       data: {
         documentId: document.id,
-        token: userInfo.token,
+        token: token,
       },
       success: (res) => {
         console.log("添加下载记录成功", res);
@@ -250,12 +245,13 @@ Page({
     });
   },
 
-  addOrder(document, userInfo) {
+  addOrder(document) {
     const that = this;
-    console.log("添加订单", document, userInfo);
+    console token =getApp().globalData.userInfo.token;
+    console.log("添加订单", document);
     //先创建订单
     wx.request({
-      url: `${config.baseURL}/api/order/add?token=${userInfo.token}`,
+      url: `${config.baseURL}/api/order/add?token=${token}`,
       method: "POST",
       header: {
         "Content-Type": "application/json",
@@ -269,10 +265,9 @@ Page({
           //调用后台封装的微信下单接口
           wx.request({
             url: `${config.baseURL}/api/wxpay/prepay`,
-            method: "GET",
             data: {
               orderId: res.data.data,
-              token: userInfo.token,
+              token: token,
             },
             success: (res) => {
               wx.requestPayment({
@@ -284,7 +279,7 @@ Page({
                 success: function (res) {
                   console.log("支付成功", res);
                   //支付成功后，添加下载记录
-                  that.addDownloadRecord(document, userInfo);
+                  that.addDownloadRecord(document);
 
                   // 支付成功后跳转到下载记录页面
                   wx.redirectTo({

@@ -8,7 +8,7 @@ const config = require("./utils/config.js");
 
 App({
   globalData: {
-    userInfo: null,
+    userInfo: wx.getStorageSync("userInfo") || null,
     config: config.IM,
     isConnected: true,
     networkType: "wifi",
@@ -23,8 +23,6 @@ App({
     this.networkStatusListeners = new Set(); // 初始化监听器集合
     this.checkNetworkStatus(); // 检查当前网络状态
     this.listenNetworkChange(); // 开始监听网络变化
-
-    // this.checkLoginStatus();
 
     // 延迟设置TabBar图标
     wx.nextTick(() => {
@@ -88,27 +86,6 @@ App({
     ]).catch((err) => {
       console.error("设置TabBar图标失败:", err);
     });
-  },
-
-  checkLoginStatus() {
-    const userInfo = wx.getStorageSync("userInfo");
-    if (userInfo) {
-      wx.checkSession({
-        success: () => {
-          // 登录态有效
-          this.globalData.userInfo = userInfo;
-        },
-        fail: () => {
-          // 登录态过期，清除存储
-          wx.removeStorageSync("userInfo");
-          wx.navigateTo({
-            url: "/pages/login/login",
-          });
-        },
-      });
-    } else {
-      wx.removeStorageSync("userInfo");
-    }
   },
 
   enableShare() {

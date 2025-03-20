@@ -52,7 +52,6 @@ Page({
       },
     ],
     imgUrls: null,
-    userInfo: null,
   },
 
   /**
@@ -60,10 +59,6 @@ Page({
    */
   onLoad(options) {
     this.setImagesByPixelRatio();
-    this.setData({
-      userInfo: wx.getStorageSync("userInfo"),
-    });
-
     wx.request({
       url: config.baseURL + "/api/document/category",
       method: "GET",

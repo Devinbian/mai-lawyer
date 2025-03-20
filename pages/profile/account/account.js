@@ -29,7 +29,7 @@ Page({
 
   // 获取用户信息
   getUserInfo() {
-    const userInfo = wx.getStorageSync("userInfo");
+    const userInfo = getApp().globalData.userInfo;
     this.setData({
       userInfo: userInfo || {},
     });
@@ -180,37 +180,6 @@ Page({
     });
   },
 
-  // 退出登录
-  handleLogout() {
-    wx.showModal({
-      title: "提示",
-      content: "确定要退出登录吗？",
-      success: (res) => {
-        if (res.confirm) {
-          // 清除登录信息
-          wx.removeStorageSync("userInfo");
-          wx.removeStorageSync("token");
-
-          const app = getApp();
-          app.globalData.userInfo = null;
-          app.globalData.isLogin = false;
-
-          // 返回到个人中心页面
-          wx.navigateBack({
-            success: () => {
-              // 通知个人中心页面刷新
-              const pages = getCurrentPages();
-              const profilePage = pages[pages.length - 2];
-              if (profilePage) {
-                profilePage.onShow();
-              }
-            },
-          });
-        }
-      },
-    });
-  },
-
   // 选择性别
   selectGender(e) {
     const gender = parseInt(e.currentTarget.dataset.gender);
@@ -232,7 +201,7 @@ Page({
 
   // 更新用户信息到服务器
   updateUserInfo(data) {
-    const userInfo = wx.getStorageSync("userInfo") || {};
+    const userInfo = getApp().globalData.userInfo || {};
     const token = userInfo.token;
 
     if (!token) {
@@ -258,10 +227,9 @@ Page({
       success: (res) => {
         if (res.data.success) {
           // 更新成功，更新本地存储
-          const userInfo = wx.getStorageSync("userInfo") || {};
           Object.assign(userInfo, res.data.data);
           wx.setStorageSync("userInfo", userInfo);
-
+          getApp().globalData.userInfo = userInfo;
           wx.showToast({
             title: "更新成功",
             icon: "success",

@@ -19,7 +19,7 @@ Page({
   onLoad() {
     console.log("onLoad");
     // 获取用户信息
-    const userInfo = wx.getStorageSync("userInfo");
+    const userInfo = getApp().globalData.userInfo;
     if (!userInfo) {
       wx.redirectTo({
         url: "/pages/login/login",
@@ -49,7 +49,7 @@ Page({
           url: `${config.baseURL}/api/document/collectList`,
           method: "GET",
           data: {
-            token: wx.getStorageSync("userInfo").token,
+            token: getApp().globalData.userInfo.token,
             pageNo: pageNum,
             pageSize: pageSize,
           },

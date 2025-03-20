@@ -24,7 +24,7 @@ Page({
    */
   async onLoad(options) {
     this.setData({
-      "config.userID": wx.getStorageSync("userInfo").phone,
+      "config.userID": getApp().globalData.userInfo.phone,
     });
     // 初始化SDK并登录
     await this.initSDKAndLogin();

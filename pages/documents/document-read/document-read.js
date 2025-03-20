@@ -7,16 +7,11 @@ Page({
     documentId: "",
     document: null,
     imgUrls: null,
-    userInfo: null,
     fileUrl: "",
     loading: true,
   },
 
   onLoad(options) {
-    this.setData({
-      userInfo: wx.getStorageSync("userInfo"),
-    });
-
     if (options.id && options.document) {
       try {
         const document = JSON.parse(decodeURIComponent(options.document));
@@ -50,10 +45,9 @@ Page({
     return new Promise((resolve, reject) => {
       wx.request({
         url: config.baseURL + "/api/document/detail",
-        method: "GET",
         data: {
           id: id,
-          token: this.data.userInfo.token,
+          token: getApp().globalData.userInfo.token,
         },
         dataType: "json",
         success: (res) => {

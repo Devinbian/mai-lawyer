@@ -10,7 +10,6 @@ Page({
    * 页面的初始数据
    */
   data: {
-    userInfo: null,
     config: {
       SDKAPPID: 1600076169, // 将在onLoad中设置真实值
       SECRETKEY: "3aebef5623822d13d3124b10687cbf1c46cc4928583af930bb74270160b76cc4",
@@ -28,10 +27,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   async onLoad(options) {
-    // 获取用户信息
-    this.setData({
-      userInfo: wx.getStorageSync("userInfo"),
-    });
     // 根据options设置标题
     if (options.title) {
       // 解码接收到的标题参数
@@ -45,7 +40,7 @@ Page({
     await this.accountImport();
     // 初始化配置信息
     this.setData({
-      "config.userID": this.data.userInfo.phone,
+      "config.userID": getApp().globalData.userInfo.phone,
     });
 
     // 初始化SDK并登录
@@ -63,7 +58,7 @@ Page({
   accountImport() {
     return new Promise((resolve, reject) => {
       wx.request({
-        url: config.baseURL + "/api/im/accountImport?token=" + this.data.userInfo.token,
+        url: config.baseURL + "/api/im/accountImport?token=" + getApp().globalData.userInfo.token,
         success: (res) => {
           resolve(res);
         },
@@ -295,7 +290,7 @@ Page({
 
       // 更新用户资料
       await wx.$TUIKit.updateMyProfile({
-        avatar: this.data.userInfo.avatar,
+        avatar: getApp().globalData.userInfo.avatar,
       });
 
       // 初始化 TUIKit 组件

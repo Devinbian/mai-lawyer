@@ -216,7 +216,7 @@ Page({
   // 显示删除确认框
   showDeleteConfirm(e) {
     const orderId = e.currentTarget.dataset.id;
-    const userInfo = wx.getStorageSync("userInfo");
+    const token = getApp().globalData.userInfo.token;
     this.closeDropdown();
     wx.showModal({
       title: "提示",
@@ -225,7 +225,7 @@ Page({
         if (res.confirm) {
           // TODO: 调用删除订单接口
           wx.request({
-            url: `${config.baseURL}/api/order/delete?token=${userInfo.token}`,
+            url: `${config.baseURL}/api/order/delete?token=${token}`,
             method: "POST",
             header: {
               "Content-Type": "application/json",
@@ -249,7 +249,7 @@ Page({
   // 取消订单
   cancelOrder(e) {
     const orderId = e.currentTarget.dataset.id;
-    const userInfo = wx.getStorageSync("userInfo");
+    const token = getApp().globalData.userInfo.token;
     wx.showModal({
       title: "提示",
       content: "确定要取消该订单吗？",
@@ -258,7 +258,7 @@ Page({
           console.log("点击确定，取消订单", orderId);
           // TODO: 调用取消订单接口
           wx.request({
-            url: `${config.baseURL}/api/order/cancel?token=${userInfo.token}`,
+            url: `${config.baseURL}/api/order/cancel?token=${token}`,
             method: "POST",
             header: {
               "Content-Type": "application/json",
@@ -296,15 +296,11 @@ Page({
       return;
     }
 
-    const userInfo = wx.getStorageSync("userInfo");
-    const token = userInfo.token;
-
     wx.request({
       url: `${config.baseURL}/api/wxpay/prepay`,
-      method: "GET",
       data: {
         orderId: item.orderId,
-        token: token,
+        token: getApp().globalData.userInfo.token,
       },
       success: (res) => {
         wx.requestPayment({
@@ -409,27 +405,19 @@ Page({
     }
 
     return new Promise((resolve, reject) => {
-      const token = wx.getStorageSync("userInfo").token;
-      console.log("准备发起请求:", {
-        url: `${config.baseURL}/api/order/page`,
-        token: token,
-        orderStatusIndex,
-      });
-
       wx.request({
         url: `${config.baseURL}/api/order/page`,
-        method: "GET",
         data:
           orderStatusIndex === 99
             ? {
                 pageNo: pageNum,
                 pageSize: pageSize,
-                token: token,
+                token: getApp().globalData.userInfo.token,
               }
             : {
                 pageNo: pageNum,
                 pageSize: pageSize,
-                token: token,
+                token: getApp().globalData.userInfo.token,
                 orderStatus: orderStatusIndex,
               },
         success: (res) => {

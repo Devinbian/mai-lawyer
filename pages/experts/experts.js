@@ -14,7 +14,6 @@ Page({
     bottomPadding: 0,
     scrollTop: 0, // 记录滚动位置
     listHeight: "calc(100vh - 280rpx)", // 默认高度
-    userInfo: null,
   },
 
   /**
@@ -25,10 +24,6 @@ Page({
       title: "加载中...",
       icon: "loading",
       duration: 2000,
-    });
-
-    this.setData({
-      userInfo: wx.getStorageSync("userInfo"),
     });
     this.setImagesByPixelRatio();
     this.initList();
@@ -89,13 +84,7 @@ Page({
 
   // 跳转到专家详情页
   navigateToDetail(e) {
-    // console.log("navigateToDetail", this.data.userInfo);
-    // console.log("navigateToDetail", wx.getStorageSync("userInfo"));
-    // console.log(
-    //   `!this.data.userInfo || !wx.getStorageSync("userInfo")`,
-    //   !this.data.userInfo && !wx.getStorageSync("userInfo"),
-    // );
-    if (!this.data.userInfo && !wx.getStorageSync("userInfo")) {
+    if (!getApp().globalData.userInfo) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -137,7 +126,7 @@ Page({
 
   // 电话咨询
   handlePhoneConsult(e) {
-    if (!this.data.userInfo && !wx.getStorageSync("userInfo")) {
+    if (!getApp().globalData.userInfo) {
       wx.navigateTo({
         url: "/pages/login/login",
       });
@@ -159,7 +148,7 @@ Page({
 
   // 在线咨询
   handleOnlineConsult(e) {
-    if (!this.data.userInfo && !wx.getStorageSync("userInfo")) {
+    if (!getApp().globalData.userInfo) {
       wx.navigateTo({
         url: "/pages/login/login",
       });

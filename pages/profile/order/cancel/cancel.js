@@ -19,16 +19,13 @@ Page({
 
   onLoad(options) {
     this.setImagesByPixelRatio();
-    const userInfo = wx.getStorageSync("userInfo");
-
     if (options.id) {
       // 模拟获取订单数据
       wx.request({
         url: `${config.baseURL}/api/order/cancel-detail`,
-        method: "GET",
         data: {
           orderId: options.id,
-          token: userInfo.token,
+          token: getApp().globalData.userInfo.token,
         },
         success: (res) => {
           console.log("取消订单详情", res);
@@ -91,14 +88,14 @@ Page({
 
   // 删除订单
   deleteOrder() {
-    const userInfo = wx.getStorageSync("userInfo");
+    const token = getApp().globalData.userInfo.token;
     wx.showModal({
       title: "提示",
       content: "确定要删除该订单吗？",
       success: (res) => {
         if (res.confirm) {
           wx.request({
-            url: `${config.baseURL}/api/order/delete?token=${userInfo.token}`,
+            url: `${config.baseURL}/api/order/delete?token=${token}`,
             method: "POST",
             header: {
               "Content-Type": "application/json",
@@ -121,9 +118,9 @@ Page({
 
   // 再次购买
   buyAgain() {
-    const userInfo = wx.getStorageSync("userInfo");
+    const token = getApp().globalData.userInfo.token;
     wx.request({
-      url: `${config.baseURL}/api/order/again-add?token=${userInfo.token}`,
+      url: `${config.baseURL}/api/order/again-add?token=${token}`,
       method: "POST",
       header: {
         "Content-Type": "application/json",

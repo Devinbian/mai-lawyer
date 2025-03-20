@@ -12,7 +12,6 @@ Page({
 
   onLoad(options) {
     this.setImagesByPixelRatio();
-    const userInfo = wx.getStorageSync("userInfo");
 
     console.log("options", options);
 
@@ -22,25 +21,16 @@ Page({
         method: "GET",
         data: {
           orderId: options.id,
-          token: userInfo.token,
+          token: getApp().globalData.userInfo.token,
         },
         success: (res) => {
           console.log("/api/order/detail", res.data.data);
           if (res.data.success) {
             this.setData({
               orderInfo: {
-                typeName:
-                  res.data.data.orderType === 1 ? "图文咨询服务" : "下载文档",
-                lawyerAvatar:
-                  res.data.data.orderType === 1
-                    ? res.data.data.lawyerAvatar
-                    : this.data.imgUrls[
-                        config.fileExt[res.data.data.documentFileExtension]
-                      ],
-                lawyerName:
-                  res.data.data.orderType === 1
-                    ? res.data.data.lawyerName
-                    : res.data.data.documentTitle,
+                typeName: res.data.data.orderType === 1 ? "图文咨询服务" : "下载文档",
+                lawyerAvatar: res.data.data.orderType === 1 ? res.data.data.lawyerAvatar : this.data.imgUrls[config.fileExt[res.data.data.documentFileExtension]],
+                lawyerName: res.data.data.orderType === 1 ? res.data.data.lawyerName : res.data.data.documentTitle,
                 lawyerTitle: res.data.data.lawyerTitle,
                 orderNo: res.data.data.orderNo,
                 orderId: options.id,
@@ -98,7 +88,6 @@ Page({
   },
 
   async submitRefund() {
-    const userInfo = wx.getStorageSync("userInfo");
     if (!this.data.canSubmit) {
       return;
     }
@@ -116,10 +105,7 @@ Page({
     const uploadedImages = [];
     // 先上传图片（如果有的话）
     if (this.data.uploadImages.length > 0) {
-      console.log(
-        "this.data.uploadImages.length",
-        this.data.uploadImages.length,
-      );
+      console.log("this.data.uploadImages.length", this.data.uploadImages.length);
       for (const imagePath of this.data.uploadImages) {
         console.log("imagePath", imagePath);
         const res = await this.uploadFile({
@@ -132,8 +118,9 @@ Page({
       console.log("uploadedImages", uploadedImages);
     }
 
+    const token = getApp().globalData.userInfo.token;
     wx.request({
-      url: `${config.baseURL}/api/order/refund-request?token=${userInfo.token}`,
+      url: `${config.baseURL}/api/order/refund-request?token=${token}`,
       method: "POST",
       header: {
         "Content-Type": "application/json",

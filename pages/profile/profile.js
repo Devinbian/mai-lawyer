@@ -15,7 +15,7 @@ Page({
    */
   onLoad(options) {
     this.setImagesByPixelRatio();
-    const userInfo = wx.getStorageSync("userInfo");
+    const userInfo = getApp().globalData.userInfo;
     if (userInfo) {
       this.setData({
         userInfo,
@@ -135,6 +135,7 @@ Page({
         if (res.confirm) {
           // 清除登录信息
           wx.removeStorageSync("userInfo");
+          getApp().globalData.userInfo = null;
           // 更新页面状态
           this.setData({
             userInfo: null,
@@ -159,36 +160,12 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow() {
-    const userInfo = wx.getStorageSync("userInfo");
+    const userInfo = getApp().globalData.userInfo;
     if (userInfo) {
       this.setData({
         userInfo,
+        isLogin: true,
       });
     }
   },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {},
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {},
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {},
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {},
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {},
 });

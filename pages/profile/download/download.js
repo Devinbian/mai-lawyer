@@ -10,7 +10,6 @@ Page({
     imgUrls: null,
     downloadStatus: "completed", // completed: 已下载, downloading: 下载中
     currentTab: "all", // all: 全部, contract: 合同协议, complaint: 起诉状, defense: 答辩状, legal_opinion: 法律意见, application: 申请文书, general: 通用文书
-    userInfo: null,
   },
 
   onLoad() {
@@ -21,7 +20,7 @@ Page({
     });
 
     // 获取用户信息
-    const userInfo = wx.getStorageSync("userInfo");
+    const userInfo = getApp().globalData.userInfo;
     if (!userInfo) {
       wx.redirectTo({
         url: "/pages/login/login",
@@ -30,7 +29,6 @@ Page({
     }
 
     this.setData({
-      userInfo: userInfo,
       imgUrls: imageUtil.getCommonImages(["documentGet", "default"]),
     });
 
@@ -169,19 +167,18 @@ Page({
 
           wx.request({
             url: `${config.baseURL}/api/document-download-history/page`,
-            method: "GET",
             data:
               type === -1
                 ? {
                     pageNo: pageNum,
                     pageSize: pageSize,
-                    token: this.data.userInfo.token,
+                    token: getApp().globalData.userInfo.token,
                   }
                 : {
                     pageNo: pageNum,
                     pageSize: pageSize,
                     type: type,
-                    token: this.data.userInfo.token,
+                    token: getApp().globalData.userInfo.token,
                   },
             success: (res) => {
               try {
