@@ -1,24 +1,17 @@
 .container {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   background: #F5F7FA;
   box-sizing: border-box;
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  position: relative;
 }
 
 .content {
   position: absolute;
-  top: 376rpx;
+  top: 160rpx;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
   padding: 20rpx;
   box-sizing: border-box;
   overflow-y: auto;
@@ -31,17 +24,14 @@
 
 /* 登录注册区域 */
 .login-section {
-  position: fixed;
-  top: 200rpx;
-  left: 20rpx;
-  right: 20rpx;
-  width: calc(100% - 40rpx);
+  position: relative;
+  width: 100%;
   height: 180rpx;
   border-radius: 16rpx;
   background: #FFFFFF;
   box-sizing: border-box;
   overflow: hidden;
-  z-index: 10;
+  margin: 20rpx 0;
 }
 
 .login-bg {
