@@ -106,7 +106,7 @@ Page({
         if (this.data.document.price === 0) {
           showMenu = true;
         } else if (this.data.document.price > 0) {
-          showMenu = true;
+          showMenu = false;
         }
         wx.openDocument({
           filePath: filePath,
