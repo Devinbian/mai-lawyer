@@ -230,14 +230,14 @@ Page({
     const userInput = this.data.inputValue.trim();
     if (!userInput) return;
 
-    const checkValue = await this.checkMessage(userInput);
-    if (checkValue !== "Normal") {
-      wx.showToast({
-        title: "提问中含有违规词",
-        icon: "none",
-      });
-      return;
-    }
+    // const checkValue = await this.checkMessage(userInput);
+    // if (checkValue !== "Normal") {
+    //   wx.showToast({
+    //     title: "提问中含有违规词",
+    //     icon: "none",
+    //   });
+    //   return;
+    // }
 
     try {
       // 检查消息类型并分发到不同的处理函数

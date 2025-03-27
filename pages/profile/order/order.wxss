@@ -334,6 +334,13 @@
   padding: 0;
 }
 
+/* 倒计时样式 */
+.countdown-text {
+  color: #FF4D4F;
+  font-size: 26rpx;
+  margin-right: 20rpx;
+}
+
 .action-btn.refund {
   color: #666;
   background: #fff;

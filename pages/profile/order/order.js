@@ -437,7 +437,7 @@ Page({
             }
 
             const orderList = rows.map((order) => {
-              return {
+              const orderItem = {
                 orderId: order.orderId,
                 orderNo: order.orderNo,
                 typeName: config.orderType[order.orderType]?.title || "未知类型",
@@ -451,7 +451,15 @@ Page({
                 documentName: order.documentName || "未知文档",
                 documentUrl: order.documentUrl, // 添加文档下载链接
                 lawyerName: order.lawyerName, // 添加律师姓名
+                countdown: "", // 初始化倒计时显示
               };
+
+              // 如果是待支付状态，启动倒计时
+              if (orderItem.status === "pending") {
+                this.startCountdown(orderItem.orderId, orderItem.consultTime);
+              }
+
+              return orderItem;
             });
             console.log("数据处理完成:", {
               orderList,
@@ -485,5 +493,81 @@ Page({
       }
     }
     return null; // 如果没有找到，返回 null
+  },
+
+  // 开始倒计时
+  startCountdown(orderId, createTime) {
+    // 清除已存在的定时器
+    if (this.data.countdownTimers && this.data.countdownTimers[orderId]) {
+      clearInterval(this.data.countdownTimers[orderId]);
+    }
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const createTimeStamp = new Date(createTime).getTime();
+      const timeLeft = createTimeStamp + 30 * 60 * 1000 - now; // 30分钟的毫秒数
+
+      if (timeLeft <= 0) {
+        // 清除定时器
+        if (this.data.countdownTimers && this.data.countdownTimers[orderId]) {
+          clearInterval(this.data.countdownTimers[orderId]);
+          const countdownTimers = { ...this.data.countdownTimers };
+          delete countdownTimers[orderId];
+          this.setData({ countdownTimers });
+        }
+        // 更新订单状态为已取消
+        this.updateOrderStatus(orderId);
+        return;
+      }
+
+      // 计算剩余分钟和秒数
+      const minutes = Math.floor(timeLeft / (1000 * 60));
+      const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+      // 更新显示的倒计时
+      const list = this.data.list.map((item) => {
+        if (item.orderId === orderId) {
+          item.countdown = `${minutes}分${seconds}秒`;
+        }
+        return item;
+      });
+
+      this.setData({ list });
+    };
+
+    // 立即执行一次
+    updateCountdown();
+
+    // 设置定时器，每秒更新一次
+    const timer = setInterval(updateCountdown, 1000);
+
+    // 保存定时器ID
+    const countdownTimers = { ...this.data.countdownTimers } || {};
+    countdownTimers[orderId] = timer;
+    this.setData({ countdownTimers });
+  },
+
+  // 更新订单状态
+  updateOrderStatus(orderId) {
+    const token = getApp().globalData.userInfo.token;
+    wx.request({
+      url: `${config.baseURL}/api/order/cancel?token=${token}`,
+      method: "POST",
+      header: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        orderId: orderId,
+      },
+      success: (res) => {
+        if (res.data.success) {
+          // 刷新订单列表
+          this.initList();
+        }
+      },
+      fail: (err) => {
+        console.error("自动取消订单失败:", err);
+      },
+    });
   },
 });
