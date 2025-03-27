@@ -511,3 +511,22 @@
 }
 
 
+
+.help-button {
+  margin-top: 20rpx;
+  text-align: right;
+}
+
+.help-button button {
+  display: inline;
+  padding: 0;
+  background: none;
+  border: none;
+  line-height: normal;
+  color: #1890ff;
+  font-size: 28rpx;
+}
+
+.help-button button::after {
+  border: none;
+}

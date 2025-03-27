@@ -202,3 +202,20 @@
   font-size: 28rpx;
   font-weight: 500;
 }
+
+.service-action {
+  margin-top: 40rpx;
+}
+
+.service-action button {
+  padding: 0;
+  margin: 0;
+  width: auto;
+  background: none;
+  line-height: normal;
+  border-radius: 0;
+}
+
+.service-action button::after {
+  border: none;
+}

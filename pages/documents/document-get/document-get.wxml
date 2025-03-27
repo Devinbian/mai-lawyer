@@ -28,10 +28,12 @@
       <view class="service-content">
         <view class="service-desc">您下载的这份文书是制式文书模板，内容仅供参考。请您务必根据自己的实际情况进行修改，必要时请寻求专业法律人士协助，以保障您的合法权益。本公司对您所下载的法律文书享有最终解释权。</view>
         <view class="service-action">
-          <view class="service-btn" bindtap="showServiceDetail">
-            <text>前往专家审核</text>
-            <image class="arrow-icon" src="{{imgUrls.arrow}}" mode="aspectFit"></image>
-          </view>
+          <button open-type="contact">
+            <view class="service-btn" >
+              <text>前往专家审核</text>
+              <image class="arrow-icon" src="{{imgUrls.arrow}}" mode="aspectFit"></image>
+            </view>
+          </button>
         </view>
       </view>
     </view>
