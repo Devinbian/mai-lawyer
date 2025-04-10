@@ -1,7 +1,7 @@
 // 基础配置信息
 module.exports = {
   // 服务器地址配置
-  baseURL: "http://218.78.129.237:8081",
+  baseURL: "https://admin.maixiaolv.com",
 
   // 请求超时时间（毫秒）
   timeout: 10000,

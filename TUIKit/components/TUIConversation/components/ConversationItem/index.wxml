@@ -47,7 +47,7 @@
                 {{conversation.lastMessage.timeago}}
             </view>
             <view wx:if="{{showMuteIcon}}" class="t-conversation-item-mutenotifications">
-                <image class="t-conversation-mutenotifications-img" src="http://218.78.129.237:9000/mxl/images/mutenotifications.png"/>
+                <image class="t-conversation-mutenotifications-img" src="https://minio.maixiaolv.com/mxl/images/mutenotifications.png"/>
             </view>
         </view>
         <view class="t-conversation-box">

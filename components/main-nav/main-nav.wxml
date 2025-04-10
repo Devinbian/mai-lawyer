@@ -1,7 +1,7 @@
 <view class="nav-container">
-  <image class="nav-bg" src="http://218.78.129.237:9000/mxl/images/nav-bg@2x.png" mode="widthFix"></image>
+  <image class="nav-bg" src="https://minio.maixiaolv.com/mxl/images/nav-bg@2x.png" mode="widthFix"></image>
   <view class="status-bar" style="height: {{statusBarHeight}}px"></view>
   <view class="nav-bar" style="height: {{navBarHeight}}px">
-    <image class="nav-title" src="http://218.78.129.237:9000/mxl/images/nav-title@2x.png" mode="heightFix"></image>
+    <image class="nav-title" src="https://minio.maixiaolv.com/mxl/images/nav-title@2x.png" mode="heightFix"></image>
   </view>
 </view> 
