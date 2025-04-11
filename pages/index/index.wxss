@@ -92,7 +92,11 @@
 /* 指导提示样式 */
 .guide-title {
   font-size: 24rpx;
-  color: #666;
+  color: rgba(0,15,31,0.6);
+  line-height: 28rpx;
+  text-align: left;
+  font-style: normal;
+  text-transform: none;
   margin-bottom: 24rpx;
   padding-left: 32rpx;
   padding-top: -20rpx;
@@ -103,17 +107,20 @@
 }
 
 .guide-item {
-  margin-bottom: 20rpx;
+
 }
 
 .guide-message {
+  margin-bottom: 12rpx;
+  height: 42rpx;
   display: inline-block;
   background: #fff;
-  padding: 24rpx 32rpx;
+  padding: 16rpx 32rpx 14rpx 32rpx;
   font-size: 28rpx;
   color: #333;
-  border-radius: 20rpx 20rpx 20rpx 0;  /* 左下角直角，其他圆角 */
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+
+  border-radius: 16rpx 16rpx 16rpx 0rpx;
+  border: 2rpx solid #FFFFFF;
 }
 
 /* 输入框区域 */
@@ -124,7 +131,8 @@
   bottom: 0;
   padding: 20rpx;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: center;
   z-index: 999;
   transition: all 0.3s ease;
 }
@@ -139,16 +147,16 @@
 
 .chat-input {
   width: 100%;
-  min-height: 72rpx;
-  max-height: 160rpx;
-  padding: 16rpx 24rpx;
+  min-height: 88rpx ;
+  max-height: 400rpx;
+  padding: 24rpx 22rpx;
   font-size: 28rpx;
   line-height: 40rpx;
   box-sizing: border-box;
   color: #333333;
-  box-shadow: 0px 0px 8px 0px rgba(167,178,190,0.1);
-  border-radius: 4px 4px 4px 4px;
-  border: 1px solid #D1E3FD;
+  box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(167,178,190,0.1);
+  border-radius: 8rpx 8rpx 8rpx 8rpx;
+  border: 2rpx solid #D1E3FD;
 }
 
 .input-placeholder {
@@ -159,11 +167,11 @@
 /* 重置按钮的默认样式 */
 .send-btn {
   padding: 0;
-  width: 90rpx !important;
-  height: 90rpx !important;
+  width: 60rpx !important;
+  height: 60rpx !important;
   min-height: 0;
   margin: 0;
-  background: #0084ff;
+  background: linear-gradient( 180deg, #0062FF 0%, #007BFF 100%);
   border-radius: 16rpx;
   display: flex;
   align-items: center;
@@ -176,8 +184,8 @@
 }
 
 .send-icon {
-  width: 90rpx;
-  height: 90rpx;
+  width: 60rpx;
+  height: 60rpx;
 }
 
 /* 聊天消息样式 */
@@ -216,8 +224,12 @@
 
 .message-content {
   max-width: 100%;  /* 恢复普通消息的最大宽度 */
-  padding: 20rpx 24rpx;  /* 恢复普通消息的内边距 */
+  padding: 20rpx 32rpx;  /* 恢复普通消息的内边距 */
   font-size: 28rpx;
+line-height: 38rpx;
+text-align: left;
+font-style: normal;
+text-transform: none;
   border-radius: 12rpx;
   word-break: break-all;
   will-change: transform;
@@ -494,27 +506,30 @@
 }
 
 .help-button {
-  margin-top: 30rpx;
+  width: 176rpx !important;
+height: 80rpx;
   background: #E5F2FF;
-  padding: 8rpx 24rpx;
   border-radius: 78rpx;
   letter-spacing: 1rpx;
-  width: fit-content;
   align-self: flex-end;
   margin-left: auto;
 }
 
 .help-button text {
-  color: #3B7FE9;
-  font-size: 24rpx;
-  font-weight: bold;
+  font-weight: 500;
+  font-size: 28rpx;
+  color: #007BFF;
+  line-height: 33rpx;
+  text-align: left;
+  font-style: normal;
+  text-transform: none;
 }
 
 
 
 .help-button {
-  margin-top: 20rpx;
-  text-align: right;
+  margin-top: 12rpx;
+  text-align: center;
 }
 
 .help-button button {
@@ -522,8 +537,8 @@
   padding: 0;
   background: none;
   border: none;
-  line-height: normal;
-  color: #1890ff;
+  line-height: 80rpx;
+  color: #007BFF;
   font-size: 28rpx;
 }
 
