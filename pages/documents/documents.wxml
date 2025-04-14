@@ -4,7 +4,7 @@
   <!-- 平台产品标题 -->
   <view class="platform-title">
     <image class="title-name" src="{{imgUrls.titleName}}" mode="heightFix"></image>
-    <image class="title-avatar" src="{{imgUrls.titleBg}}" mode="scaleToFill"></image>
+    <image class="title-avatar" src="{{imgUrls.titleBg}}" mode="aspectFill"></image>
   </view>
 
   <!-- 文档类型列表 -->

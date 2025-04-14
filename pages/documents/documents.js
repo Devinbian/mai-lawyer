@@ -144,7 +144,7 @@ Page({
 
   setImagesByPixelRatio() {
     this.setData({
-      imgUrls: imageUtil.getCommonImages(["documents", "default"]),
+      imgUrls: imageUtil.getCommonImages(["default", "documents"]),
     });
   },
 });
