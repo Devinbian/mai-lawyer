@@ -216,14 +216,15 @@
 }
 
 .action-btn {
-  height: 80rpx;
+  height: 60rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8rpx;
-  font-size: 28rpx;
   margin: 0;
   padding: 0;
+  font-weight: 400;
+  font-size: 28rpx;
 }
 
 .action-btn::after {
@@ -231,14 +232,17 @@
 }
 
 .action-btn.phone {
+  width: 176rpx;
   flex: 2;
   background: #fff;
   color: #0084FF;
-  margin-right: 20rpx;
-  border: 4rpx solid #0084FF;
+  margin-right: 28rpx;
+  border-radius: 8rpx 8rpx 8rpx 8rpx;
+  border: 2rpx solid #007BFF;
 }
 
 .action-btn.online {
+  width: 262rpx;
   flex: 3;
   background: transparent;
   color: #FFFFFF;
