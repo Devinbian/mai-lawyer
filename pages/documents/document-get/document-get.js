@@ -37,7 +37,7 @@ Page({
             this.setData({
               document,
               totalPrice: document.price || 0,
-              imgUrls: imageUtil.getCommonImages(["documentGet", "default"]),
+              imgUrls: imageUtil.getCommonImages(["default", "documentGet"]),
               fileExtIcon: config.fileExt[document.ext],
             });
           },

@@ -147,7 +147,7 @@
 
 .chat-input {
   width: 100%;
-  min-height: 88rpx ;
+  /* min-height: 88rpx ; */
   max-height: 400rpx;
   padding: 24rpx 22rpx;
   font-size: 28rpx;

@@ -18,7 +18,7 @@
   padding: 12rpx 20rpx;
   background: #F5F7FA;
   position: fixed;
-  top: 188rpx;
+  top: 170rpx;
   left: 0;
   right: 0;
   z-index: 100;
@@ -51,7 +51,7 @@
 .document-list {
   width: 100%;
   box-sizing: border-box;
-  padding: 84rpx 20rpx 0;
+  padding: 55rpx 20rpx 0;
   background: transparent;
 }
 
@@ -94,8 +94,8 @@
 .doc-title {
   font-size: 28rpx;
   color: #333333;
-  font-weight: bolder;
-  line-height: 1.5;
+  font-weight: bold;
+  line-height: 48rpx;
   margin-bottom: 16rpx;
   letter-spacing: 1rpx;
   min-height: 42rpx;
@@ -103,10 +103,11 @@
 
 .doc-desc {
   font-size: 24rpx;
+  font-weight: 400;
   color: #666666;
-  line-height: 1.6;
+  line-height: 40rpx;
   margin-bottom: 24rpx;
-  padding: 20rpx;
+  padding: 8rpx 16rpx;
   background: #F3F4F6;
   border-radius: 8rpx;
   display: -webkit-box;

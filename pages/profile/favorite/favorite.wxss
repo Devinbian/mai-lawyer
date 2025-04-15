@@ -14,7 +14,7 @@
 }
 
 .favorite-list {
-  padding: 20rpx;
+  padding: 0 20rpx;
 }
 
 .favorite-item {
@@ -25,6 +25,7 @@
 }
 
 .doc-title {
+  font-weight: 500;
   font-size: 28rpx;
   color: #333333;
   line-height: 40rpx;

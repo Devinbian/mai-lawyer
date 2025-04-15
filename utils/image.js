@@ -90,7 +90,7 @@ function getCommonImages(types) {
     documentGet: {
       arrow: getImageByPixelRatio(`${baseImagePath}/documents/arrow`),
       service: getImageByPixelRatio(`${baseImagePath}/documents/service`),
-
+      titleBg: getImageByPixelRatio(`${baseImagePath}/documentGet/title-bg`),
       ring: getImageByPixelRatio(`${baseImagePath}/profile/ring`),
     },
     default: {
