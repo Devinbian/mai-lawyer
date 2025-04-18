@@ -1,17 +1,17 @@
 <!--index.wxml-->
-<view class="container-bg" bindtouchstart="onPageTouch">
+<view class="container-bg" bindtouchstart="onPageTouch" bindtap="onPageTouch">
   <main-nav></main-nav>
   <image class="container-bg-image" src="{{imgUrls.containerBg}}" mode="widthFix" />
   <view class="container">
     <!-- 固定不动的顶部区域 -->
-    <view class="fixed-top">
+    <view class="fixed-top {{hideTop ? 'hide-top' : ''}}">
       <view class="banner">
         <image class="banner-title" src="{{imgUrls.bannerTitle}}" mode="widthFix" />  
       </view>
     </view>
     
     <!-- 可滚动的聊天区域 -->
-    <view class="chat-area {{isKeyboardShow ? 'keyboard-show' : ''}}">
+    <view class="chat-area {{isKeyboardShow ? 'keyboard-show' : ''}} {{hideTop ? 'full-chat' : ''}}" bindtap="onPageTouch">
       <image class="chat-bg" src="{{imgUrls.chatContentBg}}" mode="widthFix" />
       <view class="chat-container">
         <scroll-view 
@@ -22,11 +22,12 @@
           show-scrollbar="true"
           scroll-top="{{scrollTop}}"
           scroll-with-animation="{{true}}"
-          style="height: calc(100vh - {{isKeyboardShow ? (keyboardHeight + 360) : 460}}rpx);"
+          style="height: calc(100vh - {{isKeyboardShow ? (keyboardHeight + 220) : 330}}rpx - {{hideTop ? 0 : 280}}rpx);"
           bindscroll="onScroll"
           scroll-anchoring="true"
           bindscrolltoupper="loadMoreHistory"
           upper-threshold="50"
+          bindtap="onPageTouch"
         >
           <!-- 加载更多提示 -->
           <view class="loading-more" wx:if="{{isLoading}}">
@@ -50,9 +51,10 @@
                     class="message-item {{item.type === 'user' ? 'user-message' : 'ai-message'}}"
                     data-index="{{index}}"
               >
-                <!-- 消息操作菜单 -->
-                <view class="message-menu {{item.showMenu ? 'show' : ''}}" 
-                      style="{{item.type === 'user' ? 'right: 0;' : 'left: 0;'}}"
+                <!-- 消息操作菜单 - 使用绝对定位 -->
+                <view wx:if="{{item.showMenu}}" 
+                      class="message-menu show {{item.menuPosition.direction || ''}}" 
+                      style="left: {{item.menuPosition.left}}px; top: {{item.menuPosition.top}}px;"
                       catchtap="stopPropagation">
                   <view class="menu-item" catchtap="handleCopy" data-index="{{index}}" data-content="{{item.content}}">复制</view>
                   <view class="menu-item" catchtap="handleDelete" data-index="{{index}}">删除</view>
@@ -63,7 +65,8 @@
                 </view>
                 
                 <view class="message-content {{item.isCard ? 'has-card' : ''}}" 
-                      bindlongpress="handleLongPress" 
+                      catch:longpress="handleLongPress" 
+                      catchtap="stopMessageItemClick"
                       data-index="{{index}}" 
                       data-content="{{item.content}}"
                       data-id="{{item.id}}">
@@ -99,19 +102,11 @@
                         </view>
                       </view>
                     </view>
-
-                    <!-- 说明类卡片 -->
-                    <!-- <view class="explanation-card" wx:elif="{{item.cardData.type === 'explanation'}}">
-                      <view class="explanation-content">{{item.cardData.content}}</view>
-                      <view class="help-button" wx:if="{{item.cardData.showHelpButton}}" bindtap="navigateToExperts">
-                        <text>{{item.cardData.buttonText}}</text>
-                      </view>
-                    </view> -->
                   </block>
                   <block wx:else>
                     <view style="display: flex; flex-direction: column;">
                       <view>{{item.content}}</view>
-                      <view class="help-button"  wx:if="{{item.type === 'ai' && !item.isStreaming}}">
+                      <view class="help-button" wx:if="{{item.type === 'ai' && !item.isStreaming}}">
                         <button open-type="contact">
                         <text>求助人工</text>
                         </button>
@@ -123,31 +118,45 @@
             </block>
           </view>
           <!-- 底部占位元素，确保内容完全显示 -->
-          <view style="height: 20rpx;" id="bottom-anchor"></view>
+          <view style="height: 180rpx;" id="bottom-anchor"></view>
         </scroll-view>
-
-        <view class="input-area" style="{{inputStyle}}">
-          <view class="input-box">
-            <textarea 
-              class="chat-input" 
-              value="{{inputValue}}"
-              placeholder="请输入想要问的问题" 
-              placeholder-class="input-placeholder"
-              adjust-position="{{false}}"
-              cursor-spacing="20"
-              auto-height="{{true}}"
-              show-confirm-bar="{{false}}"
-              maxlength="{{500}}"
-              bindfocus="onInputFocus"
-              bindblur="onInputBlur"
-              bindinput="onInput"
-              bindconfirm="sendMessage"
-            />
-          </view>
-          <button class="send-btn" bindtap="sendMessage">
-            <image class="send-icon" src="{{imgUrls.sendIcon}}" mode="aspectFill" />
-          </button>
-        </view>
+      </view>
+    </view>
+    
+    <!-- 固定在底部的输入区域 -->
+    <view class="input-area {{isKeyboardShow ? 'keyboard-active' : ''}} {{isFullScreen ? 'full-screen' : ''}}" style="{{inputStyle}}" bindtap="onPageTouch">
+      <view class="input-box">
+        <textarea 
+          class="chat-input" 
+          value="{{inputValue}}"
+          placeholder="请输入想问的问题" 
+          placeholder-class="input-placeholder"
+          adjust-position="{{false}}"
+          cursor-spacing="10"
+          auto-height="{{true}}"
+          show-confirm-bar="{{false}}"
+          maxlength="{{500}}"
+          bindfocus="onInputFocus"
+          bindblur="onInputBlur"
+          bindinput="onInput"
+          bindkeyboardheightchange="onKeyboardHeightChange"
+          bindlinechange="ensureInputVisible"
+          bindconfirm="onKeyboardConfirm"
+          catchtap="stopPropagation"
+          disable-default-padding="{{true}}"
+          hold-keyboard="{{true}}"
+          always-embed="{{true}}"
+          show-keyboard="{{true}}"
+          focus="{{shouldFocus}}"
+          fixed="{{true}}"
+          confirm-type="return"
+          confirm-hold="{{true}}"
+        />
+      </view>
+      <view class="send-btn-wrapper">
+        <button class="send-btn" bindtap="sendMessage">
+          <image class="send-icon" src="{{imgUrls.sendIcon}}" mode="aspectFill" />
+        </button>
       </view>
     </view>
   </view>

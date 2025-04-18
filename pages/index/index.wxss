@@ -4,8 +4,8 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;  /* 恢复高度 */
-  z-index: 1;  /* 降低层级，作为背景 */
+  height: 100vh;
+  z-index: 1;
 }
 
 .container-bg-image {
@@ -24,6 +24,19 @@
 }
 
 /* Banner区域 */
+.fixed-top {
+  position: relative;
+  height: 280rpx;
+  transition: transform 0.3s ease-out;
+  z-index: 160;
+  overflow: visible;
+}
+
+.fixed-top.hide-top {
+  transform: translateY(-280rpx);
+  height: 0;
+}
+
 .banner {
   position: relative;
   display: flex;
@@ -33,12 +46,12 @@
 }
 
 .banner-title {
-  width: 703rpx;  /* 使用原图宽度 */
-  height: 248rpx;  /* 使用原图高度 */
+  width: 703rpx;
+  height: 248rpx;
   display: block;
   margin-top: -30rpx;
-  image-rendering: -webkit-optimize-contrast;  /* 优化图片渲染 */
-  transform: translateZ(0);  /* 开启GPU加速 */
+  image-rendering: -webkit-optimize-contrast;
+  transform: translateZ(0);
 }
 
 /* 聊天区域 */
@@ -52,6 +65,12 @@
   z-index: 150;
   display: flex;
   flex-direction: column;
+  transition: top 0.3s ease-out;
+  padding-bottom: 0; /* 确保没有底部内边距 */
+}
+
+.chat-area.full-chat {
+  top: 100rpx; /* 调整顶部隐藏时的top值，确保适当位置 */
 }
 
 .chat-container {
@@ -60,7 +79,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* 防止内容溢出 */
+  overflow: visible;
+  /* padding-bottom: 100rpx; */
 }
 
 .chat-bg {
@@ -70,23 +90,33 @@
   top: 360rpx;
   bottom: 0;
   width: 100%;
+  height: 100vh; /* 使用100vh确保覆盖整个视口高度 */
   z-index: 1;
   pointer-events: none;
+  transition: top 0.3s ease-out;
+  background-position: center bottom; /* 确保背景从底部开始 */
+  background-size: cover; /* 覆盖整个元素 */
+}
+
+.full-chat .chat-bg {
+  top: 100rpx;
+  height: 100vh; /* 使用100vh确保覆盖整个视口高度 */
 }
 
 .chat-content {
   position: relative;
   flex: 1;
-  z-index: 2;
+  z-index: 3; /* 确保在聊天背景和底部遮挡层之上 */
   overflow-y: scroll;
-  padding-bottom: 140rpx; /* 增加底部padding */
+  padding-bottom: 180rpx; /* 进一步增加底部内边距 */
   -webkit-overflow-scrolling: touch;
   padding-top: 38rpx;
   overscroll-behavior: contain;
+  min-height: calc(100% - 30rpx); /* 增加最小高度，确保初始状态就填充到底部 */
 }
 
 .chat-content.keyboard-show {
-  padding-bottom: 200rpx;
+  padding-bottom: 220rpx; /* 键盘显示时增加内边距 */
 }
 
 /* 指导提示样式 */
@@ -129,39 +159,88 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 20rpx;
+  padding: 12rpx 20rpx;
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 999;
-  transition: all 0.3s ease;
+  justify-content: space-between;
+  z-index: 1000; /* 提高z-index确保在底部遮挡层之上 */
+  transition: all 0.2s ease;
+  background-color: rgba(243, 249, 255); /* 默认背景色 - 消息未超过一屏 */
+  box-shadow: none;
+  transform: translateZ(0);
+  will-change: transform, bottom;
+  min-height: 100rpx; /* 确保最小高度足够 */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 键盘激活状态下的输入区域样式 */
+.input-area.keyboard-active {
+  background-color: #ffffff; /* 键盘弹出时使用白色背景 */
+  box-shadow: 0 -4rpx 10rpx rgba(0, 0, 0, 0.05); /* 添加轻微阴影 */
+}
+
+/* 消息超过一屏时的输入区域样式 */
+.input-area.full-screen {
+  background-color: #ffffff; /* 消息超过一屏时使用白色背景 */
+  box-shadow: 0 -4rpx 10rpx rgba(0, 0, 0, 0.05); /* 添加轻微阴影 */
 }
 
 .input-box {
   flex: 1;
   border-radius: 36rpx;
-  margin-right: 10rpx;
+  margin-right: 20rpx;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: stretch;
+  max-width: calc(100% - 80rpx);
+  position: relative;
+  padding-bottom: 0;
+  min-height: 70rpx; /* 确保输入框容器也有最小高度 */
 }
 
 .chat-input {
   width: 100%;
-  /* min-height: 88rpx ; */
-  max-height: 400rpx;
-  padding: 24rpx 22rpx;
+  min-height: 70rpx;
+  max-height: 350rpx; /* 减小最大高度，确保有足够空间显示光标 */
+  padding: 16rpx 20rpx;
   font-size: 28rpx;
-  line-height: 40rpx;
+  line-height: 36rpx;
   box-sizing: border-box;
   color: #333333;
   box-shadow: 0rpx 0rpx 16rpx 0rpx rgba(167,178,190,0.1);
-  border-radius: 8rpx 8rpx 8rpx 8rpx;
+  border-radius: 8rpx;
   border: 2rpx solid #D1E3FD;
+  background-color: #ffffff;
+  overflow-y: auto;
+  word-break: break-all;
+  white-space: pre-wrap; /* 添加白空间预包装，确保换行符生效 */
+  text-overflow: ellipsis;
+  margin-bottom: 0;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  transition: height 0.2s ease;
+  transform: translateZ(0);
+  will-change: transform, height;
 }
 
 .input-placeholder {
   color: #999999;
   font-size: 28rpx;
+  line-height: 50rpx;
+  vertical-align: middle;
+}
+
+/* 发送按钮包装器 */
+.send-btn-wrapper {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  align-self: flex-end;
+  height: auto;
+  padding-bottom: 0;
+  margin-bottom: 6rpx; /* 为了与输入框底部对齐 */
 }
 
 /* 重置按钮的默认样式 */
@@ -171,12 +250,17 @@
   height: 60rpx !important;
   min-height: 0;
   margin: 0;
-  background: linear-gradient( 180deg, #0062FF 0%, #007BFF 100%);
+  background: linear-gradient(180deg, #0062FF 0%, #007BFF 100%);
   border-radius: 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
+}
+
+.send-icon {
+  width: 40rpx;
+  height: 40rpx;
 }
 
 .send-btn::after {
@@ -192,7 +276,7 @@
 .message-list {
   padding: 32rpx;
   margin-top: 40rpx;
-  /* padding-bottom: 150rpx; 增加底部padding */
+  padding-bottom: 80rpx; /* 增加底部内边距 */
 }
 
 .message-item {
@@ -301,39 +385,65 @@
 
 /* 消息操作菜单 */
 .message-menu {
-  position: absolute;
-  top: -40rpx;
+  position: fixed;
   background: #4C4C4C;
   border-radius: 8rpx;
-  display: none;
+  display: flex;
   flex-direction: row;
   align-items: center;
   padding: 0 16rpx;
-  z-index: 999;
+  z-index: 1500; /* 提高z-index确保在其他元素之上 */
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.2);
-  will-change: transform, opacity;
-  transform: translateZ(0);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: auto; /* 确保菜单可点击 */
 }
 
 .message-menu.show {
-  display: flex;
+  opacity: 1;
+  transform: scale(1);
 }
 
+/* 默认三角指向下方 */
 .message-menu::after {
   content: '';
   position: absolute;
   bottom: -16rpx;
+  left: 50%;
+  transform: translateX(-50%);
   border-width: 8rpx;
   border-style: solid;
   border-color: #4C4C4C transparent transparent transparent;
 }
 
-.user-message .message-menu::after {
-  right: 30rpx;
+/* 三角指向右侧 */
+.message-menu.right::after {
+  bottom: auto;
+  left: auto;
+  right: -16rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  border-color: transparent transparent transparent #4C4C4C;
 }
 
-.ai-message .message-menu::after {
-  left: 30rpx;
+/* 三角指向左侧 */
+.message-menu.left::after {
+  bottom: auto;
+  left: -16rpx;
+  right: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  border-color: transparent #4C4C4C transparent transparent;
+}
+
+/* 三角指向上方 */
+.message-menu.top::after {
+  bottom: auto;
+  top: -16rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  border-color: transparent transparent #4C4C4C transparent;
 }
 
 .menu-item {
@@ -507,7 +617,7 @@
 
 .help-button {
   width: 176rpx !important;
-height: 80rpx;
+  height: 80rpx;
   background: #E5F2FF;
   border-radius: 78rpx;
   letter-spacing: 1rpx;
@@ -524,8 +634,6 @@ height: 80rpx;
   font-style: normal;
   text-transform: none;
 }
-
-
 
 .help-button {
   margin-top: 12rpx;
@@ -544,4 +652,25 @@ height: 80rpx;
 
 .help-button button::after {
   border: none;
+}
+
+.input-toolbar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 8rpx 0;
+  background-color: #f7f7f7;
+  margin-top: 6rpx;
+}
+
+.toolbar-btn {
+  padding: 6rpx 16rpx;
+  border-radius: 8rpx;
+  background: #e5f2ff;
+  margin-right: 12rpx;
+}
+
+.newline-btn {
+  font-size: 24rpx;
+  color: #0084ff;
 }
