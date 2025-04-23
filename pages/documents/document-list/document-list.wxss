@@ -143,6 +143,7 @@
 }
 
 .doc-words {
+  margin-left: 3rpx;
   margin-right: 24rpx;
 }
 

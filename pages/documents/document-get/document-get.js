@@ -13,8 +13,8 @@ Page({
     isCollected: false,
     docType: config.docType, //法律文书类型
     fileExtIcon: "", //文件类型图标
+    payFlag: false, //是否已经支付
   },
-
   onLoad(options) {
     if (options.id && options.document) {
       try {
@@ -30,6 +30,7 @@ Page({
             console.log("收藏状态", res);
             if (res.data.success) {
               this.setData({
+                payFlag: res.data.data.payFlag,
                 isCollected: res.data.data.collect,
               });
               document.collect = res.data.data.collect;
