@@ -64,26 +64,62 @@ Page({
     });
   },
 
+  data: {
+    userInfo: null,
+    navHeight: 0,
+    imgUrls: null,
+    showPhoneButton: false,
+    showNicknameModal: false,
+    tempNickname: "", // 临时存储输入的昵称
+  },
+
   // 修改姓名
   changeNickname() {
-    wx.showModal({
-      title: "修改姓名",
-      editable: true,
-      placeholderText: "请输入姓名",
-      success: (res) => {
-        if (res.confirm && res.content) {
-          // 更新本地数据
-          this.setData({
-            "userInfo.name": res.content,
-          });
-
-          // 更新到服务器
-          this.updateUserInfo({
-            name: res.content,
-          });
-        }
-      },
+    this.setData({
+      showNicknameModal: true,
     });
+  },
+
+  // 关闭昵称修改弹框
+  closeNicknameModal() {
+    this.setData({
+      showNicknameModal: false,
+      tempNickname: "",
+    });
+  },
+
+  // 处理昵称输入完成
+  onNicknameInput(e) {
+    this.setData({
+      tempNickname: e.detail.value,
+    });
+  },
+
+  // 确认昵称修改
+  confirmNickname() {
+    const nickname = this.data.tempNickname;
+    if (nickname) {
+      // 更新本地数据
+      this.setData({
+        "userInfo.name": nickname,
+        showNicknameModal: false,
+      });
+
+      // 更新到服务器
+      this.updateUserInfo({
+        name: nickname,
+      });
+    } else {
+      wx.showToast({
+        title: "请输入姓名",
+        icon: "none",
+      });
+    }
+  },
+
+  // 防止穿透
+  preventTouchMove() {
+    return;
   },
 
   // 修改性别

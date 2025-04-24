@@ -27,6 +27,23 @@
       </view>
     </view>
 
+    <!-- 昵称修改弹框 -->
+    <view class="nickname-modal {{showNicknameModal ? 'show' : ''}}" catchtouchmove="preventTouchMove">
+      <view class="modal-mask" bindtap="closeNicknameModal"></view>
+      <view class="modal-content">
+        <view class="modal-header">
+          <text>修改姓名</text>
+        </view>
+        <view class="modal-body">
+          <input type="nickname" class="nickname-input" placeholder="请输入姓名" bindblur="onNicknameInput" focus="{{showNicknameModal}}" />
+        </view>
+        <view class="modal-footer">
+          <view class="btn-cancel" bindtap="closeNicknameModal">取消</view>
+          <view class="btn-confirm" bindtap="confirmNickname">确定</view>
+        </view>
+      </view>
+    </view>
+
     <!-- 绑定信息 -->
     <view class="info-section">
       <!-- 手机号 -->
