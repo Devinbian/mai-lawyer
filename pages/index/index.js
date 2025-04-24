@@ -6,11 +6,7 @@ Page({
   data: {
     inputValue: "", // 输入框的值
     showSuggestions: true, // 是否显示建议问题
-    suggestions: [
-      "起诉状如何写",
-      "恶意拖欠劳动工资，如何申请仲裁处理？",
-      "律师费如何计算",
-    ],
+    suggestions: ["起诉状如何写", "恶意拖欠劳动工资，如何申请仲裁处理？", "律师费如何计算"],
     // loading: false, // 已被 isLoading 替代，不再使用
     navHeight: 0, // 导航栏高度
     statusBarHeight: 20, // 状态栏高度
@@ -66,11 +62,7 @@ Page({
     const userNickname = userInfo ? userInfo.name : "用户";
     this.setData({
       userNickname: userNickname,
-      imgUrls: imageUtils.getCommonImages([
-        "index",
-        "default",
-        "expertsDetail",
-      ]),
+      imgUrls: imageUtils.getCommonImages(["index", "default", "expertsDetail"]),
     });
 
     // 获取缓存的聊天记录时进行数量限制
@@ -109,7 +101,7 @@ Page({
           },
           () => {
             this.scrollToBottom(false);
-          },
+          }
         );
       });
     } catch (error) {
@@ -145,14 +137,11 @@ Page({
     const { index } = e.currentTarget.dataset;
 
     // 获取长按的触摸位置
-    const touch =
-      e.touches && e.touches[0] ? e.touches[0] : e.changedTouches[0];
+    const touch = e.touches && e.touches[0] ? e.touches[0] : e.changedTouches[0];
 
     // 根据用户消息还是AI消息，设置不同的菜单位置
     const isUserMessage = this.data.messageList[index].type === "user";
-    const menuPosition = isUserMessage
-      ? `right: 20rpx; top: ${touch.clientY - 80}px;`
-      : `left: 20rpx; top: ${touch.clientY - 80}px;`;
+    const menuPosition = isUserMessage ? `right: 20rpx; top: ${touch.clientY - 80}px;` : `left: 20rpx; top: ${touch.clientY - 80}px;`;
 
     // 更新消息列表，显示当前消息的菜单并设置位置
     const messageList = this.data.messageList.map((msg, i) => ({
@@ -211,7 +200,7 @@ Page({
             () => {
               this.saveChatHistory();
               this.closeAllMenus();
-            },
+            }
           );
         } else {
           this.closeAllMenus();
@@ -266,6 +255,9 @@ Page({
   async sendMessage() {
     if (!this.checkLogin()) return;
     if (this.data.isAiResponding) return; // 防止重复发送
+    this.setData({
+      isAiResponding: true,
+    });
 
     const userInput = this.data.inputValue.trim();
     if (!userInput) return;
@@ -294,7 +286,6 @@ Page({
 
       this.setData({
         inputValue: "", // 其他情况下的清空输入框
-        isAiResponding: true,
       });
 
       // 创建用户消息
@@ -470,7 +461,7 @@ Page({
               }, 1000);
             }
             resolve();
-          },
+          }
         );
       }
     });
@@ -502,8 +493,7 @@ Page({
       if (this._lastAiMessageIndex !== undefined) {
         // 使用本地变量累积内容，减少setData调用
         if (!this._accumulatedContent) {
-          this._accumulatedContent =
-            this.data.messageList[this._lastAiMessageIndex].content || "";
+          this._accumulatedContent = this.data.messageList[this._lastAiMessageIndex].content || "";
         }
         this._accumulatedContent += content;
 
@@ -514,11 +504,8 @@ Page({
         // 每累积2次内容就更新一次界面，使更新更及时
         if (this._updateCounter >= 2) {
           const updateData = {};
-          updateData[`messageList[${this._lastAiMessageIndex}].content`] =
-            this._accumulatedContent;
-          updateData[
-            `messageList[${this._lastAiMessageIndex}].isThinking`
-          ] = false;
+          updateData[`messageList[${this._lastAiMessageIndex}].content`] = this._accumulatedContent;
+          updateData[`messageList[${this._lastAiMessageIndex}].isThinking`] = false;
 
           // 使用Promise确保状态更新完成
           new Promise((resolve) => {
@@ -546,14 +533,9 @@ Page({
       // 清理缓存
       if (this._accumulatedContent) {
         const updateData = {};
-        updateData[`messageList[${this._lastAiMessageIndex}].content`] =
-          this._accumulatedContent;
-        updateData[
-          `messageList[${this._lastAiMessageIndex}].isThinking`
-        ] = false;
-        updateData[
-          `messageList[${this._lastAiMessageIndex}].isStreaming`
-        ] = false;
+        updateData[`messageList[${this._lastAiMessageIndex}].content`] = this._accumulatedContent;
+        updateData[`messageList[${this._lastAiMessageIndex}].isThinking`] = false;
+        updateData[`messageList[${this._lastAiMessageIndex}].isStreaming`] = false;
 
         // 使用Promise确保状态更新完成
         new Promise((resolve) => {
@@ -649,7 +631,7 @@ Page({
             () => {
               // 消息流结束时保存聊天记录
               this.saveChatHistory();
-            },
+            }
           );
           break;
         }
@@ -730,10 +712,7 @@ Page({
   onKeyboardConfirm(e) {
     // 回车键只用于换行，不发送消息
     const cursorPos = this.cursorPosition || this.data.inputValue.length;
-    const newValue =
-      this.data.inputValue.slice(0, cursorPos) +
-      "\n" +
-      this.data.inputValue.slice(cursorPos);
+    const newValue = this.data.inputValue.slice(0, cursorPos) + "\n" + this.data.inputValue.slice(cursorPos);
 
     this.setData({
       inputValue: newValue,
@@ -784,10 +763,7 @@ Page({
 
           if (isNearMax) {
             // 接近最大高度时的特殊处理
-            this.forceRefreshWithCursor(
-              this.data.inputValue,
-              this.cursorPosition,
-            );
+            this.forceRefreshWithCursor(this.data.inputValue, this.cursorPosition);
 
             // 使用节点API直接设置scrollTop
             this.tryDirectScrollBottom();
@@ -863,11 +839,10 @@ Page({
               // 确保滚动到底部，但留出足够空间显示光标所在行
               const lineHeight = parseInt(res.computedStyle.lineHeight || "38");
               // 计算应滚动的位置: 总高度减去可视区域高度，再加上一行高度的缓冲
-              const scrollPos =
-                res.scrollHeight - (res.clientHeight || 0) + lineHeight;
+              const scrollPos = res.scrollHeight - (res.clientHeight || 0) + lineHeight;
               res.node.scrollTop = scrollPos > 0 ? scrollPos : 0;
             }
-          },
+          }
         )
         .exec();
     } catch (e) {
@@ -966,7 +941,7 @@ Page({
                 node.style.paddingTop = "16rpx";
                 node.style.paddingBottom = "16rpx";
               }
-            },
+            }
           )
           .exec();
       })
@@ -1017,8 +992,7 @@ Page({
               // 总高度减去可视区域高度，再加上一行高度的缓冲，确保最后一行完全可见
               const node = res.node;
               if (node) {
-                const scrollPosition =
-                  scrollHeight - clientHeight + lineHeight + 10;
+                const scrollPosition = scrollHeight - clientHeight + lineHeight + 10;
                 node.scrollTop = scrollPosition > 0 ? scrollPosition : 0;
 
                 // 200ms后再次确认滚动位置
@@ -1028,16 +1002,8 @@ Page({
               }
 
               // 如果是接近最大高度，且光标在文本末尾，使用更强的方法
-              if (
-                isNearMaxHeight &&
-                this.cursorPosition &&
-                this.data.inputValue &&
-                this.cursorPosition >= this.data.inputValue.length - 5
-              ) {
-                this.forceRefreshWithCursor(
-                  this.data.inputValue,
-                  this.cursorPosition,
-                );
+              if (isNearMaxHeight && this.cursorPosition && this.data.inputValue && this.cursorPosition >= this.data.inputValue.length - 5) {
+                this.forceRefreshWithCursor(this.data.inputValue, this.cursorPosition);
 
                 // 连续尝试多次滚动
                 [50, 150, 250].forEach((delay) => {
@@ -1049,7 +1015,7 @@ Page({
                 });
               }
             }
-          },
+          }
         )
         .exec();
     }, 30);
@@ -1068,7 +1034,7 @@ Page({
         this.sendMessage();
         // 点击建议问题后也需要滚动
         this.scrollToBottom();
-      },
+      }
     );
   },
 
@@ -1122,7 +1088,7 @@ Page({
                 isAutoScrolling: false,
               });
             }, 500); // 增加动画时间
-          },
+          }
         );
       })
       .exec();
@@ -1212,7 +1178,7 @@ Page({
                       this.setData({ isAutoScrolling: false }, resolve);
                     }, 300);
                   }
-                },
+                }
               );
             });
           })
@@ -1266,8 +1232,7 @@ Page({
       nickname: "小迈",
       cardData: {
         type: "explanation",
-        content:
-          "起诉状是启动民事诉讼的重要法律文书，需包含明确的当事人信息、清晰的诉讼请求、准确的事实陈述与理由阐述以及合法的证据支持等内容，以确保诉求得到法院有效受理和审理。",
+        content: "起诉状是启动民事诉讼的重要法律文书，需包含明确的当事人信息、清晰的诉讼请求、准确的事实陈述与理由阐述以及合法的证据支持等内容，以确保诉求得到法院有效受理和审理。",
         showHelpButton: true,
         buttonText: "求助人工",
       },
@@ -1314,7 +1279,7 @@ Page({
             isAiResponding: false,
             isAutoScrolling: false,
           },
-          resolve,
+          resolve
         );
       });
     });
@@ -1323,9 +1288,7 @@ Page({
   // 处理起诉状类型选择
   handleDocumentTypeSelect(e) {
     const { typeId } = e.currentTarget.dataset;
-    const selectedType = this.data.documentTypes.find(
-      (type) => type.id === typeId,
-    );
+    const selectedType = this.data.documentTypes.find((type) => type.id === typeId);
 
     if (selectedType) {
       wx.navigateTo({
@@ -1346,8 +1309,7 @@ Page({
       const nextPage = this.data.currentPage + 1;
 
       // 计算下一页的起始和结束索引
-      const endIndex =
-        totalMessages - this.data.currentPage * this.data.pageSize;
+      const endIndex = totalMessages - this.data.currentPage * this.data.pageSize;
       const startIndex = Math.max(0, endIndex - this.data.pageSize);
 
       if (startIndex >= 0) {
@@ -1411,10 +1373,7 @@ Page({
     const cursorPos = this.cursorPosition || this.data.inputValue.length;
 
     // 在光标处插入换行符
-    const newValue =
-      this.data.inputValue.slice(0, cursorPos) +
-      "\n" +
-      this.data.inputValue.slice(cursorPos);
+    const newValue = this.data.inputValue.slice(0, cursorPos) + "\n" + this.data.inputValue.slice(cursorPos);
 
     // 更新输入内容并确保光标位置正确
     this.setData({

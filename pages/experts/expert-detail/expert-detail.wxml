@@ -81,7 +81,7 @@
             <text class="service-price">¥ {{expert.consultationFee}}/次</text>
           </view>
 
-          <view class="service-item">
+          <view class="service-item"  bindtap="handlePhoneConsult" data-phone="{{expert.phone}}">
             <view class="service-left">
               <image class="service-icon" src="{{imgUrls.phone}}" mode="aspectFit"></image>
               <view class="service-info">
@@ -92,7 +92,7 @@
             <text class="service-price">¥ 40/次</text>
           </view>
 
-          <view class="service-item">
+          <!-- <view class="service-item">
             <view class="service-left">
               <image class="service-icon" src="{{imgUrls.meeting}}" mode="aspectFit"></image>
               <view class="service-info">
@@ -101,9 +101,9 @@
               </view>
             </view>
             <text class="service-price">¥ 100/次</text>
-          </view>
+          </view> -->
 
-          <view class="service-item">
+          <!-- <view class="service-item">
             <view class="service-left">
               <image class="service-icon" src="{{imgUrls.case}}" mode="aspectFit"></image>
               <view class="service-info">
@@ -123,7 +123,7 @@
               </view>
             </view>
             <text class="service-price">¥ 80/次</text>
-          </view>
+          </view> -->
         </view>
       </view>
     </view>

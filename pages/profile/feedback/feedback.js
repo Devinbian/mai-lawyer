@@ -76,8 +76,9 @@ Page({
 
   // 检查是否可以提交
   checkCanSubmit() {
-    const { content, contact } = this.data;
-    const canSubmit = content.trim().length > 0 && contact.trim().length > 0;
+    // const { content, contact } = this.data;
+    // const canSubmit = content.trim().length > 0 && contact.trim().length > 0;
+    const canSubmit = true;
     this.setData({ canSubmit });
   },
 

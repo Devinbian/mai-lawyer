@@ -227,6 +227,27 @@ Page({
     });
   },
 
+  handlePhoneConsult(e) {
+    if (!getApp().globalData.userInfo) {
+      wx.navigateTo({
+        url: "/pages/login/login",
+      });
+      return;
+    }
+    const phone = e.currentTarget.dataset.phone;
+    // 拨打电话时移除所有非数字字符
+    const cleanedPhone = phone.replace(/\D/g, "");
+    wx.makePhoneCall({
+      phoneNumber: cleanedPhone,
+      success: () => {
+        console.log("拨打电话成功");
+      },
+      fail: (err) => {
+        console.log("拨打电话失败", err);
+      },
+    });
+  },
+
   // 处理展开/收起
   toggleExpand() {
     this.setData({
