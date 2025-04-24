@@ -109,23 +109,11 @@ Page({
 
   // 点击文档
   handleItemClick(e) {
-    const docUrl = e.currentTarget.dataset.url;
-    const fileExt = e.currentTarget.dataset.ext;
-    wx.downloadFile({
-      url: docUrl,
-      success: (res) => {
-        const filePath = res.tempFilePath;
-        wx.openDocument({
-          filePath: filePath,
-          fileType: fileExt,
-          success: () => {
-            console.log("打开文档成功");
-          },
-          fail: (err) => {
-            console.log("打开文档失败", err);
-          },
-        });
-      },
+    const { id, url, ext } = e.currentTarget.dataset;
+    const document = this.data.list.find((doc) => doc.id === id);
+    // 跳转到文档详情页面
+    wx.navigateTo({
+      url: `/pages/documents/document-get/document-get?id=${id}&document=${encodeURIComponent(JSON.stringify(document))}`,
     });
   },
 });
