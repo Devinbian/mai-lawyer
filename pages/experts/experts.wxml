@@ -59,10 +59,10 @@
             </view>
           </view>
           <view class="expert-actions">
-            <button class="action-btn phone" catchtap="handlePhoneConsult" data-phone="{{item.phone}}">
+            <button class="action-btn phone" catchtap="navigateToDetail"  data-expert="{{item}}" data-type="1">
               <text>电话咨询 {{item.phone ? formatPhoneNumber(item.phone) : ''}}</text>
             </button>
-            <button class="action-btn online" catchtap="handleOnlineConsult" data-id="{{item.id}}">
+            <button class="action-btn online" catchtap="navigateToDetail"  data-expert="{{item}}"  data-type="2">
               <image class="btn-bg" src="{{imgUrls.btnBg}}" mode="adjust"></image>
               <image class="btn-icon" src="{{imgUrls.btnIcon}}"></image>
               <text>在线咨询</text>

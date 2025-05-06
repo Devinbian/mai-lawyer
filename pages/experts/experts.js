@@ -92,10 +92,11 @@ Page({
     }
 
     const expert = e.currentTarget.dataset.expert;
+    const type = e.currentTarget.dataset.type;
     // 将专家信息转换为查询字符串
     const expertInfo = encodeURIComponent(JSON.stringify(expert));
     wx.navigateTo({
-      url: `./expert-detail/expert-detail?expert=${expertInfo}`,
+      url: `./expert-detail/expert-detail?expert=${expertInfo}&type=${type}`,
       fail(err) {
         wx.showToast({
           title: "打开详情页失败",

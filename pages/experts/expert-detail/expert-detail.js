@@ -8,6 +8,7 @@ Page({
     isIntroExpanded: false,
     isExpanded: false,
     isFollowed: false,
+    type: 2,
   },
   imgUrls: null,
   onLoad(options) {
@@ -71,6 +72,11 @@ Page({
           icon: "none",
         });
       }
+    }
+    if (options.type) {
+      this.setData({
+        type: options.type,
+      });
     }
   },
 
