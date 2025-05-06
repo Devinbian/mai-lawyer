@@ -62,6 +62,10 @@
             <text class="label">{{item.orderType === 2 ? '文档名称' : '服务律师'}}：</text>
             <text class="value">{{item.orderContent}}</text>
           </view>
+          <view class="info-item"  wx:if="{{item.orderType === 3}}">
+            <text class="label">联系电话：</text>
+            <text class="value">{{item.phone}}</text>
+          </view>
         </view>
 
         <!-- 订单操作 -->

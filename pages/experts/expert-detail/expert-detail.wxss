@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  background: #F5F6F9;
+  background: #f5f6f9;
   position: relative;
 }
 
@@ -10,7 +10,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: #F5F6F9;
+  background: #f5f6f9;
 }
 
 .expert-detail {
@@ -22,6 +22,8 @@
 /* 通用卡片样式 */
 .lawyer-info,
 .lawyer-intro,
+.phone-input,
+.phone-tips,
 .service-items {
   background: #fff;
   padding: 30rpx;
@@ -29,12 +31,12 @@
   border-radius: 16rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
   box-sizing: border-box;
-  width: calc(100% - 60rpx);  /* 确保宽度一致，减去左右margin */
+  width: calc(100% - 60rpx); /* 确保宽度一致，减去左右margin */
 }
 
 /* 律师基本信息特殊样式 */
 .lawyer-info {
-  margin-top: 20rpx;  /* 顶部特殊间距 */
+  margin-top: 20rpx; /* 顶部特殊间距 */
   position: relative;
   overflow: hidden;
   height: auto;
@@ -81,18 +83,18 @@
 .lawyer-name {
   font-size: 36rpx;
   font-weight: 500;
-  color: #000;  /* 改为白色 */
+  color: #000; /* 改为白色 */
   margin-bottom: 10rpx;
 }
 
 .lawyer-location {
   font-size: 24rpx;
-  color: #6F737C;  
+  color: #6f737c;
 }
 
 .follow-btn {
   padding: 8rpx 24rpx;
-  background: #0062FF;
+  background: #0062ff;
   color: #fff;
   font-size: 28rpx;
   border-radius: 8rpx;
@@ -100,7 +102,7 @@
 }
 
 .follow-btn.followed {
-  background: #F5F7FA;
+  background: #f5f7fa;
   color: #666666;
 }
 
@@ -120,26 +122,26 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1;  /* 让每个item占据相等空间 */
+  flex: 1; /* 让每个item占据相等空间 */
 }
 
 /* 统计数据之间的分割线 */
 .stat-divider {
   width: 2rpx;
   height: 40rpx;
-  background-color: rgba(111, 115, 124, 0.2);  /* 改为半透明白色 */
+  background-color: rgba(111, 115, 124, 0.2); /* 改为半透明白色 */
 }
 
 .stat-num {
   font-size: 36rpx;
   font-weight: 500;
-  color: #000;  /* 改为白色 */
+  color: #000; /* 改为白色 */
   margin-bottom: 8rpx;
 }
 
 .stat-label {
   font-size: 24rpx;
-  color: #6F737C;
+  color: #6f737c;
 }
 
 /* 擅长领域标签 */
@@ -168,7 +170,7 @@
 .skill-tags .tag {
   height: 40rpx;
   padding: 6rpx 20rpx;
-  background: #F5F7FA;
+  background: #f5f7fa;
   border-radius: 8rpx;
   font-size: 24rpx;
   color: #666666;
@@ -181,7 +183,7 @@
 }
 
 .skill-tags .more-tag {
-  background: #F5F7FA;
+  background: #f5f7fa;
   margin-left: 16rpx;
   padding: 6rpx 12rpx;
   line-height: 28rpx;
@@ -225,7 +227,7 @@
 
 .expand-btn {
   text-align: center;
-  color: #0062FF;
+  color: #0062ff;
   font-size: 24rpx;
   display: flex;
   align-items: center;
@@ -237,12 +239,12 @@
 }
 
 .expand-btn::after {
-  content: '';
+  content: "";
   display: inline-block;
   width: 12rpx;
   height: 12rpx;
-  border-right: 2rpx solid #0062FF;
-  border-bottom: 2rpx solid #0062FF;
+  border-right: 2rpx solid #0062ff;
+  border-bottom: 2rpx solid #0062ff;
   transform: rotate(45deg);
   margin-left: 8rpx;
   margin-top: -4rpx;
@@ -256,11 +258,10 @@
 
 /* 服务项目特殊样式 */
 .service-items {
-  margin-bottom: 0;  /* 移除最后一个卡片的底部间距 */
+  margin-bottom: 0; /* 移除最后一个卡片的底部间距 */
 }
 
 .service-list {
-  
 }
 
 .service-item {
@@ -306,4 +307,68 @@
   font-size: 24rpx;
   color: rgba(51, 51, 51, 1);
   font-weight: 500;
-} 
+}
+
+.phone-service {
+}
+
+/* 手机号输入区域样式 */
+.phone-service .required {
+  color: #ff4d4f;
+  margin-left: 4rpx;
+}
+
+.phone-service .section-title {
+  margin-left: 32rpx;
+  margin-bottom: 10rpx;
+}
+
+.phone-input {
+  margin-top: 0rpx;
+  font-size: 48rpx;
+}
+
+.phone-input input {
+  width: 100%;
+  height: 48rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.phone-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.phone-tips .tips-red {
+  color: #ff6b35;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.phone-tips .tips-content {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* 提交咨询按钮样式 */
+.phone-service button {
+  width: 90%;
+  height: 88rpx;
+  margin-top: 40rpx;
+  background: #0062ff;
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 500;
+  border-radius: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.phone-service button:active {
+  opacity: 0.8;
+}

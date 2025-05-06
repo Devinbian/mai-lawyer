@@ -37,7 +37,7 @@
         <view class="expert-item" 
           wx:for="{{list}}" 
           wx:key="id" 
-          bindtap="navigateToDetail" 
+          bindtap="navigateToDetail" data-type="2"
           data-expert="{{item}}"
         >
           <image class="expert-bg" src="{{imgUrls.expertBg}}" mode="aspectFill"></image>

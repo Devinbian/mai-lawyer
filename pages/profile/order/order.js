@@ -448,6 +448,7 @@ Page({
                 consultTime: order.createTime,
                 price: order.totalFee,
                 orderContent: order.orderContent, // 图文咨询时为律师手机号，文档下载时为文档名称
+                phone: order.phone, //
                 documentName: order.documentName || "未知文档",
                 documentUrl: order.documentUrl, // 添加文档下载链接
                 lawyerName: order.lawyerName, // 添加律师姓名

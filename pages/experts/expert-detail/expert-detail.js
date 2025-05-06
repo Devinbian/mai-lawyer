@@ -9,6 +9,7 @@ Page({
     isExpanded: false,
     isFollowed: false,
     type: 2,
+    phone: null,
   },
   imgUrls: null,
   onLoad(options) {
@@ -233,6 +234,13 @@ Page({
     });
   },
 
+  getInputPhoneValue(e) {
+    const value = e.detail.value;
+    this.setData({
+      phone: value,
+    });
+  },
+
   handlePhoneConsult(e) {
     if (!getApp().globalData.userInfo) {
       wx.navigateTo({
@@ -241,15 +249,69 @@ Page({
       return;
     }
     const phone = e.currentTarget.dataset.phone;
-    // 拨打电话时移除所有非数字字符
-    const cleanedPhone = phone.replace(/\D/g, "");
-    wx.makePhoneCall({
-      phoneNumber: cleanedPhone,
-      success: () => {
-        console.log("拨打电话成功");
+    // 调用支付接口
+    const token = getApp().globalData.userInfo.token;
+    wx.request({
+      url: `${config.baseURL}/api/order/add?token=${token}`,
+      method: "POST",
+      data: {
+        lawyerId: this.data.expert.id,
+        type: 3, //电话咨询
+        phone: this.data.phone,
+      },
+      success: (res) => {
+        if (res.data.success) {
+          wx.request({
+            url: `${config.baseURL}/api/wxpay/prepay`,
+            data: {
+              orderId: res.data.data,
+              token: token,
+            },
+            success: (res) => {
+              wx.requestPayment({
+                timeStamp: res.data.data.timeStamp,
+                nonceStr: res.data.data.nonceStr,
+                package: res.data.data.packageValue,
+                signType: res.data.data.signType,
+                paySign: res.data.data.paySign,
+                success: function (res) {
+                  console.log("支付成功", res);
+                  //支付成功后，拨打电话
+                  // 拨打电话时移除所有非数字字符
+                  const cleanedPhone = phone.replace(/\D/g, "");
+                  wx.makePhoneCall({
+                    phoneNumber: cleanedPhone,
+                    success: () => {
+                      console.log("拨打电话成功");
+                    },
+                    fail: (err) => {
+                      console.log("拨打电话失败", err);
+                    },
+                  });
+                },
+                fail: function (res) {
+                  console.log("支付失败", res);
+                },
+                complete: function (res) {},
+              });
+            },
+            fail: (err) => {
+              console.log("支付失败", err);
+            },
+          });
+        } else {
+          wx.showToast({
+            title: res.data.msg || "创建支付订单失败",
+            icon: "none",
+          });
+        }
       },
       fail: (err) => {
-        console.log("拨打电话失败", err);
+        console.error("请求支付失败：", err);
+        wx.showToast({
+          title: "创建支付订单失败",
+          icon: "none",
+        });
       },
     });
   },

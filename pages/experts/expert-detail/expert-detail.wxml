@@ -126,8 +126,17 @@
           </view> -->
         </view>
       </view>
-      <view wx:elif="{{type==1}}">
-      xxx
+      <view wx:elif="{{type==1}}" class="phone-service">
+        <text class="section-title">手机号<text class="required">*</text></text>
+        <view class="phone-input">
+            <input placeholder="请输入手机号"  bindinput="getInputPhoneValue"  />
+         </view>
+
+         <view class="phone-tips">
+            <view class="tips-red">温馨提示:</view>
+            <view class="tips-content">如果您的案件比较着急可使用电话咨询服务与我联系，我会在收到您的需求后尽快与您联系，您还可以主动联系我电话咨询，按次收费。</view>
+         </view>
+         <button  bindtap="handlePhoneConsult" data-phone="{{expert.phone}}">¥ {{expert.consultationFee}}  提交咨询</button>
       </view>
     </view>
   </scroll-view>
